@@ -4,12 +4,14 @@
   box-shadow: $box-shadow-lg;
   z-index: 1000;
 }
+
 .dropdown-menu-animated {
   animation-name: DropDownSlide;
   animation-duration: 0.3s;
   animation-fill-mode: both;
   margin: 0;
   position: absolute;
+
   &.show {
     top: 100% !important;
   }
@@ -31,6 +33,7 @@
   100% {
     transform: translateY(0);
   }
+
   0% {
     transform: translateY(10px);
   }
@@ -68,27 +71,31 @@
 
 @media (max-width: 1550px) {
   .dropdown-menu-lg-widest {
-    &.dropdown-menu-widest{
+    &.dropdown-menu-widest {
       min-width: 60rem;
     }
   }
 }
+
 @media (max-width: 1320px) {
   .dropdown-menu-lg-widest {
-    &.dropdown-menu-widest{
+    &.dropdown-menu-widest {
       min-width: 45rem;
-      .menu-image{
+
+      .menu-image {
         display: none;
       }
     }
   }
 }
+
 @media (max-width: 1080px) {
   .dropdown-menu-lg-widest {
-    &.dropdown-menu-widest{
+    &.dropdown-menu-widest {
       min-width: 35rem;
-      .dropdown-col{
-        .grid-nav-row{
+
+      .dropdown-col {
+        .grid-nav-row {
           flex-wrap: wrap;
         }
       }
@@ -106,6 +113,7 @@
   padding: 15px 0 9px;
   color: $gray-600;
   border: 1px dashed var(--#{$prefix}border-color);
+
   &:hover {
     background-color: var(--#{$prefix}light);
     color: $primary;
@@ -153,6 +161,7 @@
       transform: rotate(-225deg);
       margin-left: 0rem;
     }
+
     .dropdown-toggle-split::before {
       display: none;
     }
@@ -189,7 +198,7 @@
 }
 
 .dropdown-header {
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 
 .dropdown-center {
@@ -201,8 +210,9 @@
 
 .dropdown-submenu {
   position: relative;
+
   &:hover {
-    > .dropdown-submenu-menu {
+    >.dropdown-submenu-menu {
       display: inline-block;
     }
   }
@@ -210,9 +220,11 @@
 
 .dropdown-addon {
   white-space: nowrap;
+
   &:last-child {
     margin-left: 0.5rem;
   }
+
   &:first-child {
     margin-right: 0.5rem;
   }
@@ -235,6 +247,7 @@
     animation-name: slideUp;
   }
 }
+
 .dropdown-submenu-menu {
   width: fit-content;
   position: absolute;
@@ -271,12 +284,15 @@
         &:hover {
           background-color: transparent;
         }
+
         &:active {
           background-color: $primary;
         }
       }
+
       .grid-nav-item {
         background-color: transparent;
+
         &:active {
           background-color: $primary;
         }

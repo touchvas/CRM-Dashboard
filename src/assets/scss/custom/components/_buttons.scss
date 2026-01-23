@@ -7,10 +7,22 @@ a {
 
 .btn {
   position: relative;
+  border-radius: 0.5rem; // Consistent rounding with inputs
+  font-weight: 500;
+  padding: 0.75rem 1.5rem; // Larger touch targets
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+
+  &:hover {
+    transform: translateY(-1px); // Subtle lift
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
 
   &:active {
+    transform: translateY(0);
     border-color: transparent;
   }
+
   &.show,
   &:first-child:active {
     border-color: transparent;
@@ -34,6 +46,7 @@ a {
 @each $color, $value in $theme-colors {
   .btn-#{$color} {
     color: $white !important;
+
     &:hover,
     &:active,
     &.active,
@@ -44,6 +57,7 @@ a {
   }
 
   .btn-outline-#{$color} {
+
     &:hover,
     &:active {
       color: $white !important;
@@ -66,6 +80,7 @@ a {
   .btn-flat-#{$color} {
     background-color: var(--#{$prefix}light);
     color: var(--#{$prefix}body-color);
+
     &:hover,
     &:active,
     &:focus {
@@ -78,6 +93,7 @@ a {
   .btn-text-#{$color} {
     background-color: transparent;
     color: $value;
+
     &:hover,
     &:focus {
       background-color: rgba(($value), 0.15);
@@ -92,13 +108,14 @@ a {
   }
 }
 
-.btn-text-light{
-  &:active{
+.btn-text-light {
+  &:active {
     background-color: var(--#{$prefix}light) !important;
   }
 }
 
 .btn-flat-light {
+
   &:hover,
   &:active,
   &:focus {
@@ -133,7 +150,7 @@ a {
   font-size: 1.2rem !important;
 }
 
-.btn-icon > svg {
+.btn-icon>svg {
   font-size: 1rem;
   height: 1em;
 }
@@ -189,6 +206,7 @@ a {
   color: var(--#{$prefix}body-color);
   background-color: var(--#{$prefix}light);
   border-color: var(--#{$prefix}border-color);
+
   &:hover,
   &:active {
     background-color: var(--#{$prefix}body-bg) !important;
@@ -201,6 +219,7 @@ a {
   color: $white;
   background-color: var(--#{$prefix}dark);
   border-color: transparent;
+
   &:hover,
   &:active {
     background-color: var(--#{$prefix}dark) !important;
@@ -212,6 +231,7 @@ a {
 .btn-outline-light {
   color: var(--#{$prefix}body-bg);
   border-color: var(--#{$prefix}body-bg);
+
   &:hover,
   &:active {
     background-color: var(--#{$prefix}body-bg) !important;
@@ -221,6 +241,7 @@ a {
 }
 
 .btn-label-light {
+
   &:hover,
   &:active {
     background-color: var(--#{$prefix}body-bg) !important;
@@ -230,10 +251,10 @@ a {
 }
 
 
-.btn-check:checked+.btn{
+.btn-check:checked+.btn {
   color: $white;
 }
 
-.btn-label-dark{
+.btn-label-dark {
   color: var(--#{$prefix}body-color);
 }

@@ -1,0 +1,116 @@
+<div class="page-title-right">
+    <ol class="breadcrumb m-0 text-sm">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
+        <li class="breadcrumb-item active">Existing Campaigns</li>
+    </ol>
+</div>
+<div class="d-flex justify-content-between mb-4">
+    <h3>Existing Campaigns</h3>
+    <a href="pages-starter.html" class="btn btn-primary"><i class="mdi mdi-plus me-1"></i>Create Campaign</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Search campaigns...">
+            </div>
+            <div class="col-md-8 text-end">
+                <div class="btn-group">
+                    <button class="btn btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Status: All
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">All</a></li>
+                        <li><a class="dropdown-item" href="#">Active</a></li>
+                        <li><a class="dropdown-item" href="#">Draft</a></li>
+                        <li><a class="dropdown-item" href="#">Completed</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 40%;">Campaign Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span
+                                    class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-16 me-2"
+                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-rocket-launch"></i>
+                                </span>
+                                <div>
+                                    <h6 class="mb-0">Summer Sale 2026</h6>
+                                    <small class="text-muted">Target: All Users</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-success-subtle text-success">Active</span></td>
+                        <td>Push Notification</td>
+                        <td>Jan 15, 2026</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span
+                                    class="avatar-title rounded-circle bg-warning-subtle text-warning font-size-16 me-2"
+                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-file-document-edit"></i>
+                                </span>
+                                <div>
+                                    <h6 class="mb-0">Draft: Re-engagement</h6>
+                                    <small class="text-muted">Target: Dormant Users</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-warning-subtle text-warning">Draft</span></td>
+                        <td>Email</td>
+                        <td>Jan 18, 2026</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span
+                                    class="avatar-title rounded-circle bg-secondary-subtle text-secondary font-size-16 me-2"
+                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-check-all"></i>
+                                </span>
+                                <div>
+                                    <h6 class="mb-0">Welcome Message</h6>
+                                    <small class="text-muted">Target: New Signups</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-secondary-subtle text-secondary">Completed</span></td>
+                        <td>In-App</td>
+                        <td>Dec 20, 2025</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
+                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

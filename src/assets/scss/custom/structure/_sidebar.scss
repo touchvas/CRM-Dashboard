@@ -54,7 +54,7 @@
     padding: 10px 0 30px 0;
 
     .mm-active {
-        > .has-arrow {
+        >.has-arrow {
             &:after {
                 transform: rotate(-180deg);
             }
@@ -79,16 +79,16 @@
                 padding: 0.625rem 1.5rem;
                 color: $leftsidebar-menu-item-color;
                 position: relative;
-                font-size: 13.3px;
+                font-size: 20px;
                 transition: all 0.4s;
                 font-family: $font-family-secondary;
-                font-weight: 500;
+                font-weight: bold;
 
                 i {
                     display: inline-block;
                     min-width: 1.5rem;
                     padding-bottom: 0.125em;
-                    font-size: 14px;
+                    font-size: 20px;
                     line-height: 1.40625rem;
                     color: $leftsidebar-menu-item-icon-color;
                     transition: all 0.4s;
@@ -114,10 +114,10 @@
                 li {
                     a {
                         padding: 0.4rem 1.5rem 0.4rem 2.2rem;
-                        font-size: 13px;
+                        font-size: 16px; // Increased from 13px
 
                         i {
-                            font-size: 6px;
+                            font-size: 10px; // Slightly larger bullet
                         }
                     }
 
@@ -127,7 +127,7 @@
                         li {
                             a {
                                 padding: 0.4rem 1.5rem 0.4rem 3rem;
-                                font-size: 13.5px;
+                                font-size: 16px; // Increased from 13.5px
                             }
                         }
                     }
@@ -152,17 +152,21 @@
 
 .mm-active {
     color: $primary !important;
-    > a {
+
+    >a {
         border-left: 4px solid $primary;
         border-radius: 2px;
         color: $primary !important;
+
         i {
             color: $primary !important;
         }
     }
-    > i {
+
+    >i {
         color: $primary !important;
     }
+
     .active {
         color: $primary !important;
 
@@ -237,6 +241,7 @@
 
         // Sidebar Menu
         #sidebar-menu {
+
             .menu-title,
             .badge,
             .collapse.in {
@@ -253,14 +258,15 @@
                 }
             }
 
-            > ul {
-                > li {
+            >ul {
+                >li {
                     position: relative;
                     white-space: nowrap;
 
-                    > a {
+                    >a {
                         padding: 15px 20px;
                         min-height: 55px;
+                        font-size: 18px;
                         transition: none;
 
                         &:hover,
@@ -281,10 +287,11 @@
                     }
 
                     &:hover {
-                        > a {
+                        >a {
                             position: relative;
                             width: calc(190px + #{$leftsidebar-collapsed-width});
                             color: $primary;
+                            font-size: 16px;
                             background-color: var(--#{$prefix}light);
                             transition: none;
 
@@ -297,7 +304,7 @@
                             }
                         }
 
-                        > ul {
+                        >ul {
                             display: block;
                             left: $leftsidebar-collapsed-width;
                             position: absolute;
@@ -333,7 +340,7 @@
 
                     li {
                         &:hover {
-                            > ul {
+                            >ul {
                                 display: block;
                                 left: 190px;
                                 height: auto !important;
@@ -343,7 +350,7 @@
                             }
                         }
 
-                        > a {
+                        >a {
                             span.pull-right {
                                 position: absolute;
                                 right: 20px;
@@ -374,6 +381,7 @@ body[data-sidebar-size="small"] {
             width: auto;
         }
     }
+
     .sidebar-left {
         width: $leftsidebar-width-sm;
         text-align: center;
@@ -383,11 +391,14 @@ body[data-sidebar-size="small"] {
             display: none !important;
         }
     }
+
     .main-content {
         margin-left: $leftsidebar-width-sm;
     }
+
     .footer {
         left: $leftsidebar-width-sm;
+
         @media (max-width: 991px) {
             left: 0;
         }
@@ -398,11 +409,13 @@ body[data-sidebar-size="small"] {
             &.menu-title {
                 background-color: lighten($leftsidebar-dark-bg, 2%);
             }
+
             a {
                 i {
                     display: block;
                 }
             }
+
             ul.sub-menu {
                 li {
                     a {
@@ -420,16 +433,19 @@ body[data-sidebar-size="small"] {
             }
         }
     }
+
     &.sidebar-collpsed {
         .main-content {
             margin-left: $leftsidebar-collapsed-width;
         }
+
         .sidebar-left {
             #sidebar-menu {
                 text-align: left;
-                > ul {
-                    > li {
-                        > a {
+
+                >ul {
+                    >li {
+                        >a {
                             i {
                                 display: inline-block;
                             }
@@ -438,6 +454,7 @@ body[data-sidebar-size="small"] {
                 }
             }
         }
+
         .footer {
             left: $leftsidebar-collapsed-width;
         }
@@ -449,14 +466,17 @@ body[data-sidebar-size="small"] {
 [data-sidebar="dark"] {
     .navbar-logo-box {
         background: $white-dark;
+
         .top-icon {
             background-color: $body-bg-dark;
-            &:active, 
+
+            &:active,
             &:hover {
                 background-color: $primary;
             }
         }
     }
+
     .logo-light {
         display: block;
     }
@@ -464,6 +484,7 @@ body[data-sidebar-size="small"] {
     .logo-dark {
         display: none;
     }
+
     .sidebar-left {
         background: $white-dark;
 
@@ -471,9 +492,11 @@ body[data-sidebar-size="small"] {
             color: $body-color-dark;
         }
     }
+
     #sidebar-menu ul li a:hover {
         color: $body-color-dark;
-        i{
+
+        i {
             color: $body-color-dark;
         }
     }

@@ -1,0 +1,53 @@
+@@include("partials/main.html")
+
+<head>
+
+    @@include("partials/title-meta.html", {"title": "Data"})
+
+    @@include("partials/head-css.html")
+
+    <style>
+        .dropdown-item:hover,
+        .dropdown-item:focus {
+            color: var(--bs-primary) !important;
+            background-color: var(--bs-light) !important;
+        }
+    </style>
+
+</head>
+
+@@include("partials/body.html")
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+    @@include("partials/menu.html")
+
+    <!-- Begin main content -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                @@include("partials/data-view.html")
+
+            </div>
+        </div>
+
+        @@include("partials/footer.html")
+
+    </div>
+    <!-- End main content -->
+
+</div>
+<!-- End layout-wrapper -->
+
+@@include("partials/right-sidebar.html")
+
+@@include("partials/vendor-scripts.html")
+
+<script src="assets/js/app.js"></script>
+
+</body>
+
+</html>

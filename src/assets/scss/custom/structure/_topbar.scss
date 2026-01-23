@@ -41,8 +41,10 @@
 @media (max-width: 991.98px) {
     .sidebar-enable {
         transition: all 0.5s ease-in !important;
+
         .navbar-logo-box {
             width: $leftsidebar-width !important;
+
             .logo {
                 .logo-lg {
                     display: inline-block !important;
@@ -66,13 +68,17 @@
         }
     }
 }
+
 .menu-sm {
     width: calc(100% - 255px);
+
     @media (max-width: 408px) {
         margin: auto !important;
     }
+
     @media (max-width: 452px) {
         width: 100%;
+
         .dropdown-menu-wide {
             min-width: 18rem;
         }
@@ -98,12 +104,13 @@
 
     .form-control {
         background-color: var(--#{$prefix}light);
-        height: 32px;
+        height: 46px;
         padding-left: 40px;
         padding-right: 20px;
         box-shadow: none;
         border-radius: 30px;
     }
+
     span {
         position: absolute;
         z-index: 10;
@@ -115,8 +122,7 @@
 }
 
 .page-content {
-    padding: calc(#{$header-height} + #{$grid-gutter-width}) 0.9rem $footer-height
-        $grid-gutter-width;
+    padding: calc(#{$header-height} + #{$grid-gutter-width}) 0.9rem $footer-height $grid-gutter-width;
 }
 
 .header-item {
@@ -147,17 +153,19 @@
 }
 
 .top-icon {
-    width: 35px;
-    height: 35px;
+    width: 46px;
+    height: 46px;
     background-color: var(--#{$prefix}body-bg);
+
     i {
-        font-size: 18px;
+        font-size: 22px;
         color: $header-item-color;
     }
 
     &:hover,
     &:active {
         background-color: $primary;
+
         i {
             color: $white;
         }
@@ -183,29 +191,36 @@
 [data-topbar="dark"] {
     #page-topbar {
         background-color: $white-dark;
+
         .app-search .form-control {
             background-color: $light-dark;
             border-color: $border-color-dark;
-            &:focus{
+
+            &:focus {
                 color: $body-color-dark;
                 border-color: $primary;
             }
-            &::placeholder{
+
+            &::placeholder {
                 color: $body-color-dark;
                 opacity: 0.75;
             }
         }
+
         .top-icon {
             background-color: $body-bg-dark;
-            &:active, 
+
+            &:active,
             &:hover {
                 background-color: $primary;
             }
         }
     }
+
     .navbar-logo-box {
         background: $white-dark;
     }
+
     .logo-light {
         display: block;
     }

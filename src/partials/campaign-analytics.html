@@ -1,0 +1,131 @@
+<div class="page-title-right">
+    <ol class="breadcrumb m-0 text-sm">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
+        <li class="breadcrumb-item active">Aviator</li>
+    </ol>
+</div>
+<div class="d-flex justify-content-between">
+    <h3>Aviator</h3>
+    <div class="d-flex justify-content-end gap-3">
+        <button class="btn btn-outline-primary"><i class="fa fa-user-tag me-1"></i>Calculate recipients</button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Save <i class="mdi mdi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Save as Draft</a>
+                <a class="dropdown-item" href="#">Save as Template</a>
+            </div>
+        </div>
+        <button class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Review & Update</button>
+    </div>
+</div>
+<div>
+    <ol class="d-flex gap-5 list-styled mb-0">
+        <li class="text-muted"><a href="pages-starter.html" class="text-muted ">Setup </a></li>
+        <li class="text-muted"><a href="pages-starter2.html" class="text-muted">Template </a></li>
+        <li class="text-muted"><a href="pages-starter3.html" class="text-muted">Recipients </a></li>
+        <li class="text-muted"><a href="pages-starter4.html" class="text-muted">Schedule </a></li>
+        <li class="text-muted"><a href="pages-starter5.html" class="text-muted">Review & Launch </a></li>
+        <li class="text-muted"><a href="pages-starter6.html" class="text-primary">Analytics </a></li>
+    </ol>
+</div>
+<hr>
+
+<!-- Sub-navigation -->
+<ul class="nav nav-tabs nav-tabs-custom mb-3">
+    <li class="nav-item">
+        <a class="nav-link active" href="#">Engagement</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Performance</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Reports</a>
+    </li>
+</ul>
+
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2">
+        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link mb-2 active" href="#"><i class="mdi mdi-folder-outline me-2"></i>All Channels</a>
+            <a class="nav-link mb-2 text-muted" href="#"><i class="mdi mdi-web me-2"></i>Web Push</a>
+            <a class="nav-link mb-2 text-muted" href="#"><i class="mdi mdi-email-outline me-2"></i>Inbox</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">All Channels</h5>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm"><i class="mdi mdi-poll me-1"></i>Save as
+                    report</button>
+                <button class="btn btn-outline-secondary btn-sm"><i class="mdi mdi-download me-1"></i>Export
+                    analytics</button>
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle">
+                    <i class="mdi mdi-calendar me-1"></i>Jan 15, 2026 - Jan 15, 2026
+                </button>
+            </div>
+        </div>
+
+        <!-- Web Push Chart -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="mdi mdi-web me-2"></i>Web Push</h5>
+                <!-- Chart Placeholder -->
+                <div id="chart-web-push" class="apex-charts" dir="ltr" style="min-height: 250px;"></div>
+                <!-- Legend Placeholder (Visual match) -->
+                <div class="d-flex justify-content-end gap-3 text-xs">
+                    <span class="d-flex align-items-center"><span class="bg-primary rounded-circle me-1"
+                            style="width:8px;height:8px;"></span> Sent 0</span>
+                    <span class="d-flex align-items-center"><span class="bg-success rounded-circle me-1"
+                            style="width:8px;height:8px;"></span> Delivered 0</span>
+                    <span class="d-flex align-items-center"><span class="bg-danger rounded-circle me-1"
+                            style="width:8px;height:8px;"></span> Clicked 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inbox Chart -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="mdi mdi-email-outline me-2"></i>Inbox</h5>
+                <!-- Chart Placeholder -->
+                <div id="chart-inbox" class="apex-charts" dir="ltr" style="min-height: 250px;"></div>
+                <div class="d-flex justify-content-end gap-3 text-xs">
+                    <span class="d-flex align-items-center"><span class="bg-primary rounded-circle me-1"
+                            style="width:8px;height:8px;"></span> Sent 0</span>
+                    <span class="d-flex align-items-center"><span class="bg-success rounded-circle me-1"
+                            style="width:8px;height:8px;"></span> Delivered 0</span>
+                    <span class="d-flex align-items-center"><span class="bg-danger rounded-circle me-1" s
+                            style="width:8px;height:8px;"></span> Clicked 0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dummy Script to render basic charts if ApexCharts is loaded, otherwise just empty div -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Simple config to render empty grid lines to mimic the image
+        var options = {
+            series: [],
+            chart: { height: 250, type: 'line', toolbar: { show: false } },
+            grid: { show: true, borderColor: '#f1f1f1' },
+            xaxis: {
+                categories: ['12AM', '01AM', '02AM', '03AM', '04AM', '05AM', '06AM', '07AM', '08AM', '09AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM', '9PM', '10PM', '11PM']
+            },
+            yaxis: { min: 0, max: 5, tickAmount: 5 },
+            noData: { text: " " } // Hide no data text
+        };
+
+        if (typeof ApexCharts !== 'undefined') {
+            new ApexCharts(document.querySelector("#chart-web-push"), options).render();
+            new ApexCharts(document.querySelector("#chart-inbox"), options).render();
+        }
+    });
+</script>

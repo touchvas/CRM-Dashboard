@@ -1,0 +1,190 @@
+<div class="page-title-right">
+    <ol class="breadcrumb m-0 text-sm">
+        <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
+        <li class="breadcrumb-item active">Create Campaigns</li>
+    </ol>
+</div>
+<div class="d-flex justify-content-between">
+    <h3>Create Campaign</h3>
+    <div class="d-flex justify-content-end gap-3">
+        <button class="btn btn-outline-primary"><i class="fa fa-user-tag me-1"></i>Calculate recipients</button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Save <i class="mdi mdi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Save as Draft</a>
+                <a class="dropdown-item" href="#">Save as Template</a>
+            </div>
+        </div>
+        <a href="pages-starter5.html" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Next</a>
+    </div>
+</div>
+<div>
+    <ol class="d-flex gap-5 list-styled mb-0">
+        <li class="text-muted"><a href="pages-starter.html" class="text-muted ">Setup </a></li>
+        <li class="text-muted"><a href="pages-starter2.html" class="text-muted">Template </a></li>
+        <li class="text-muted"><a href="pages-starter3.html" class="text-muted">Recipients </a></li>
+        <li class="text-muted"><a href="pages-starter4.html" class="text-primary">Schedule </a></li>
+        <li class="text-muted"><a href="pages-starter5.html" class="text-muted">Review & Launch </a></li>
+        <li class="text-muted"><a href="pages-starter6.html" class="text-muted">Analytics </a></li>
+    </ol>
+</div>
+<hr>
+<style>
+    .btn-hover-primary:hover i,
+    .card-selected .mdi-adjust,
+    .card-selected .mdi-radiobox-marked {
+        color: var(--bs-primary) !important;
+    }
+
+    .card-selected {
+        background-color: rgba(var(--bs-primary-rgb), 0.1);
+        border-color: var(--bs-primary) !important;
+    }
+</style>
+
+<div class="card pt-2 m-3 pb-3 mb-3">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card border card-selected">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-marked fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Send now</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Campaign will be sent on launch</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-blank fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Send later</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Campaign will be sent at the set time</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-blank fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Repeat</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Campaign will repeat according to set rules</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card pt-2 m-3 pb-3 mb-3">
+    <div class="card-header card-header-bordered">
+        <h3 class="card-title">Persist content in Inbox</h3>
+        <p class="text-muted mb-0">You can keep content in inbox or remove it after some time</p>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card border card-selected">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-marked fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Do not remove</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Keep content in inbox</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-blank fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Remove on</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Remove content at certain date or time</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border">
+                    <div class="card-body">
+                        <div class="d-flex mb-2">
+                            <button
+                                class="btn btn-light rounded-circle btn-hover-primary selection-btn ps-2 pe-2 pt-1 pb-1">
+                                <i class="mdi mdi-radiobox-blank fs-18"></i>
+                            </button>
+                            <h5 class="card-title ms-2 mt-2">Remove after</h5>
+                        </div>
+                        <p class="card-text text-muted ms-5">Remove content after some time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.selection-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const card = this.closest('.card');
+            const row = card.closest('.row');
+
+            // Remove 'card-selected' from all other cards in the same row
+            row.querySelectorAll('.card').forEach(c => {
+                c.classList.remove('card-selected');
+                // Reset icon to blank
+                const btnIcon = c.querySelector('.selection-btn i');
+                if (btnIcon) {
+                    btnIcon.classList.remove('mdi-radiobox-marked');
+                    btnIcon.classList.add('mdi-radiobox-blank');
+                }
+            });
+
+            // Add 'card-selected' to the clicked card
+            card.classList.add('card-selected');
+            // Set icon to marked
+            const icon = this.querySelector('i');
+            if (icon) {
+                icon.classList.remove('mdi-radiobox-blank');
+                icon.classList.add('mdi-radiobox-marked');
+            }
+        });
+
+        // Double click to deselect
+        btn.addEventListener('dblclick', function (e) {
+            e.stopPropagation();
+            const card = this.closest('.card');
+            card.classList.remove('card-selected');
+            // Reset icon to blank
+            const icon = this.querySelector('i');
+            if (icon) {
+                icon.classList.remove('mdi-radiobox-marked');
+                icon.classList.add('mdi-radiobox-blank');
+            }
+        });
+    });
+</script>

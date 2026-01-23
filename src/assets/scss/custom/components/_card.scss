@@ -4,16 +4,20 @@
     .card-#{$color} {
         background-color: $value !important;
         color: $white !important;
+
         .card-header {
             background-color: $value !important;
             color: $white !important;
+
             .card-title {
                 color: $white !important;
             }
         }
+
         .card-body {
             color: $white !important;
         }
+
         .card-footer {
             background-color: $value !important;
             color: $white !important;
@@ -23,6 +27,14 @@
 
 .card {
     margin-bottom: $grid-gutter-width;
+    box-shadow: $box-shadow;
+    border: 1px solid rgba($gray-200, 0.7); // Very subtle border
+    border-radius: 0.75rem; // Modern rounded corners
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: $box-shadow-lg; // Lift effect
+    }
 }
 
 .card-drop {
@@ -44,9 +56,11 @@
 .card-header {
     background-color: var(--#{$prefix}white);
     border-bottom: 1px solid var(--#{$prefix}border-color);
+
     .card-title {
         margin-bottom: 0;
     }
+
     display: flex;
     align-items: center;
 }
@@ -62,6 +76,7 @@
 .card-header-lines {
     margin-right: calc(-0.5 * 1rem);
     margin-left: calc(-0.5 * 1rem);
+
     .nav-link {
         margin-bottom: calc((0.75rem - 2px) * -1);
     }
@@ -75,6 +90,7 @@
         border: 0;
         background: 0 0;
         border-bottom: 2px solid transparent;
+
         &.active {
             color: $primary;
             border-color: $primary;
@@ -87,11 +103,11 @@
     border-top: 1px solid var(--#{$prefix}border-color);
 }
 
-.card-addon{
+.card-addon {
     margin-left: auto;
 }
 
-@media (min-width: 1500px){
+@media (min-width: 1500px) {
     .card-row-fill-xl>[class*=col]>.card {
         flex: 1;
     }

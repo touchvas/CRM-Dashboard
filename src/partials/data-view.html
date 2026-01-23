@@ -1,0 +1,245 @@
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-flex align-items-center justify-content-between">
+            <h4 class="mb-0">Data Management</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">CRM</a></li>
+                    <li class="breadcrumb-item active">Data View</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-pills nav-justified bg-light rounded" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#players" role="tab">
+                            <i class="mdi mdi-account-group me-1"></i> <span class="d-none d-md-inline-block">Player
+                                360</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#transactions" role="tab">
+                            <i class="mdi mdi-cash-multiple me-1"></i> <span
+                                class="d-none d-md-inline-block">Transactions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#betting-logs" role="tab">
+                            <i class="mdi mdi-clipboard-text-outline me-1"></i> <span
+                                class="d-none d-md-inline-block">Betting Logs</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content p-3 text-muted">
+                    <!-- Players Tab -->
+                    <div class="tab-pane active" id="players" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Player Directory</h5>
+                            <div class="hstack gap-2">
+                                <input type="text" class="form-control form-control-sm border-dashed"
+                                    placeholder="Search Player ID/Name...">
+                                <button class="btn btn-sm btn-soft-primary"><i class="mdi mdi-filter-variant"></i>
+                                    Filters</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Player ID</th>
+                                        <th>Name</th>
+                                        <th>Country</th>
+                                        <th>Status</th>
+                                        <th>Total Wagered</th>
+                                        <th>NGR</th>
+                                        <th>Risk Level</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#NB-8821</a> </td>
+                                        <td>James Wilson</td>
+                                        <td>United Kingdom</td>
+                                        <td><span
+                                                class="badge rounded-pill bg-success-subtle text-success">Active</span>
+                                        </td>
+                                        <td>$12,450.00</td>
+                                        <td>$2,100.00</td>
+                                        <td><span class="badge bg-soft-info text-info">Low</span></td>
+                                        <td><button class="btn btn-light btn-sm">View Profile</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#NB-8822</a> </td>
+                                        <td>Sophie Martin</td>
+                                        <td>France</td>
+                                        <td><span
+                                                class="badge rounded-pill bg-warning-subtle text-warning">Dormant</span>
+                                        </td>
+                                        <td>$8,200.00</td>
+                                        <td>-$240.00</td>
+                                        <td><span class="badge bg-soft-warning text-warning">Medium</span></td>
+                                        <td><button class="btn btn-light btn-sm">View Profile</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#NB-8823</a> </td>
+                                        <td>Lukas Berg</td>
+                                        <td>Germany</td>
+                                        <td><span
+                                                class="badge rounded-pill bg-success-subtle text-success">Active</span>
+                                        </td>
+                                        <td>$54,000.00</td>
+                                        <td>$15,200.00</td>
+                                        <td><span class="badge bg-soft-danger text-danger">VIP / High</span></td>
+                                        <td><button class="btn btn-light btn-sm">View Profile</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="javascript: void(0);" class="text-body fw-bold">#NB-8824</a> </td>
+                                        <td>Elena Rossi</td>
+                                        <td>Italy</td>
+                                        <td><span
+                                                class="badge rounded-pill bg-danger-subtle text-danger">Suspended</span>
+                                        </td>
+                                        <td>$1,200.00</td>
+                                        <td>$400.00</td>
+                                        <td><span class="badge bg-soft-dark text-dark">Extreme</span></td>
+                                        <td><button class="btn btn-light btn-sm">View Profile</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Tab -->
+                    <div class="tab-pane" id="transactions" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Financial History</h5>
+                            <button class="btn btn-sm btn-soft-success"><i class="mdi mdi-export me-1"></i> Export
+                                CSV</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>TxID</th>
+                                        <th>Date</th>
+                                        <th>Player</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>TX-9901</td>
+                                        <td>20 Jan, 22:15</td>
+                                        <td>James Wilson</td>
+                                        <td><span class="text-success">Deposit</span></td>
+                                        <td>$500.00</td>
+                                        <td>Visa (**44)</td>
+                                        <td><i class="mdi mdi-checkbox-marked-circle text-success me-1"></i> Complete
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>TX-9902</td>
+                                        <td>20 Jan, 21:30</td>
+                                        <td>Lukas Berg</td>
+                                        <td><span class="text-danger">Withdrawal</span></td>
+                                        <td>$2,000.00</td>
+                                        <td>Crypto (BTC)</td>
+                                        <td><i class="mdi mdi-clock-outline text-warning me-1"></i> Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td>TX-9903</td>
+                                        <td>20 Jan, 20:45</td>
+                                        <td>Sophie Martin</td>
+                                        <td><span class="text-primary">Bonus Credit</span></td>
+                                        <td>$50.00</td>
+                                        <td>Manual Adjustment</td>
+                                        <td><i class="mdi mdi-checkbox-marked-circle text-success me-1"></i> Complete
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Betting Logs Tab -->
+                    <div class="tab-pane" id="betting-logs" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Full Wager Log</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light border text-dark dropdown-toggle"
+                                    data-bs-toggle="dropdown">Last 24 Hours <i
+                                        class="mdi mdi-chevron-down ms-1"></i></button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Today</a>
+                                    <a class="dropdown-item" href="#">Yesterday</a>
+                                    <a class="dropdown-item" href="#">Last 7 Days</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Bet ID</th>
+                                        <th>Time</th>
+                                        <th>Event / Game</th>
+                                        <th>Market</th>
+                                        <th>Stake</th>
+                                        <th>Odds</th>
+                                        <th>Result</th>
+                                        <th>PnL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#BT-5561</td>
+                                        <td>20 Jan, 23:10</td>
+                                        <td>Arsenal vs Liverpool</td>
+                                        <td>Full Time Result (1)</td>
+                                        <td>$100.00</td>
+                                        <td>2.10</td>
+                                        <td><span class="badge bg-success">Won</span></td>
+                                        <td><span class="text-success">+$110.00</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#BT-5562</td>
+                                        <td>20 Jan, 22:58</td>
+                                        <td>Starburst Slot</td>
+                                        <td>Casino Spin</td>
+                                        <td>$5.00</td>
+                                        <td>-</td>
+                                        <td><span class="badge bg-danger">Lost</span></td>
+                                        <td><span class="text-danger">-$5.00</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#BT-5563</td>
+                                        <td>20 Jan, 22:50</td>
+                                        <td>Lakers vs Warriors</td>
+                                        <td>Under 220.5</td>
+                                        <td>$250.00</td>
+                                        <td>1.95</td>
+                                        <td><span class="badge bg-info">Pending</span></td>
+                                        <td>-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

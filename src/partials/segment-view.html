@@ -1,0 +1,123 @@
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">Segment Details</h4>
+
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="pages-segmentation.html">Segmentation</a></li>
+                    <li class="breadcrumb-item active">View Segment</li>
+                </ol>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div id="segmentViewApp">
+    <!-- Segment Info Card -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="card-title mb-2">{{ segmentData.name || 'Unnamed Segment' }}</h4>
+                            <p class="text-muted mb-0">
+                                <i class="mdi mdi-calendar me-1"></i>Created: {{ new Date().toLocaleDateString() }}
+                            </p>
+                        </div>
+                        <div>
+                            <a href="pages-segmentation.html" class="btn btn-outline-secondary me-2">
+                                <i class="mdi mdi-arrow-left me-1"></i>Back to Segmentation
+                            </a>
+                            <button class="btn btn-outline-danger" @click="deleteSegment">
+                                <i class="mdi mdi-delete me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Segment Rule Details -->
+                    <div class="row" v-if="segmentData.rules && segmentData.rules[0]">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Field</label>
+                                <div class="fw-medium">{{ segmentData.rules[0].field }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Operator</label>
+                                <div class="fw-medium">{{ segmentData.rules[0].operator }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Value</label>
+                                <div class="fw-medium">{{ segmentData.rules[0].value }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matching Contacts -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="card-title mb-0">Matching Contacts</h4>
+                        <span class="badge bg-primary font-size-14">{{ filteredContacts.length }} contacts</span>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div v-if="filteredContacts.length > 0" class="table-responsive" style="max-height: 500px;">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Country</th>
+                                    <th>Status</th>
+                                    <th>Total Spend</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="contact in filteredContacts" :key="contact.id">
+                                    <td>{{ contact.name }}</td>
+                                    <td>{{ contact.email }}</td>
+                                    <td>{{ contact.country }}</td>
+                                    <td>
+                                        <span class="badge" :class="{
+                                            'bg-info': contact.status === 'Lead',
+                                            'bg-warning': contact.status === 'Prospect',
+                                            'bg-success': contact.status === 'Customer'
+                                        }">{{ contact.status }}</span>
+                                    </td>
+                                    <td>${{ contact.total_spend?.toLocaleString() || 0 }}</td>
+                                    <td>{{ new Date(contact.created_at).toLocaleDateString() }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div v-else class="text-center py-5">
+                        <i class="mdi mdi-filter-outline font-size-48 text-muted mb-3 d-block"></i>
+                        <h5 class="text-muted">No contacts match this segment</h5>
+                        <p class="text-muted">Try adjusting the filter criteria</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,8 +4,11 @@
     'use strict';
 
     function initMetisMenu() {
-        //metis menu
-        $("#side-menu").metisMenu();
+        //metis menu initialization
+        $("#side-menu").metisMenu({
+            toggle: true, // Auto-close other menus
+            triggerElement: '.has-arrow' // Explicitly define trigger
+        });
     }
 
     function initLeftMenuCollapse() {
@@ -31,18 +34,25 @@
         // === following js will activate the menu in left side bar based on url ====
         $("#sidebar-menu a").each(function () {
             var pageUrl = window.location.href.split(/[?#]/)[0];
+
+            // Handle root/index matching effectively
+            const isRoot = pageUrl.endsWith('index.html') || pageUrl.endsWith('/');
+
             if (this.href == pageUrl) {
                 $(this).addClass("active");
                 $(this).parent().addClass("mm-active"); // add active to li of the current link
-                $(this).parent().parent().addClass("mm-show");
-                $(this).parent().parent().prev().addClass("mm-active"); // add active class to an anchor
-                $(this).parent().parent().parent().addClass("mm-active");
-                $(this).parent().parent().parent().parent().addClass("mm-show"); // add active to li of the current link
-                $(this).parent().parent().parent().parent().parent().addClass("mm-active");
+                $(this).parents('ul').addClass("mm-show"); // Open matching submenus
+                $(this).parents('li').addClass("mm-active"); // Mark parent items as active
+            } else if (isRoot) {
+                // Ensure we don't accidentally active submenus on root if href is empty or special
+                if (this.getAttribute('href') === 'index.html') {
+                    $(this).addClass("active");
+                    $(this).parent().addClass("mm-active");
+                }
             }
         });
     }
-    
+
     document.addEventListener("scroll", function () {
         windowScroll();
     });
@@ -172,7 +182,7 @@
     }
 
     function initSettings() {
-        
+
         //
         /********************* light-dark js ************************/
         //
@@ -233,9 +243,9 @@
     }
 
     function init() {
+        initActiveMenu();
         initMetisMenu();
         initLeftMenuCollapse();
-        initActiveMenu();
         initMenuItem();
         initMenuItemScroll();
         initFullScreen();
@@ -250,3 +260,161 @@
     init();
 
 })(jQuery)
+
+
+import { createApp, ref, computed } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+import { applyRule, filterContacts, saveSegment } from "./logic.js";
+import { contacts, ContactFilterSchema } from "./dummydata.js";
+
+const app = createApp({
+    setup() {
+        // The currently selected rule
+        const rule = ref({
+            field: '',
+            operator: '',
+            value: ''
+        });
+
+        const segmentName = ref('');
+        const allContacts = ref(contacts);
+        const segments = ref(JSON.parse(localStorage.getItem('segments') || '[]'));
+
+        const filteredContacts = computed(() => filterContacts(allContacts.value, rule.value));
+
+        function saveCurrentSegment(name) {
+            if (!rule.value.field || !rule.value.operator) {
+                alert('Please select a field and operator first!');
+                return;
+            }
+            segments.value = saveSegment(name, rule.value);
+            segmentName.value = ''; // Clear input after saving
+            alert(`Segment "${name}" saved!`);
+        }
+
+        function loadSegment(segment) {
+            segmentName.value = segment.name;
+            rule.value.field = segment.rules[0].field;
+            rule.value.operator = segment.rules[0].operator;
+            rule.value.value = segment.rules[0].value;
+        }
+
+        return {
+            rule,
+            segmentName,
+            ContactFilterSchema,
+            filteredContacts,
+            segments,
+            saveCurrentSegment,
+            loadSegment
+        };
+    }
+});
+
+// Mount createSegmentApp
+if (document.getElementById('createSegmentApp')) {
+    app.mount('#createSegmentApp');
+}
+
+// Old segmentation page support (backwards compatibility)
+if (document.getElementById('app')) {
+    app.mount('#app');
+}
+
+// Saved Segments App
+const savedSegmentsApp = createApp({
+    setup() {
+        const segments = ref(JSON.parse(localStorage.getItem('segments') || '[]'));
+        const selectedSegment = ref(null);
+        const allContacts = ref(contacts);
+
+        const filteredContacts = computed(() => {
+            if (!selectedSegment.value || !selectedSegment.value.rules || !selectedSegment.value.rules[0]) {
+                return [];
+            }
+            return filterContacts(allContacts.value, selectedSegment.value.rules[0]);
+        });
+
+        function viewSegment(segment) {
+            // Toggle: if clicking the same segment, close it; otherwise show the new one
+            if (selectedSegment.value && selectedSegment.value.name === segment.name) {
+                selectedSegment.value = null;
+            } else {
+                selectedSegment.value = segment;
+            }
+        }
+
+        return {
+            segments,
+            selectedSegment,
+            filteredContacts,
+            viewSegment
+        };
+    }
+});
+
+if (document.getElementById('savedSegmentsApp')) {
+    savedSegmentsApp.mount('#savedSegmentsApp');
+}
+
+// Segment View App
+const segmentViewApp = createApp({
+    setup() {
+        const segmentData = ref({});
+        const allContacts = ref(contacts);
+
+        // Load segment from URL parameter or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const segmentName = urlParams.get('name');
+
+        if (segmentName) {
+            const segments = JSON.parse(localStorage.getItem('segments') || '[]');
+            const found = segments.find(s => s.name === segmentName);
+            if (found) {
+                segmentData.value = found;
+            }
+        }
+
+        // Compute filtered contacts based on segment rule
+        const filteredContacts = computed(() => {
+            if (!segmentData.value.rules || !segmentData.value.rules[0]) return [];
+            return filterContacts(allContacts.value, segmentData.value.rules[0]);
+        });
+
+        function getFieldLabel(field) {
+            const fieldConfig = ContactFilterSchema.find(f => f.field === field);
+            return fieldConfig ? fieldConfig.label : field;
+        }
+
+        function getOperatorLabel(operator) {
+            const operators = {
+                'equals': 'Equals',
+                'contains': 'Contains',
+                'gte': 'Greater than or equal to',
+                'lte': 'Less than or equal to'
+            };
+            return operators[operator] || operator;
+        }
+
+        function deleteSegment() {
+            if (confirm(`Are you sure you want to delete "${segmentData.value.name}"?`)) {
+                const segments = JSON.parse(localStorage.getItem('segments') || '[]');
+                const filtered = segments.filter(s => s.name !== segmentData.value.name);
+                localStorage.setItem('segments', JSON.stringify(filtered));
+                alert('Segment deleted!');
+                window.location.href = 'pages-segmentation.html';
+            }
+        }
+
+        return {
+            segmentData,
+            filteredContacts,
+            getFieldLabel,
+            getOperatorLabel,
+            deleteSegment
+        };
+    }
+});
+
+if (document.getElementById('segmentViewApp')) {
+    segmentViewApp.mount('#segmentViewApp');
+}
