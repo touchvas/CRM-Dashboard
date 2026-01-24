@@ -1,16 +1,17 @@
 FROM node:20-alpine
 
+# Install git (and build tools if needed)
+RUN apk add --no-cache git python3 make g++
+
 WORKDIR /app
 
-# Install dependencies first
+# Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
-# Copy project files
+# Copy the rest of the app
 COPY . .
 
-# BrowserSync port
+# Expose and run your app
 EXPOSE 3000
-
-# Run gulp via npm script
 CMD ["npm", "run", "dev"]
