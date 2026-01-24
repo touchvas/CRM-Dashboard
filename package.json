@@ -104,7 +104,7 @@
     "leaflet": "^1.9.4",
     "magnific-popup": "^1.2.0",
     "masonry-layout": "4.2.2",
-    "metismenu": "^3.0.7",
+    "metismenu": "3.0.7",
     "moment": "2.24.0",
     "node-waves": "^0.7.6",
     "parsleyjs": "^2.9.2",

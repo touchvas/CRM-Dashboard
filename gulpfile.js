@@ -10,7 +10,8 @@ const replace = require('gulp-replace');
 const uglify = require('gulp-uglify');
 const useref = require('gulp-useref-plus');
 const rename = require('gulp-rename');
-const sass = require('gulp-sass')(require('sass'));
+const sassCompiler = require('sass');
+const sass = require('gulp-sass')(sassCompiler);
 const autoprefixer = require("gulp-autoprefixer");
 const sourcemaps = require("gulp-sourcemaps");    
 const cleanCSS = require('gulp-clean-css');
@@ -115,11 +116,17 @@ gulp.task('jsPages', function() {
 });
 
 gulp.task('scss', function () {
+  // Sass compiler options to reduce deprecation warnings
+  const sassOptions = {
+    quietDeps: true, // Suppress deprecation warnings from dependencies (like Bootstrap)
+    silenceDeprecations: ['legacy-js-api', 'import', 'if-function', 'global-builtin', 'color-functions']
+  };
+
   // generate ltr  
   gulp
     .src(paths.src.scss.main)
     .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
+    .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(
       autoprefixer()
     )
@@ -138,7 +145,7 @@ gulp.task('scss', function () {
   return gulp
     .src(paths.src.scss.main)
     .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
+    .pipe(sass(sassOptions).on('error', sass.logError))
     .pipe(
       autoprefixer()
     )
