@@ -1,0 +1,388 @@
+/* Custom Typography and Size Improvements - 20PX VERSION */
+
+/* ========================================
+   NAVBAR / TOPBAR ENHANCEMENTS
+   ======================================== */
+
+/* Increase navbar height and padding - LARGER */
+#page-topbar {
+    padding: 0.85rem 0;
+    min-height: 85px;
+}
+
+#page-topbar .navbar-header {
+    min-height: 85px;
+}
+
+/* Larger logo sizes */
+#page-topbar .logo-lg img {
+    height: 32px !important;
+}
+
+#page-topbar .logo-sm img {
+    height: 30px !important;
+}
+
+/* Increase navbar button and text sizes */
+#page-topbar .btn {
+    font-size: 20px !important;
+    padding: 0.6rem 1.1rem !important;
+}
+
+#page-topbar .top-icon {
+    font-size: 22px !important;
+    width: 46px;
+    height: 46px;
+}
+
+#page-topbar .top-icon i {
+    font-size: 22px !important;
+}
+
+/* Navbar dropdown text */
+#page-topbar .dropdown-item {
+    font-size: 20px !important;
+    padding: 0.7rem 1.3rem;
+}
+
+#page-topbar .dropdown-content {
+    font-size: 20px !important;
+}
+
+/* Search input */
+#page-topbar .app-search input {
+    font-size: 20px !important;
+    height: 46px;
+    padding: 0.6rem 2.5rem 0.6rem 2.8rem;
+    /* Increased left padding for icon */
+}
+
+/* Search icon alignment */
+#page-topbar .app-search span {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px !important;
+    line-height: 1;
+}
+
+/* Notification text */
+#page-topbar .notification-item h6 {
+    font-size: 20px !important;
+}
+
+#page-topbar .notification-item .text-muted {
+    font-size: 18px !important;
+}
+
+/* ========================================
+   FOOTER ENHANCEMENTS
+   ======================================== */
+
+.footer {
+    padding: 26px 0 !important;
+    font-size: 20px !important;
+    min-height: 70px;
+}
+
+.footer .text-muted {
+    color: #2d3748 !important;
+    font-size: 20px !important;
+}
+
+/* ========================================
+   GENERAL TEXT SIZE IMPROVEMENTS
+   ======================================== */
+
+/* Base body text - 20PX */
+body {
+    font-size: 20px !important;
+    line-height: 1.65;
+}
+
+/* Headings - increase sizes */
+h1,
+.h1 {
+    font-size: 2.6rem !important;
+}
+
+h2,
+.h2 {
+    font-size: 2.2rem !important;
+}
+
+h3,
+.h3 {
+    font-size: 1.9rem !important;
+}
+
+h4,
+.h4 {
+    font-size: 1.6rem !important;
+}
+
+h5,
+.h5 {
+    font-size: 1.4rem !important;
+}
+
+h6,
+.h6 {
+    font-size: 1.2rem !important;
+}
+
+/* Card titles */
+.card-title {
+    font-size: 1.5rem !important;
+}
+
+/* Form labels */
+.form-label {
+    font-size: 20px !important;
+    margin-bottom: 0.65rem;
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+    font-size: 20px !important;
+    padding: 0.65rem 1rem;
+}
+
+/* Buttons */
+.btn {
+    font-size: 20px !important;
+    padding: 0.6rem 1.2rem;
+}
+
+.btn-sm {
+    font-size: 18px !important;
+    padding: 0.45rem 0.85rem;
+}
+
+.btn-lg {
+    font-size: 22px !important;
+    padding: 0.75rem 1.5rem;
+}
+
+/* ========================================
+   TEXT COLOR IMPROVEMENTS - MUCH DARKER GREYS
+   ======================================== */
+
+/* Standard muted text - MUCH darker */
+.text-muted {
+    color: #2d3748 !important;
+}
+
+/* Secondary text */
+.text-secondary {
+    color: #2d3748 !important;
+}
+
+/* Breadcrumb text */
+.breadcrumb-item {
+    font-size: 18px !important;
+}
+
+.breadcrumb-item.active {
+    color: #1f2937 !important;
+}
+
+/* Page title */
+.page-title-box h4 {
+    font-size: 1.8rem !important;
+}
+
+/* ========================================
+   TABLE IMPROVEMENTS
+   ======================================== */
+
+/* Table text */
+.table {
+    font-size: 20px !important;
+}
+
+.table th {
+    font-size: 20px !important;
+    font-weight: 600;
+    padding: 1rem 1.1rem;
+}
+
+.table td {
+    font-size: 20px !important;
+    padding: 1rem 1.1rem;
+}
+
+.table-light {
+    background-color: #f8f9fa !important;
+}
+
+/* ========================================
+   BADGE IMPROVEMENTS
+   ======================================== */
+
+.badge {
+    font-size: 16px !important;
+    padding: 0.5em 0.8em;
+}
+
+/* ========================================
+   LIST GROUP IMPROVEMENTS
+   ======================================== */
+
+.list-group-item {
+    font-size: 20px !important;
+    padding: 1.1rem 1.3rem;
+}
+
+.list-group-item h5,
+.list-group-item h6 {
+    font-size: 1.3rem !important;
+}
+
+/* ========================================
+   DROPDOWN IMPROVEMENTS
+   ======================================== */
+
+.dropdown-menu {
+    font-size: 20px !important;
+}
+
+.dropdown-item {
+    font-size: 20px !important;
+    padding: 0.7rem 1.3rem;
+}
+
+.dropdown-header {
+    font-size: 18px !important;
+    color: #1f2937 !important;
+}
+
+/* ========================================
+   SIDEBAR IMPROVEMENTS
+   ======================================== */
+
+#sidebar-menu ul li a {
+    font-size: 20px !important;
+    padding: 0.75rem 1.4rem;
+}
+
+#sidebar-menu .menu-title {
+    font-size: 16px !important;
+    color: #2d3748 !important;
+}
+
+/* ========================================
+   DROPDOWN MENU FIXES
+   ======================================== */
+
+/* Fix dropdown arrows to be more visible and clickable */
+#sidebar-menu .has-arrow::after {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+}
+
+/* Ensure dropdown parent items are fully clickable */
+#sidebar-menu .has-arrow {
+    position: relative;
+    display: block !important;
+    cursor: pointer !important;
+}
+
+/* Improve sub-menu visibility */
+#sidebar-menu .sub-menu {
+    transition: all 0.3s ease-in-out !important;
+}
+
+#sidebar-menu .sub-menu li a {
+    font-size: 16px !important;
+    padding: 0.7rem 1.5rem 0.7rem 3rem !important;
+    transition: all 0.2s ease !important;
+}
+
+#sidebar-menu .sub-menu li a:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Ensure MetisMenu arrows work properly */
+#sidebar-menu a.has-arrow {
+    pointer-events: auto !important;
+}
+
+/* Active menu item styling */
+#sidebar-menu li.mm-active>a {
+    color: var(--bs-primary) !important;
+}
+
+/* ========================================
+   ALERT IMPROVEMENTS
+   ======================================== */
+
+.alert {
+    font-size: 20px !important;
+    padding: 1.1rem 1.3rem;
+}
+
+/* ========================================
+   MISC IMPROVEMENTS
+   ======================================== */
+
+/* Paragraph text */
+p {
+    font-size: 20px !important;
+    margin-bottom: 1.05rem;
+}
+
+/* Small text - still readable */
+small,
+.small {
+    font-size: 18px !important;
+}
+
+/* Font size utilities enhancement */
+.font-size-12 {
+    font-size: 16px !important;
+}
+
+.font-size-13 {
+    font-size: 17px !important;
+}
+
+.font-size-14 {
+    font-size: 20px !important;
+}
+
+.font-size-16 {
+    font-size: 20px !important;
+}
+
+.font-size-18 {
+    font-size: 22px !important;
+}
+
+.font-size-20 {
+    font-size: 24px !important;
+}
+
+/* Empty state text */
+.text-center.text-muted p,
+.text-center.p-5 p {
+    font-size: 20px !important;
+    color: #2d3748 !important;
+}
+
+/* Lead text */
+.lead {
+    font-size: 1.4rem !important;
+}
+
+/* ========================================
+   LAYOUT SPACING FIXES
+   ======================================== */
+
+/* Fix content overlap with taller topbar */
+.page-content {
+    padding-top: 115px !important;
+    /* 85px header + 30px spacing */
+}
