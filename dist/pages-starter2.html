@@ -449,30 +449,37 @@
                     </li>
 
                     <li>
-                        <a href="javascript: void(0);" class="has-arrow">
+                        <a href="javascript: void(0);" class="has-arrow menu-toggle">
                             <i class="mdi mdi-google-analytics"></i>
                             <span>Analytics</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
-                            <li><a href="analytics/overview.html">Overview</a></li>
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow">Campaigns</a>
+                            <li><a href="analytics/overview.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Overview</a></li>
+                       
+                            <!-- <li>
+                                <a href="javascript: void(0);" class="has-arrow menu-toggle">Campaigns</a>
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="analytics/campaigns-comparison.html">Comparison</a></li>
                                     <li><a href="analytics/campaigns-performance.html">Performance</a></li>
                                     <li><a href="analytics/campaigns-delivery.html">Delivery & Engagement</a></li>
                                 </ul>
-                            </li>
-                            <li><a href="analytics/channels.html">Channels</a></li>
-                            <li><a href="analytics/users.html">Users</a></li>
-                            <li><a href="analytics/behaviour.html">Behaviour</a></li>
-                            <li><a href="analytics/locations.html">Locations</a></li>
-                            <li><a href="analytics/devices.html">Devices</a></li>
+                            </li> -->
+                            <li><a href="analytics/channels.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Channels</a></li>
+                            <li><a href="analytics/users.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Users</a></li>
+                            <li><a href="analytics/behaviour.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Behaviour</a></li>
+                            <li><a href="analytics/locations.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Locations</a></li>
+                            <li><a href="analytics/devices.html"><i
+                                        class="mdi mdi-checkbox-blank-circle align-middle"></i>Devices</a></li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="javascript: void(0);" class="has-arrow">
+                        <a href="javascript: void(0);" class="has-arrow menu-toggle">
                             <i class="mdi mdi-send-outline"></i>
                             <span>Campaigns</span>
                         </a>
@@ -497,7 +504,7 @@
                     </li>
 
                     <li>
-                        <a href="javascript: void(0);" class="has-arrow">
+                        <a href="javascript: void(0);" class="has-arrow menu-toggle">
                             <i class="mdi mdi-filter-variant"></i>
                             <span>Segmentation</span>
                         </a>
@@ -661,6 +668,15 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
+        .sub-menu {
+      display: none;
+      padding-left: 1rem;
+    }
+
+    li.open > .sub-menu {
+      display: block;
+    }
+
     </style>
 
     <script>
@@ -747,6 +763,23 @@
             });
 
         });
+
+        document.addEventListener("DOMContentLoaded", () => {
+          document.querySelectorAll(".menu-toggle").forEach(toggle => {
+            toggle.addEventListener("click", e => {
+              e.preventDefault();
+
+              const parentLi = toggle.closest("li");
+          const submenu = parentLi.querySelector(":scope > .sub-menu");
+
+          if (!submenu) return;
+
+          parentLi.classList.toggle("open")
+            })
+          })
+        });
+ 
+
     </script>
 
 
