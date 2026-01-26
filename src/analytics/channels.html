@@ -1,0 +1,115 @@
+@@include("../partials/main.html")
+
+<head>
+    <base href="../">
+    @@include("../partials/title-meta.html", { "title": "Channels Analytics" })
+    @@include("../partials/head-css.html")
+</head>
+
+@@include("../partials/body.html")
+
+<div id="layout-wrapper">
+    @@include("../partials/menu.html")
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                @@include("../partials/page-title.html", { "pagetitle": "Analytics", "title": "Channels" })
+
+                <!-- KPIs -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Web Push CTR</h6>
+                                <h3>4.5%</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">In-App Click Rate</h6>
+                                <h3>12.1%</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Onsite Engagement</h6>
+                                <h3>8.3%</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">CTR by Channel</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="channels_chart" class="apex-charts" dir="ltr"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Channel Performance</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Channel</th>
+                                                <th>Sent</th>
+                                                <th>Clicked</th>
+                                                <th>CTR</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Web Push</td>
+                                                <td>120,000</td>
+                                                <td>5,400</td>
+                                                <td>4.5%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>In-App</td>
+                                                <td>85,000</td>
+                                                <td>10,285</td>
+                                                <td>12.1%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Onsite</td>
+                                                <td>40,000</td>
+                                                <td>3,320</td>
+                                                <td>8.3%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        @@include("../partials/footer.html")
+    </div>
+</div>
+
+@@include("../partials/right-sidebar.html")
+@@include("../partials/vendor-scripts.html")
+<script src="/assets/js/pages/analytics/channels.js"></script>
+</body>
+
+</html>

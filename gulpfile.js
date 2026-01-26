@@ -13,74 +13,74 @@ const rename = require('gulp-rename');
 const sassCompiler = require('sass');
 const sass = require('gulp-sass')(sassCompiler);
 const autoprefixer = require("gulp-autoprefixer");
-const sourcemaps = require("gulp-sourcemaps");    
+const sourcemaps = require("gulp-sourcemaps");
 const cleanCSS = require('gulp-clean-css');
 const rtlcss = require('gulp-rtlcss');
 
 const paths = {
-  base:   {
-    base:         {
-      dir:    './'
+  base: {
+    base: {
+      dir: './'
     },
-    node:         {
-      dir:    './node_modules'
+    node: {
+      dir: './node_modules'
     },
-    packageLock:  {
-      files:  './package-lock.json'
+    packageLock: {
+      files: './package-lock.json'
     }
   },
-  dist:   {
-    base:   {
-      dir:    './dist',
-      files:  './dist/**/*'
+  dist: {
+    base: {
+      dir: './dist',
+      files: './dist/**/*'
     },
-    libs:   {
-      dir:    './dist/assets/libs'
+    libs: {
+      dir: './dist/assets/libs'
     },
-    css:    {
-      dir:    './dist/assets/css',
+    css: {
+      dir: './dist/assets/css',
     },
-    js:    {
-      dir:    './dist/assets/js',
-      files:  './dist/assets/js/pages',
+    js: {
+      dir: './dist/assets/js',
+      files: './dist/assets/js/pages',
     },
   },
-  src:    {
-    base:   {
-      dir:    './src',
-      files:  './src/**/*'
+  src: {
+    base: {
+      dir: './src',
+      files: './src/**/*'
     },
-    css:    {
-      dir:    './src/assets/css',
-      files:  './src/assets/css/**/*'
+    css: {
+      dir: './src/assets/css',
+      files: './src/assets/css/**/*'
     },
-    html:   {
-      dir:    './src',
-      files:  './src/**/*.html',
+    html: {
+      dir: './src',
+      files: './src/**/*.html',
     },
-    img:    {
-      dir:    './src/assets/images',
-      files:  './src/assets/images/**/*',
+    img: {
+      dir: './src/assets/images',
+      files: './src/assets/images/**/*',
     },
-    js:     {
-      dir:    './src/assets/js',
-      pages:  './src/assets/js/pages',
-      files:  './src/assets/js/pages/*.js',
-      main:   './src/assets/js/*.js',
+    js: {
+      dir: './src/assets/js',
+      pages: './src/assets/js/pages',
+      files: './src/assets/js/pages/**/*.js',
+      main: './src/assets/js/*.js',
     },
-    partials:   {
-      dir:    './src/partials',
-      files:  './src/partials/**/*'
+    partials: {
+      dir: './src/partials',
+      files: './src/partials/**/*'
     },
-    scss:   {
-      dir:    './src/assets/scss',
-      files:  './src/assets/scss/**/*',
-      main:   './src/assets/scss/*.scss'
+    scss: {
+      dir: './src/assets/scss',
+      files: './src/assets/scss/**/*',
+      main: './src/assets/scss/*.scss'
     }
   }
 };
 
-gulp.task('browsersync', function(callback) {
+gulp.task('browsersync', function (callback) {
   browsersync.init({
     server: {
       baseDir: [paths.dist.base.dir, paths.src.base.dir, paths.base.base.dir]
@@ -89,26 +89,26 @@ gulp.task('browsersync', function(callback) {
   callback();
 });
 
-gulp.task('browsersyncReload', function(callback) {
+gulp.task('browsersyncReload', function (callback) {
   browsersync.reload();
   callback();
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
   gulp.watch(paths.src.scss.files, gulp.series('scss', 'browsersyncReload'));
-  gulp.watch([paths.src.js.dir], gulp.series('js','browsersyncReload'));
-  gulp.watch([paths.src.js.pages], gulp.series('jsPages','browsersyncReload'));
+  gulp.watch([paths.src.js.dir], gulp.series('js', 'browsersyncReload'));
+  gulp.watch([paths.src.js.pages], gulp.series('jsPages', 'browsersyncReload'));
   gulp.watch([paths.src.html.files, paths.src.partials.files], gulp.series('fileinclude', 'browsersyncReload'));
 });
 
-gulp.task('js', function() {
+gulp.task('js', function () {
   return gulp
     .src(paths.src.js.main)
     .pipe(uglify())
     .pipe(gulp.dest(paths.dist.js.dir));
 });
 
-gulp.task('jsPages', function() {
+gulp.task('jsPages', function () {
   return gulp
     .src(paths.src.js.files)
     .pipe(uglify())
@@ -138,7 +138,7 @@ gulp.task('scss', function () {
         suffix: ".min"
       })
     )
-    .pipe(sourcemaps.write("./")) 
+    .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest(paths.dist.css.dir));
 
   // generate rtl
@@ -158,11 +158,11 @@ gulp.task('scss', function () {
         suffix: "-rtl.min"
       })
     )
-    .pipe(sourcemaps.write("./")) 
+    .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest(paths.dist.css.dir));
 });
 
-gulp.task('fileinclude', function(callback) {
+gulp.task('fileinclude', function (callback) {
   return gulp
     .src([
       paths.src.html.files,
@@ -178,38 +178,38 @@ gulp.task('fileinclude', function(callback) {
     .pipe(gulp.dest(paths.dist.base.dir));
 });
 
-gulp.task('clean:packageLock', function(callback) {
+gulp.task('clean:packageLock', function (callback) {
   del.sync(paths.base.packageLock.files);
   callback();
 });
 
-gulp.task('clean:dist', function(callback) {
+gulp.task('clean:dist', function (callback) {
   del.sync(paths.dist.base.dir);
   callback();
 });
 
-gulp.task('copy:all', function() {
+gulp.task('copy:all', function () {
   return gulp
     .src([
       paths.src.base.files,
       '!' + paths.src.partials.dir, '!' + paths.src.partials.files,
       '!' + paths.src.scss.dir, '!' + paths.src.scss.files,
-      '!' + paths.src.js.dir, '!' + paths.src.js.files, '!' + paths.src.js.main, 
+      '!' + paths.src.js.dir, '!' + paths.src.js.files, '!' + paths.src.js.main,
       '!' + paths.src.html.files,
     ])
     .pipe(gulp.dest(paths.dist.base.dir));
 });
 
-gulp.task('copy:libs', function() {
+gulp.task('copy:libs', function () {
   return gulp
     .src(npmdist(), { base: paths.base.node.dir })
-    .pipe(rename(function(path) {
-        path.dirname = path.dirname.replace(/\/dist/, '').replace(/\\dist/, '');
+    .pipe(rename(function (path) {
+      path.dirname = path.dirname.replace(/\/dist/, '').replace(/\\dist/, '');
     }))
     .pipe(gulp.dest(paths.dist.libs.dir));
 });
 
-gulp.task('html', function() {
+gulp.task('html', function () {
   return gulp
     .src([
       paths.src.html.files,
@@ -226,7 +226,7 @@ gulp.task('html', function() {
     .pipe(useref())
     .pipe(cached())
     .pipe(gulpif('*.js', uglify()))
-    .pipe(gulpif('*.css', cssnano({svgo: false})))
+    .pipe(gulpif('*.css', cssnano({ svgo: false })))
     .pipe(gulp.dest(paths.dist.base.dir));
 });
 

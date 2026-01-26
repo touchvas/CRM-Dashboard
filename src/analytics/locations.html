@@ -1,0 +1,104 @@
+@@include("../partials/main.html")
+
+<head>
+    <base href="../">
+    @@include("../partials/title-meta.html", { "title": "Location Analytics" })
+    @@include("../partials/head-css.html")
+</head>
+
+@@include("../partials/body.html")
+
+<div id="layout-wrapper">
+    @@include("../partials/menu.html")
+
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                @@include("../partials/page-title.html", { "pagetitle": "Analytics", "title": "Locations" })
+
+                <!-- KPI -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Top Country</h6>
+                                <h3 class="text-success"><i class="mdi mdi-flag-outline me-2"></i> Kenya</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="row">
+                    <!-- Chart -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Bets by Country</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="locations_chart" class="apex-charts" dir="ltr"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title mb-4">Location Performance</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Country</th>
+                                                <th>Bets</th>
+                                                <th>Click Rate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Kenya</td>
+                                                <td>45,000</td>
+                                                <td>12.5%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Nigeria</td>
+                                                <td>28,000</td>
+                                                <td>10.2%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ghana</td>
+                                                <td>15,000</td>
+                                                <td>8.5%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Uganda</td>
+                                                <td>9,000</td>
+                                                <td>9.1%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tanzania</td>
+                                                <td>5,000</td>
+                                                <td>6.5%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        @@include("../partials/footer.html")
+    </div>
+</div>
+
+@@include("../partials/right-sidebar.html")
+@@include("../partials/vendor-scripts.html")
+<script src="/assets/js/pages/analytics/locations.js"></script>
+</body>
+
+</html>
