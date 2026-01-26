@@ -25,7 +25,12 @@
             <div class="container-fluid">
 
 
-                @@include("partials/campaign-segment.html")
+                @@include("partials/campaign-header.html", {"current_step": "recipients"})
+                <div class="row justify-content-center">
+                    <div class="col-xl-11">
+                        @@include("partials/campaign-segment.html")
+                    </div>
+                </div>
 
             </div> <!-- container-fluid -->
         </div>

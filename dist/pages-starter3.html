@@ -699,6 +699,13 @@
             <div class="container-fluid">
 
 
+                <style>
+                    .dropdown-item:hover,
+                    .dropdown-item:focus {
+                        color: var(--bs-primary) !important;
+                        background-color: var(--bs-light) !important;
+                    }
+                </style>
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0 text-sm">
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
@@ -719,168 +726,224 @@
                                 <a class="dropdown-item" href="#">Save as Template</a>
                             </div>
                         </div>
-                        <a href="pages-starter4.html" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Next</a>
+                        <a href="pages-starter2.html" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Next</a>
                     </div>
                 </div>
-
                 <div>
                     <ol class="d-flex gap-5 list-styled mb-0">
-                        <li class="text-muted"><a href="pages-starter.html" class="text-muted ">Setup </a></li>
-                        <li class="text-muted"><a href="pages-starter2.html" class="text-muted">Template </a></li>
-                        <li class="text-muted"><a href="pages-starter3.html" class="text-primary">Recipients </a></li>
-                        <li class="text-muted"><a href="pages-starter4.html" class="text-muted">Schedule </a></li>
-                        <li class="text-muted"><a href="pages-starter5.html" class="text-muted">Review & Launch </a></li>
-                        <li class="text-muted"><a href="pages-starter6.html" class="text-muted">Analytics </a></li>
+                        <li class=" text-muted"><a
+                                href="pages-starter.html"
+                                class=" text-muted">Setup
+                            </a></li>
+                        <li class=" text-muted"><a
+                                href="pages-starter2.html"
+                                class=" text-muted">Template
+                            </a></li>
+                        <li class="text-primary ">
+                            <a href="pages-starter3.html"
+                                class="text-primary ">Recipients
+                            </a>
+                        </li>
+                        <li class=" text-muted"><a
+                                href="pages-starter4.html"
+                                class=" text-muted">Schedule
+                            </a></li>
+                        <li class=" text-muted"><a
+                                href="pages-starter5.html"
+                                class=" text-muted">Review
+                                & Launch </a></li>
+                        <li class=" text-muted"><a
+                                href="pages-starter6.html"
+                                class=" text-muted">Analytics
+                            </a></li>
                     </ol>
                 </div>
-                </div>
-                <hr>
-                <style>
-                    .btn-hover-primary:hover i,
-                    .card-selected .mdi-adjust {
-                        color: var(--bs-primary) !important;
-                    }
+                <div class="row justify-content-center">
+                    <div class="col-xl-11">
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0 text-sm">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
+                                <li class="breadcrumb-item active">Create Campaigns</li>
+                            </ol>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <h3>Create Campaign</h3>
+                            <div class="d-flex justify-content-end gap-3">
+                                <button class="btn btn-outline-primary"><i class="fa fa-user-tag me-1"></i>Calculate recipients</button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        Save <i class="mdi mdi-chevron-down"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Save as Draft</a>
+                                        <a class="dropdown-item" href="#">Save as Template</a>
+                                    </div>
+                                </div>
+                                <a href="pages-starter4.html" class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Next</a>
+                            </div>
+                        </div>
 
-                    .card-selected {
-                        background-color: rgba(var(--bs-primary-rgb), 0.1);
-                        border-color: var(--bs-primary) !important;
-                    }
+                        <div>
+                            <ol class="d-flex gap-5 list-styled mb-0">
+                                <li class="text-muted"><a href="pages-starter.html" class="text-muted ">Setup </a></li>
+                                <li class="text-muted"><a href="pages-starter2.html" class="text-muted">Template </a></li>
+                                <li class="text-muted"><a href="pages-starter3.html" class="text-primary">Recipients </a></li>
+                                <li class="text-muted"><a href="pages-starter4.html" class="text-muted">Schedule </a></li>
+                                <li class="text-muted"><a href="pages-starter5.html" class="text-muted">Review & Launch </a></li>
+                                <li class="text-muted"><a href="pages-starter6.html" class="text-muted">Analytics </a></li>
+                            </ol>
+                        </div>
+                        </div>
+                        <hr>
+                        <style>
+                            .btn-hover-primary:hover i,
+                            .card-selected .mdi-adjust {
+                                color: var(--bs-primary) !important;
+                            }
 
-                    .dropdown-item:hover,
-                    .dropdown-item:focus {
-                        color: var(--bs-primary);
-                        background-color: var(--bs-light);
-                    }
-                </style>
-                <div class="card pt-2 m-3 pb-3 mb-3">
-                    <div class="card-header card-header-bordered">
-                        <h3 class="card-title">Specify Segment</h3>
-                    </div>
+                            .card-selected {
+                                background-color: rgba(var(--bs-primary-rgb), 0.1);
+                                border-color: var(--bs-primary) !important;
+                            }
 
-                    <div class="card-body">
-                        <p class="text-muted">Target users using segmentation engine</p>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="card border h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="card-title mb-1">Select Segment</h5>
-                                                <p class="card-text text-muted small">Target users from saved segments</p>
-                                            </div>
-                                        </div>
-                                        <div class="mt-3">
-                                            <div class="dropdown">
-                                                <button
-                                                    class="btn btn-outline-light w-100 text-start d-flex justify-content-between align-items-center dropdown-toggle text-dark border"
-                                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Choose a saved segment...
-                                                </button>
-                                                <ul class="dropdown-menu w-100">
-                                                    <li><a class="dropdown-item" href="#">High-Value VIPs</a></li>
-                                                    <li><a class="dropdown-item" href="#">Dormant Casino Users</a></li>
-                                                    <li><a class="dropdown-item" href="#">New Sports Bettors</a></li>
-                                                    <li><a class="dropdown-item" href="#">Mobile App Users (iOS)</a></li>
-                                                </ul>
+                            .dropdown-item:hover,
+                            .dropdown-item:focus {
+                                color: var(--bs-primary);
+                                background-color: var(--bs-light);
+                            }
+                        </style>
+                        <div class="card pt-2 m-3 pb-3 mb-3">
+                            <div class="card-header card-header-bordered">
+                                <h3 class="card-title">Specify Segment</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="text-muted">Target users using segmentation engine</p>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h5 class="card-title mb-1">Select Segment</h5>
+                                                        <p class="card-text text-muted small">Target users from saved segments</p>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="dropdown">
+                                                        <button
+                                                            class="btn btn-outline-light w-100 text-start d-flex justify-content-between align-items-center dropdown-toggle text-dark border"
+                                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            Choose a saved segment...
+                                                        </button>
+                                                        <ul class="dropdown-menu w-100">
+                                                            <li><a class="dropdown-item" href="#">High-Value VIPs</a></li>
+                                                            <li><a class="dropdown-item" href="#">Dormant Casino Users</a></li>
+                                                            <li><a class="dropdown-item" href="#">New Sports Bettors</a></li>
+                                                            <li><a class="dropdown-item" href="#">Mobile App Users (iOS)</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card border h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h5 class="card-title mb-1">Send to everyone</h5>
-                                                <p class="card-text text-muted small">Target all users</p>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card border h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <h5 class="card-title mb-1">Send to everyone</h5>
+                                                        <p class="card-text text-muted small">Target all users</p>
+                                                    </div>
+                                                    <button
+                                                        class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
+                                                        style="width: 30px; height: 30px;">
+                                                        <i class="mdi mdi-circle text-white fs-6"></i>
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <button
-                                                class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
-                                                style="width: 30px; height: 30px;">
-                                                <i class="mdi mdi-circle text-white fs-6"></i>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="card pb-1 pt-2 m-3 mb-3">
-                    <div class="card-header card-header-bordered">
-                        <h3 class="card-title">Target group</h3>
-                    </div>
+                        <div class="card pb-1 pt-2 m-3 mb-3">
+                            <div class="card-header card-header-bordered">
+                                <h3 class="card-title">Target group</h3>
+                            </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Inbox</h5>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <div class="card border h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-muted">All available users</span>
-                                            <button
-                                                class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
-                                                style="width: 30px; height: 30px;">
-                                                <i class="mdi mdi-circle text-white fs-6"></i>
-                                            </button>
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Inbox</h5>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted">All available users</span>
+                                                    <button
+                                                        class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
+                                                        style="width: 30px; height: 30px;">
+                                                        <i class="mdi mdi-circle text-white fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card border h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-muted">Push subscribed users</span>
-                                            <button
-                                                class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
-                                                style="width: 30px; height: 30px;">
-                                                <i class="mdi mdi-circle text-white fs-6"></i>
-                                            </button>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted">Push subscribed users</span>
+                                                    <button
+                                                        class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
+                                                        style="width: 30px; height: 30px;">
+                                                        <i class="mdi mdi-circle text-white fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="card border h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-muted">Push not-subscribed users</span>
-                                            <button
-                                                class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
-                                                style="width: 30px; height: 30px;">
-                                                <i class="mdi mdi-circle text-white fs-6"></i>
-                                            </button>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border h-100">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted">Push not-subscribed users</span>
+                                                    <button
+                                                        class="btn btn-light rounded-circle p-0 d-flex align-items-center justify-content-center selection-btn"
+                                                        style="width: 30px; height: 30px;">
+                                                        <i class="mdi mdi-circle text-white fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <script>
+                            document.querySelectorAll('.selection-btn').forEach(btn => {
+                                btn.addEventListener('click', function () {
+                                    const card = this.closest('.card');
+                                    const row = card.closest('.row');
+
+                                    // Remove 'card-selected' from all other cards in the same row
+                                    row.querySelectorAll('.card').forEach(c => c.classList.remove('card-selected'));
+
+                                    // Add 'card-selected' to the clicked card
+                                    card.classList.add('card-selected');
+                                });
+
+                                btn.addEventListener('dblclick', function (e) {
+                                    e.stopPropagation(); // Prevent partial selection if click fires
+                                    const card = this.closest('.card');
+                                    card.classList.remove('card-selected');
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
-                <script>
-                    document.querySelectorAll('.selection-btn').forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const card = this.closest('.card');
-                            const row = card.closest('.row');
-
-                            // Remove 'card-selected' from all other cards in the same row
-                            row.querySelectorAll('.card').forEach(c => c.classList.remove('card-selected'));
-
-                            // Add 'card-selected' to the clicked card
-                            card.classList.add('card-selected');
-                        });
-
-                        btn.addEventListener('dblclick', function (e) {
-                            e.stopPropagation(); // Prevent partial selection if click fires
-                            const card = this.closest('.card');
-                            card.classList.remove('card-selected');
-                        });
-                    });
-                </script>
 
             </div> <!-- container-fluid -->
         </div>
