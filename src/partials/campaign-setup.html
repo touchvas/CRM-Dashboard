@@ -1,0 +1,157 @@
+<div class="card-body px-4">
+    <!-- Details Section -->
+    <div class="card mb-3">
+        <div class="card-header card-header-bordered">
+            <h5 class="card-title">Details</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label text-muted">Name</label>
+                <input type="text" class="form-control" value="sample campaign">
+            </div>
+        </div>
+    </div>
+
+    <!-- Channels Section -->
+    <div class="row mb-3">
+        <!-- Push Channels -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Push Channels</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="iosPush">
+                        <i class="mdi mdi-apple fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="iosPush">iOS Push</label>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="androidPush">
+                        <i class="mdi mdi-android fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="androidPush">Android Push</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3" id="webPush">
+                        <i class="mdi mdi-monitor fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="webPush">Web Push</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Channels -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">App Channels</h5>
+                        <div class="text-muted">
+                            <i class="mdi mdi-apple me-1"></i>
+                            <i class="mdi mdi-android"></i>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="inApp">
+                        <i class="mdi mdi-cellphone-link fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="inApp">In-App</label>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="onSite">
+                        <i class="mdi mdi-web fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="onSite">On-Site</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3" id="inbox" checked>
+                        <i class="mdi mdi-inbox-full fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="inbox">Inbox</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Open Channels -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Open Channels</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="email">
+                        <i class="mdi mdi-email-outline fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="email">Email</label>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <input type="checkbox" class="form-check-input me-3" id="sms">
+                        <i class="mdi mdi-message-processing-outline fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="sms">SMS</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" class="form-check-input me-3" id="webhook">
+                        <i class="mdi mdi-code-tags fs-20 me-2 text-muted"></i>
+                        <label class="form-check-label text-muted" for="webhook">Webhook</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variants Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="form-check-input me-3" id="variants">
+                <div>
+                    <label class="form-check-label fw-bold" for="variants">Variants</label>
+                    <p class="text-muted mb-0 small">Set the number of message variants you want to compare</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-language Support Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="form-check-input me-3" id="multiLang">
+                <div>
+                    <label class="form-check-label fw-bold" for="multiLang">Multi-language support</label>
+                    <p class="text-muted mb-0 small">Set the languages variants you want to use. Default language will
+                        go to any users not covered in the language set</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Configuration Section -->
+    <div class="card pt-2 mt-4 pb-3 mb-3">
+        <div class="card-header card-header-bordered">
+            <h3 class="card-title">Campaign Settings</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card border h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">Control Group</h5>
+                            <p class="card-text text-muted small">Define control group parameters for A/B testing.</p>
+                            <div class="mt-3 text-center p-3 bg-light rounded">
+                                <span class="text-muted">Content Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card border h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">Attribution</h5>
+                            <p class="card-text text-muted small">Configure attribution windows and tracking.</p>
+                            <div class="mt-3 text-center p-3 bg-light rounded">
+                                <span class="text-muted">Content Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

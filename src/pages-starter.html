@@ -1,51 +1,53 @@
 @@include("partials/main.html")
 
-    <head>
-        
-        @@include("partials/title-meta.html", {"title": "Starter page"})
+<head>
 
-        @@include("partials/head-css.html")
+    @@include("partials/title-meta.html", {"title": "Starter page"})
 
-    </head>
+    @@include("partials/head-css.html")
 
-    @@include("partials/body.html")
+</head>
 
-        <!-- Begin page -->
-        <div id="layout-wrapper">
+@@include("partials/body.html")
 
-            @@include("partials/menu.html")
+<!-- Begin page -->
+<div id="layout-wrapper">
 
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
- 
-            <div class="main-content">
+    @@include("partials/menu.html")
 
-                <div class="page-content">
-                    <div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
 
-                        <!-- @@include("partials/page-title.html", {"pagetitle": "Elements", "title": "Starter page"})
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+
+                <!-- @@include("partials/page-title.html", {"pagetitle": "Elements", "title": "Starter page"})
                                     <div class="flex-col"> -->
 
-                 @@include("partials/campaign-header.html")
+                @@include("partials/campaign-header.html", {"current_step": "setup"})
+                @@include("partials/campaign-setup.html")
 
-                    </div> <!-- container-fluid -->
-                </div>
-                <!-- End Page-content -->
-                
-                @@include("partials/footer.html")
-                
-            </div>
-            <!-- end main content-->
-
+            </div> <!-- container-fluid -->
         </div>
-        <!-- END layout-wrapper -->
+        <!-- End Page-content -->
 
-        @@include("partials/right-sidebar.html")
+        @@include("partials/footer.html")
 
-        @@include("partials/vendor-scripts.html")
+    </div>
+    <!-- end main content-->
 
-        <script src="assets/js/app.js"></script>
+</div>
+<!-- END layout-wrapper -->
 
-    </body>
+@@include("partials/right-sidebar.html")
+
+@@include("partials/vendor-scripts.html")
+
+<script src="assets/js/app.js"></script>
+
+</body>
+
 </html>

@@ -23895,8 +23895,8 @@
 }
 
 .mdi-rotate-45:before {
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
 }
 
 .mdi-rotate-90 {
@@ -23919,8 +23919,8 @@
 }
 
 .mdi-rotate-90:before {
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .mdi-rotate-135 {
@@ -23943,8 +23943,8 @@
 }
 
 .mdi-rotate-135:before {
-  -webkit-transform: rotate(135deg);
-  transform: rotate(135deg);
+  -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
 }
 
 .mdi-rotate-180 {
@@ -23967,8 +23967,8 @@
 }
 
 .mdi-rotate-180:before {
-  -webkit-transform: rotate(180deg);
-  transform: rotate(180deg);
+  -webkit-transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
 
 .mdi-rotate-225 {
@@ -23991,8 +23991,8 @@
 }
 
 .mdi-rotate-225:before {
-  -webkit-transform: rotate(225deg);
-  transform: rotate(225deg);
+  -webkit-transform: rotate(-225deg);
+  transform: rotate(-225deg);
 }
 
 .mdi-rotate-270 {
@@ -24015,8 +24015,8 @@
 }
 
 .mdi-rotate-270:before {
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);
+  -webkit-transform: rotate(-270deg);
+  transform: rotate(-270deg);
 }
 
 .mdi-rotate-315 {
@@ -24039,8 +24039,8 @@
 }
 
 .mdi-rotate-315:before {
-  -webkit-transform: rotate(315deg);
-  transform: rotate(315deg);
+  -webkit-transform: rotate(-315deg);
+  transform: rotate(-315deg);
 }
 
 .mdi-flip-h:before {
@@ -24070,8 +24070,8 @@
     transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
+    -webkit-transform: rotate(-359deg);
+    transform: rotate(-359deg);
   }
 }
 @keyframes mdi-spin {
@@ -24080,8 +24080,8 @@
     transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
+    -webkit-transform: rotate(-359deg);
+    transform: rotate(-359deg);
   }
 }
 
@@ -24165,8 +24165,8 @@
 
 .fa-ul {
   list-style-type: none;
-  margin-left: 2.5em;
-  padding-left: 0;
+  margin-right: 2.5em;
+  padding-right: 0;
 }
 
 .fa-ul > li {
@@ -24174,7 +24174,7 @@
 }
 
 .fa-li {
-  left: -2em;
+  right: -2em;
   position: absolute;
   text-align: center;
   width: 2em;
@@ -24188,11 +24188,11 @@
 }
 
 .fa-pull-left {
-  float: left;
+  float: right;
 }
 
 .fa-pull-right {
-  float: right;
+  float: left;
 }
 
 .fa.fa-pull-left,
@@ -24200,7 +24200,7 @@
 .far.fa-pull-left,
 .fal.fa-pull-left,
 .fab.fa-pull-left {
-  margin-right: 0.3em;
+  margin-left: 0.3em;
 }
 
 .fa.fa-pull-right,
@@ -24208,7 +24208,7 @@
 .far.fa-pull-right,
 .fal.fa-pull-right,
 .fab.fa-pull-right {
-  margin-left: 0.3em;
+  margin-right: 0.3em;
 }
 
 .fa-spin {
@@ -24227,8 +24227,8 @@
     transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+    -webkit-transform: rotate(-360deg);
+    transform: rotate(-360deg);
   }
 }
 @keyframes fa-spin {
@@ -24237,26 +24237,26 @@
     transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
+    -webkit-transform: rotate(-360deg);
+    transform: rotate(-360deg);
   }
 }
 .fa-rotate-90 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=1)";
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .fa-rotate-180 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
-  -webkit-transform: rotate(180deg);
-  transform: rotate(180deg);
+  -webkit-transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
 
 .fa-rotate-270 {
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=3)";
-  -webkit-transform: rotate(270deg);
-  transform: rotate(270deg);
+  -webkit-transform: rotate(-270deg);
+  transform: rotate(-270deg);
 }
 
 .fa-flip-horizontal {
@@ -24298,7 +24298,7 @@
 
 .fa-stack-1x,
 .fa-stack-2x {
-  left: 0;
+  right: 0;
   position: absolute;
   text-align: center;
   width: 100%;
@@ -30127,7 +30127,5 @@ readers do not read off random characters that represent icons */
 .fa,
 .fas {
   font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-}e 5 Free";
   font-weight: 900;
 }
