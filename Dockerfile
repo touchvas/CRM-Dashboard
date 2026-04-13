@@ -1,17 +1,36 @@
-FROM node:20-alpine
+# ---------- Build stage ----------
+FROM node:20-alpine AS build
 
-# Install git (and build tools if needed)
-RUN apk add --no-cache git python3 make g++
+# Native build tools (required for gulp-sass, node-gyp deps)
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Install dependencies
+# Copy only dependency manifests first (cache-friendly)
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
 
-# Copy the rest of the app
+# Install dependencies
+RUN npm install
+
+# Copy project source
 COPY . .
 
-# Expose and run your app
-EXPOSE 3000
-CMD ["npm", "run", "dev"]
+# Build static assets
+RUN npm run build
+
+
+# ---------- Runtime stage ----------
+FROM nginx:alpine
+
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
