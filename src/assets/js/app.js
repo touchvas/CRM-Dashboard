@@ -22,9 +22,9 @@
             }
         });
 
-        $('body,html').click(function (e) {
-            var container = $("#sidebar-btn");
-            if (!container.is(e.target) && container.has(e.target).length === 0 && !(e.target).closest('div.vertical-menu')) {
+        // Mobile backdrop click to close
+        $(document).on('click', '.sidebar-left', function (e) {
+            if ($(e.target).hasClass('sidebar-left')) {
                 $("body").removeClass("sidebar-enable");
             }
         });

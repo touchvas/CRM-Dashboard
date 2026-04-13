@@ -66,7 +66,8 @@
                 </a>
 
                 <button type="button" class="btn btn-sm top-icon sidebar-btn" id="sidebar-btn">
-                    <i class="mdi mdi-menu-open align-middle fs-19"></i>
+                    <i class="mdi mdi-menu-open align-middle fs-19 d-none d-lg-inline-block"></i>
+                    <i class="mdi mdi-menu align-middle fs-24 d-lg-none"></i>
                 </button>
             </div>
             <!-- End navbar brand -->
@@ -437,6 +438,12 @@
 
         <div data-simplebar class="h-100">
 
+            <!-- Mobile Header -->
+            <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom mb-2">
+                <h5 class="m-0">Navigation Menu</h5>
+                <button type="button" class="btn-close" id="close-sidebar"></button>
+            </div>
+
             <!--- Sidebar-menu -->
             <div id="sidebar-menu">
                 <!-- Left Menu Start -->
@@ -456,7 +463,7 @@
                         <ul class="sub-menu" aria-expanded="false">
                             <li><a href="analytics/overview.html"><i
                                         class="mdi mdi-checkbox-blank-circle align-middle"></i>Overview</a></li>
-                       
+
                             <!-- <li>
                                 <a href="javascript: void(0);" class="has-arrow menu-toggle">Campaigns</a>
                                 <ul class="sub-menu" aria-expanded="false">
@@ -504,7 +511,7 @@
                     </li>
 
                     <li>
-                        <a href="javascript: void(0);" class="has-arrow menu-toggle">
+                        <a href="javascript: void(0);" class=" has-arrow menu-toggle">
                             <i class="mdi mdi-filter-variant"></i>
                             <span>Segmentation</span>
                         </a>
@@ -668,15 +675,15 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
+
         .sub-menu {
-      display: none;
-      padding-left: 1rem;
-    }
+            display: none;
+            padding-left: 1rem;
+        }
 
-    li.open > .sub-menu {
-      display: block;
-    }
-
+        li.open>.sub-menu {
+            display: block;
+        }
     </style>
 
     <script>
@@ -765,20 +772,44 @@
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-          document.querySelectorAll(".menu-toggle").forEach(toggle => {
-            toggle.addEventListener("click", e => {
-              e.preventDefault();
+            // --- Sidebar Toggles and Mobile Logic ---
+            const closeSidebarBtn = document.getElementById('close-sidebar');
 
-              const parentLi = toggle.closest("li");
-          const submenu = parentLi.querySelector(":scope > .sub-menu");
+            if (closeSidebarBtn) {
+                closeSidebarBtn.addEventListener('click', function () {
+                    document.body.classList.remove('sidebar-enable');
+                });
+            }
 
-          if (!submenu) return;
+            document.querySelectorAll(".menu-toggle").forEach(toggle => {
+                toggle.addEventListener("click", e => {
+                    e.preventDefault();
+                    const parentLi = toggle.closest("li");
 
-          parentLi.classList.toggle("open")
-            })
-          })
+                    // Toggle current sub-menu
+                    const wasOpen = parentLi.classList.contains("open");
+
+                    // Close other sub-menus (accordion feel)
+                    document.querySelectorAll("#side-menu > li.open").forEach(li => {
+                        li.classList.remove("open");
+                    });
+
+                    if (!wasOpen) {
+                        parentLi.classList.add("open");
+                    }
+                });
+            });
+
+            // Close sidebar on mobile when a link is clicked (if it's not a toggle)
+            document.querySelectorAll("#sidebar-menu a:not(.menu-toggle)").forEach(link => {
+                link.addEventListener("click", () => {
+                    if (window.innerWidth < 992) {
+                        document.body.classList.remove("sidebar-enable");
+                    }
+                });
+            });
         });
- 
+
 
     </script>
 
@@ -799,10 +830,12 @@
                         <li class="breadcrumb-item active">Aviator</li>
                     </ol>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <h3>Aviator</h3>
-                    <div class="d-flex justify-content-end gap-3">
-                        <button class="btn btn-outline-primary"><i class="fa fa-user-tag me-1"></i>Calculate recipients</button>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                    <h3 class="mb-0">Aviator</h3>
+                    <div class="d-flex flex-wrap justify-content-md-end gap-2 gap-sm-3">
+                        <button class="btn btn-outline-primary"><i class="fa fa-user-tag me-1"></i><span
+                                class="d-none d-sm-inline">Calculate recipients</span><span
+                                class="d-inline d-sm-none">Recipients</span></button>
                         <div class="btn-group">
                             <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
                                 aria-expanded="false">
@@ -816,8 +849,8 @@
                         <button class="btn btn-primary"><i class="mdi mdi-check me-1"></i>Review & Update</button>
                     </div>
                 </div>
-                <div>
-                    <ol class="d-flex gap-5 list-styled mb-0">
+                <div class="overflow-x-auto pb-2" style="scrollbar-width: thin;">
+                    <ol class="d-flex gap-4 gap-md-5 list-unstyled mb-0" style="min-width: max-content;">
                         <li class="text-muted"><a href="pages-starter.html" class="text-muted ">Setup </a></li>
                         <li class="text-muted"><a href="pages-starter2.html" class="text-muted">Template </a></li>
                         <li class="text-muted"><a href="pages-starter3.html" class="text-muted">Recipients </a></li>
@@ -969,7 +1002,7 @@
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
 <!-- App js -->
-<script src="/assets/js/app.js"></script>
+<script type="module" src="/assets/js/app.js"></script>
 
 <script src="assets/js/app.js"></script>
 

@@ -3,6 +3,12 @@
 
     <div data-simplebar class="h-100">
 
+        <!-- Mobile Header -->
+        <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom mb-2">
+            <h5 class="m-0">Navigation Menu</h5>
+            <button type="button" class="btn-close" id="close-sidebar"></button>
+        </div>
+
         <!--- Sidebar-menu -->
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
@@ -22,7 +28,7 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="analytics/overview.html"><i
                                     class="mdi mdi-checkbox-blank-circle align-middle"></i>Overview</a></li>
-                       
+
                         <!-- <li>
                             <a href="javascript: void(0);" class="has-arrow menu-toggle">Campaigns</a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -70,7 +76,7 @@
                 </li>
 
                 <li>
-                    <a href="javascript: void(0);" class="has-arrow menu-toggle">
+                    <a href="javascript: void(0);" class=" has-arrow menu-toggle">
                         <i class="mdi mdi-filter-variant"></i>
                         <span>Segmentation</span>
                     </a>
@@ -234,15 +240,15 @@
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
     }
+
     .sub-menu {
-  display: none;
-  padding-left: 1rem;
-}
+        display: none;
+        padding-left: 1rem;
+    }
 
-li.open > .sub-menu {
-  display: block;
-}
-
+    li.open>.sub-menu {
+        display: block;
+    }
 </style>
 
 <script>
@@ -331,19 +337,43 @@ li.open > .sub-menu {
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".menu-toggle").forEach(toggle => {
-        toggle.addEventListener("click", e => {
-          e.preventDefault();
+        // --- Sidebar Toggles and Mobile Logic ---
+        const closeSidebarBtn = document.getElementById('close-sidebar');
 
-          const parentLi = toggle.closest("li");
-      const submenu = parentLi.querySelector(":scope > .sub-menu");
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', function () {
+                document.body.classList.remove('sidebar-enable');
+            });
+        }
 
-      if (!submenu) return;
+        document.querySelectorAll(".menu-toggle").forEach(toggle => {
+            toggle.addEventListener("click", e => {
+                e.preventDefault();
+                const parentLi = toggle.closest("li");
 
-      parentLi.classList.toggle("open")
-        })
-      })
+                // Toggle current sub-menu
+                const wasOpen = parentLi.classList.contains("open");
+
+                // Close other sub-menus (accordion feel)
+                document.querySelectorAll("#side-menu > li.open").forEach(li => {
+                    li.classList.remove("open");
+                });
+
+                if (!wasOpen) {
+                    parentLi.classList.add("open");
+                }
+            });
+        });
+
+        // Close sidebar on mobile when a link is clicked (if it's not a toggle)
+        document.querySelectorAll("#sidebar-menu a:not(.menu-toggle)").forEach(link => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth < 992) {
+                    document.body.classList.remove("sidebar-enable");
+                }
+            });
+        });
     });
- 
+
 
 </script>

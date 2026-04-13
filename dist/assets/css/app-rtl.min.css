@@ -55,6 +55,9 @@ File: Custom Css File
     width: 255px !important;
   }
   .sidebar-enable .navbar-logo-box .logo .logo-lg {
+    display: none !important;
+  }
+  .sidebar-enable .navbar-logo-box .logo .logo-sm {
     display: inline-block !important;
   }
 }
@@ -272,13 +275,17 @@ body[data-layout=horizontal] .footer {
   display: block;
   width: 100%;
 }
-.left-menu .mm-collapse {
+.left-menu .mm-collapse,
+.left-menu .sub-menu {
   display: none;
 }
-.left-menu .mm-collapse:not(.mm-show) {
+.left-menu .mm-collapse:not(.mm-show):not(.open),
+.left-menu .sub-menu:not(.mm-show):not(.open) {
   display: none;
 }
-.left-menu .mm-collapse.mm-show {
+.left-menu .mm-collapse.mm-show, .left-menu .mm-collapse.open,
+.left-menu .sub-menu.mm-show,
+.left-menu .sub-menu.open {
   display: block;
 }
 .left-menu .mm-collapsing {
@@ -314,23 +321,29 @@ body[data-layout=horizontal] .footer {
 
 #sidebar-menu {
   padding: 10px 0 30px 0;
+  /* .mm-active {
+      >.has-arrow {
+          &:after {
+              transform: rotate(-180deg);
+          }
+      }
+  } */
+  /* .has-arrow {
+      &:before {
+          content: none !important;
+      }
+
+      /* &:after {
+          content: "\F0140" !important;
+          font-family: "Material Design Icons";
+          display: block;
+          float: right;
+          transition: transform 0.2s;
+          font-size: 1rem;
+      } */
 }
-#sidebar-menu .mm-active > .has-arrow:after {
-  -webkit-transform: rotate(180deg);
-          transform: rotate(180deg);
-}
-#sidebar-menu .has-arrow:after {
-  content: "\f0140";
-  font-family: "Material Design Icons";
-  display: block;
-  float: left;
-  -webkit-transition: -webkit-transform 0.2s;
-  transition: -webkit-transform 0.2s;
-  transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s;
-  font-size: 1rem;
-}
-#sidebar-menu ul li a {
+
+ul li a {
   display: block;
   padding: 0.625rem 1.5rem;
   color: #787c79;
@@ -341,7 +354,7 @@ body[data-layout=horizontal] .footer {
   font-family: "Wix Madefor Text", sans-serif;
   font-weight: bold;
 }
-#sidebar-menu ul li a i {
+ul li a i {
   display: inline-block;
   min-width: 1.5rem;
   padding-bottom: 0.125em;
@@ -352,29 +365,29 @@ body[data-layout=horizontal] .footer {
   transition: all 0.4s;
   opacity: 0.75;
 }
-#sidebar-menu ul li a:hover {
+ul li a:hover {
   color: var(--bs-body-color);
 }
-#sidebar-menu ul li a:hover i {
+ul li a:hover i {
   color: var(--bs-body-color);
 }
-#sidebar-menu ul li .badge {
+ul li .badge {
   margin-top: 4px;
 }
-#sidebar-menu ul li ul.sub-menu {
+ul li ul.sub-menu {
   padding: 0;
 }
-#sidebar-menu ul li ul.sub-menu li a {
+ul li ul.sub-menu li a {
   padding: 0.4rem 2.2rem 0.4rem 1.5rem;
   font-size: 16px;
 }
-#sidebar-menu ul li ul.sub-menu li a i {
+ul li ul.sub-menu li a i {
   font-size: 10px;
 }
-#sidebar-menu ul li ul.sub-menu li ul.sub-menu {
+ul li ul.sub-menu li ul.sub-menu {
   padding: 0;
 }
-#sidebar-menu ul li ul.sub-menu li ul.sub-menu li a {
+ul li ul.sub-menu li ul.sub-menu li a {
   padding: 0.4rem 3rem 0.4rem 1.5rem;
   font-size: 16px;
 }
@@ -419,12 +432,60 @@ body[data-layout=horizontal] .footer {
 @media (max-width: 991.98px) {
   .sidebar-left {
     display: none;
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 2000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: 100vh !important;
+    visibility: visible !important;
+    -webkit-transition: none !important;
+    transition: none !important;
+    overflow: hidden;
   }
   .main-content {
     margin-right: 0 !important;
   }
+  body.sidebar-enable {
+    overflow: hidden !important;
+  }
   body.sidebar-enable .sidebar-left {
-    display: block;
+    display: block !important;
+  }
+  .sidebar-left .h-100 {
+    width: 80% !important;
+    max-width: 320px !important;
+    background: var(--bs-white);
+    height: 100% !important;
+    -webkit-box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+    -webkit-animation: slideInSidebar 0.3s ease-out;
+            animation: slideInSidebar 0.3s ease-out;
+    position: relative;
+  }
+  @-webkit-keyframes slideInSidebar {
+    from {
+      -webkit-transform: translateX(100%);
+              transform: translateX(100%);
+    }
+    to {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+    }
+  }
+  @keyframes slideInSidebar {
+    from {
+      -webkit-transform: translateX(100%);
+              transform: translateX(100%);
+    }
+    to {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+    }
   }
 }
 .sidebar-collpsed .main-content {

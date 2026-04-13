@@ -1,5 +1,5 @@
-<div>
-    <ol class="d-flex gap-5 list-styled mb-0">
+<div class="overflow-x-auto pb-2" style="scrollbar-width: thin;">
+    <ol class="d-flex gap-4 gap-md-5 list-unstyled mb-0" style="min-width: max-content;">
         <li class="@@if (current_step == 'setup') {text-primary} @@if (current_step != 'setup') {text-muted}"><a
                 href="pages-starter.html"
                 class="@@if (current_step == 'setup') {text-primary} @@if (current_step != 'setup') {text-muted}">Setup
@@ -11,7 +11,8 @@
         <li class="@@if (current_step == 'recipients') {text-primary} @@if (current_step != 'recipients') {text-muted}">
             <a href="pages-starter3.html"
                 class="@@if (current_step == 'recipients') {text-primary} @@if (current_step != 'recipients') {text-muted}">Recipients
-            </a></li>
+            </a>
+        </li>
         <li class="@@if (current_step == 'schedule') {text-primary} @@if (current_step != 'schedule') {text-muted}"><a
                 href="pages-starter4.html"
                 class="@@if (current_step == 'schedule') {text-primary} @@if (current_step != 'schedule') {text-muted}">Schedule

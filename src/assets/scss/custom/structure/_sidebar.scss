@@ -8,14 +8,16 @@
         width: 100%;
     }
 
-    .mm-collapse {
+    .mm-collapse,
+    .sub-menu {
         display: none;
 
-        &:not(.mm-show) {
+        &:not(.mm-show):not(.open) {
             display: none;
         }
 
-        &.mm-show {
+        &.mm-show,
+        &.open {
             display: block;
         }
     }
@@ -53,24 +55,28 @@
 #sidebar-menu {
     padding: 10px 0 30px 0;
 
-    .mm-active {
+    /* .mm-active {
         >.has-arrow {
             &:after {
                 transform: rotate(-180deg);
             }
         }
-    }
+    } */
 
-    .has-arrow {
-        &:after {
-            content: "\F0140";
+    /* .has-arrow {
+        &:before {
+            content: none !important;
+        }
+
+        /* &:after {
+            content: "\F0140" !important;
             font-family: "Material Design Icons";
             display: block;
             float: right;
             transition: transform 0.2s;
             font-size: 1rem;
-        }
-    }
+        } */
+    } 
 
     ul {
         li {
@@ -135,7 +141,7 @@
             }
         }
     }
-}
+
 
 .menu-title {
     padding: 12px 20px !important;
@@ -187,6 +193,19 @@
 @media (max-width: 991.98px) {
     .sidebar-left {
         display: none;
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.5) !important; // Backdrop overlay
+        z-index: 2000 !important; // High enough to be above topbar
+        padding: 0 !important;
+        margin: 0 !important;
+        max-height: 100vh !important;
+        visibility: visible !important;
+        transition: none !important;
+        overflow: hidden;
     }
 
     .main-content {
@@ -194,8 +213,30 @@
     }
 
     body.sidebar-enable {
+        overflow: hidden !important; // Prevent body scroll when menu is open
+
         .sidebar-left {
-            display: block;
+            display: block !important;
+        }
+    }
+
+    .sidebar-left .h-100 {
+        width: 80% !important;
+        max-width: 320px !important;
+        background: var(--#{$prefix}white);
+        height: 100% !important;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+        animation: slideInSidebar 0.3s ease-out;
+        position: relative;
+    }
+
+    @keyframes slideInSidebar {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
         }
     }
 }

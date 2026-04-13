@@ -43,10 +43,14 @@
         transition: all 0.5s ease-in !important;
 
         .navbar-logo-box {
-            width: $leftsidebar-width !important;
+            width: $navbar-logo-box-width !important; // Keep it consistent or let it be flexible
 
             .logo {
                 .logo-lg {
+                    display: none !important; // Don't force logo-lg on mobile if it's too big
+                }
+
+                .logo-sm {
                     display: inline-block !important;
                 }
             }
