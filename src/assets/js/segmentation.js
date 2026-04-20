@@ -2,6 +2,7 @@
  * Service to interact with the Segmentation & Rules API
  */
 
+const SEGMENTATION_BASE_URL = 'https://segmentation.gamesapi.dev/v1';
 const getApiKey = () => sessionStorage.getItem('api_key') || '';
 
 /**
@@ -35,13 +36,13 @@ window.apiRequest = async (url, method = 'GET', body = null) => {
 };
 
 window.fetchRules = (page = 1, limit = 20, active = true) => 
-    apiRequest(`https://segmentation.gamesapi.dev/v1/rules?page=${page}&limit=${limit}&active=${active}`);
+    apiRequest(`${SEGMENTATION_BASE_URL}/rules?page=${page}&limit=${limit}&active=${active}`);
 
 window.fetchAnalyticsSchema = () => 
-    apiRequest(`https://segmentation.gamesapi.dev/v1/analytics/schema`);
+    apiRequest(`${SEGMENTATION_BASE_URL}/analytics/schema`);
 
 window.publishRule = (ruleData) => 
-    apiRequest(`https://segmentation.gamesapi.dev/v1/rules`, 'POST', ruleData);
+    apiRequest(`${SEGMENTATION_BASE_URL}/rules`, 'POST', ruleData);
 
 /**
  * Creates a new customer segment with a condition-based criteria tree
@@ -60,11 +61,11 @@ window.createSegment = (name, description, refreshType, criteria) => {
             }))
         }
     };
-    return apiRequest(`https://segmentation.gamesapi.dev/v1/segments`, 'POST', payload);
+    return apiRequest(`${SEGMENTATION_BASE_URL}/segments`, 'POST', payload);
 };
 
 window.executeAnalyticsQuery = (queryData) => 
-    apiRequest(`https://segmentation.gamesapi.dev/v1/analytics/query`, 'POST', queryData);
+    apiRequest(`${SEGMENTATION_BASE_URL}/analytics/query`, 'POST', queryData);
 
 window.fetchSegments = (page = 1, limit = 20) => 
-    apiRequest(`https://segmentation.gamesapi.dev/v1/segments?page=${page}&limit=${limit}`);
+    apiRequest(`${SEGMENTATION_BASE_URL}/segments?page=${page}&limit=${limit}`);

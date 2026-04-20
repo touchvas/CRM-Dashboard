@@ -44,23 +44,22 @@
                     <!-- Segments List -->
                     <div v-else class="list-group list-group-flush">
                         <div v-for="seg in segments" :key="seg.name" @click="viewSegment(seg)"
-                            class="list-group-item list-group-item-action p-4" style="cursor: pointer;">
+                            class="list-group-item list-group-item-action p-4 segment-card mb-3 mx-3" style="cursor: pointer;">
                             <div class="d-flex w-100 justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-2">
-                                        <i class="mdi mdi-filter-variant text-primary font-size-20 me-2"></i>
-                                        <h5 class="mb-0 text-primary">{{ seg.name }}</h5>
+                                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 me-3">
+                                            <i class="mdi mdi-account-group me-1"></i> Segment
+                                        </span>
+                                        <h4 class="mb-0 text-dark fw-bold">{{ seg.name }}</h4>
                                     </div>
-                                    <p class="mb-1 text-muted" v-if="seg.criteria && seg.criteria.conditions">
-                                        <span class="badge bg-primary-subtle text-primary me-1">{{ seg.criteria.conditions[0].metric }}</span>
-                                        <span class="text-uppercase font-size-11 fw-bold">{{ seg.criteria.conditions[0].operator }}</span>
-                                        <span class="badge bg-light text-dark ms-1">{{ seg.criteria.conditions[0].value }}</span>
-                                        <span v-if="seg.criteria.conditions.length > 1" class="ms-1 small text-primary">+{{ seg.criteria.conditions.length - 1 }} more</span>
-                                    </p>
-                                    <small class="text-muted">
-                                        <i class="mdi mdi-calendar me-1"></i>Created: {{ new Date().toLocaleDateString()
-                                        }}
-                                    </small>
+                                    <div class="segment-summary-text mb-3 ps-1">
+                                        {{ getSegmentSummary(seg) }}
+                                    </div>
+                                    <div class="d-flex align-items-center text-muted small ps-1">
+                                        <span class="me-3"><i class="mdi mdi-calendar-clock me-1"></i>Created Today</span>
+                                        <span class="criteria-badge">{{ seg.criteria?.conditions?.length || 0 }} Active Rules</span>
+                                    </div>
                                 </div>
                                 <div class="text-end">
 

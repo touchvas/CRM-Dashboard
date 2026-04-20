@@ -273,27 +273,110 @@ h6,
     color: #2d3748 !important;
 }
 
+/* Fix Sidebar positioning to match the larger 85px topbar */
+.vertical-menu {
+    top: 85px !important;
+    height: calc(100% - 85px) !important;
+    padding-bottom: 20px;
+    overflow: hidden; /* Let SimpleBar handle the scroll */
+}
+
+/* ========================================
+   PROFESSIONAL SEGMENTATION COMPONENTS
+   ======================================== */
+
+.segment-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.segment-card:hover {
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    border-color: var(--bs-primary);
+    transform: translateY(-2px);
+}
+
+.condition-row {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid #edf2f7;
+    transition: border-color 0.2s;
+}
+
+.condition-row:hover {
+    border-color: #cbd5e0;
+}
+
+.segment-summary-text {
+    font-weight: 500;
+    color: #475569;
+    font-size: 1.1rem !important;
+}
+
+.criteria-badge {
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
 /* ========================================
    DROPDOWN MENU FIXES
    ======================================== */
 
 /* Fix dropdown arrows to be more visible and clickable */
 
- 
- /* #sidebar-menu .has-arrow::after {
-    display: none !important;
-    content:none !important;
-} */
-#sidebar-menu .has-arrow::before {
-    display: none !important;
-    content:none !important;
+/*
+ * Sidebar chevron arrows
+ * Add this to your main stylesheet (e.g. app.min.css override or a <style> in your layout)
+ * This replaces MetisMenu's default arrow indicator with a clean > chevron that rotates down when open.
+ */
+
+/* Completely remove default template font icons from both pseudo-elements */
+.metismenu .has-arrow::after,
+.metismenu .has-arrow::before {
+    content: "" !important;
+    font-family: inherit !important;
 }
+
+.metismenu .has-arrow::after {
+    display: inline-block;
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 0.25s ease;
+    /* Inherit the link's text colour so it matches in both light/dark themes */
+    opacity: 0.6;
+}
+
+/* Rotate to face downward when the dropdown is open (removes the "right facing" icon duplicate) */
+.metismenu .mm-active > .has-arrow::after,
+.metismenu .has-arrow[aria-expanded="true"]::after {
+    transform: translateY(-50%) rotate(90deg);
+    opacity: 1 !important;
+}
+
 
 /* Ensure dropdown parent items are fully clickable */
 #sidebar-menu .has-arrow {
     position: relative;
-    display: block !important;
-    cursor: pointer !important;
+    display: flex !important;
+    align-items: center;
+    width: 100%;
+    padding-right: 3rem !important;
 }
 
 /* Improve sub-menu visibility */
@@ -319,6 +402,44 @@ h6,
 /* Active menu item styling */
 #sidebar-menu li.mm-active>a {
     color: var(--bs-primary) !important;
+}
+
+/* ========================================
+   PROFESSIONAL SEGMENTATION COMPONENTS
+   ======================================== */
+
+.segment-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.segment-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: var(--bs-primary);
+}
+
+.condition-row {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #f1f5f9;
+}
+
+.segment-summary-text {
+    font-weight: 500;
+    color: #475569;
+    font-size: 18px !important;
+}
+
+.criteria-badge {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
 /* ========================================

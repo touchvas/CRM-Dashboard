@@ -11,27 +11,37 @@ document.addEventListener("DOMContentLoaded", function () {
         'use strict';
 
         function initMetisMenu() {
-            $("#side-menu").metisMenu();
+            if ($("#side-menu").length > 0) {
+                $("#side-menu").metisMenu();
+            }
         }
 
         function initLeftMenuCollapse() {
-            $('#sidebar-btn').on('click', function (event) {
+            $('#sidebar-btn').off('click').on('click', function (event) {
                 event.preventDefault();
-                $('body').toggleClass('sidebar-enable');
                 if ($(window).width() >= 992) {
                     $('body').toggleClass('sidebar-collapsed');
+                    $('body').removeClass('sidebar-enable');
                 } else {
+                    $('body').toggleClass('sidebar-enable');
                     $('body').removeClass('sidebar-collapsed');
                 }
             });
 
-            $('#close-sidebar').on('click', function () {
+            $('#close-sidebar').off('click').on('click', function () {
                 $('body').removeClass('sidebar-enable');
             });
 
-            $(document).on('click', '.sidebar-left', function (e) {
+            $(document).off('click', '.sidebar-left').on('click', '.sidebar-left', function (e) {
                 if ($(e.target).hasClass('sidebar-left')) {
                     $("body").removeClass("sidebar-enable");
+                }
+            });
+
+            // Close sidebar on mobile when a navigation link is clicked
+            $('#sidebar-menu a').off('click').on('click', function () {
+                if ($(window).width() < 992 && !$(this).hasClass('menu-toggle') && !$(this).hasClass('has-arrow')) {
+                    $('body').removeClass('sidebar-enable');
                 }
             });
         }
@@ -44,7 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (this.href == pageUrl) {
                     $(this).addClass("active");
                     $(this).parent().addClass("mm-active");
-                    $(this).parents('ul').addClass("mm-show");
+                    $(this).parents('ul').each(function() {
+                        $(this).addClass("mm-show").parent().addClass("mm-active");
+                    });
                     $(this).parents('li').addClass("mm-active");
                 } else if (isRoot) {
                     if (this.getAttribute('href') === 'index.html') {
@@ -231,8 +243,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function init() {
             initActiveMenu();
-            initMetisMenu();
             initLeftMenuCollapse();
+            initMetisMenu();
             initMenuItem();
             initMenuItemScroll();
             initFullScreen();
@@ -282,34 +294,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     console.log("Segmentation: Fetching schema...");
                     const response = await window.fetchAnalyticsSchema();
-                    const rawData = response?.data || "";
-
-                    // The API returns a string: "{[dims] [metrics] [times]}"
-                    // We use regex to extract the content inside each set of brackets
-                    const matches = Array.from(rawData.matchAll(/\[(.*?)\]/g));
                     const fields = [];
-
                     const formatLabel = (str) => str.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
 
-                    if (matches.length >= 1) {
-                        // Group 1: Dimensions (Strings)
-                        matches[0][1].split(' ').filter(s => s).forEach(d => {
+                    // Handle standard JSON response if available
+                    if (response?.dimensions || response?.metrics) {
+                        (response.dimensions || []).forEach(d => {
                             fields.push({ field: d, label: formatLabel(d), type: 'string', operators: ['eq', 'ne', 'contains'] });
                         });
-                    }
-
-                    if (matches.length >= 2) {
-                        // Group 2: Metrics (Numbers)
-                        matches[1][1].split(' ').filter(s => s).forEach(m => {
+                        (response.metrics || []).forEach(m => {
                             fields.push({ field: m, label: formatLabel(m), type: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte'] });
                         });
-                    }
+                    } 
+                    else {
+                        // Fallback: Parse the legacy string format "{[dims] [metrics] [times]}"
+                        const rawData = typeof response?.data === 'string' ? response.data : JSON.stringify(response);
+                        const matches = Array.from(rawData.matchAll(/\[(.*?)\]/g));
 
-                    if (matches.length >= 3) {
-                        // Group 3: Timestamps (Dates)
-                        matches[2][1].split(' ').filter(s => s).forEach(t => {
-                            fields.push({ field: t, label: formatLabel(t), type: 'date', operators: ['before', 'after'] });
-                        });
+                        if (matches.length >= 1) {
+                            // Group 1: Dimensions
+                            matches[0][1].split(' ').filter(s => s).forEach(d => {
+                                fields.push({ field: d, label: formatLabel(d), type: 'string', operators: ['eq', 'ne', 'contains'] });
+                            });
+                        }
+                        if (matches.length >= 2) {
+                            // Group 2: Metrics
+                            matches[1][1].split(' ').filter(s => s).forEach(m => {
+                                fields.push({ field: m, label: formatLabel(m), type: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte'] });
+                            });
+                        }
+                        if (matches.length >= 3) {
+                            // Group 3: Timestamps
+                            matches[2][1].split(' ').filter(s => s).forEach(t => {
+                                fields.push({ field: t, label: formatLabel(t), type: 'date', operators: ['before', 'after'] });
+                            });
+                        }
                     }
 
                     filterSchema.value = fields;
@@ -339,10 +358,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const runPreview = async () => {
                 if (criteria.value.conditions.length === 0 || !criteria.value.conditions[0].metric) return;
-                
+
                 isPreviewing.value = true;
                 try {
-                    // Mapping segment criteria to an analytics query
                     const queryData = {
                         measure: "count",
                         measure_field: "profileId",
@@ -353,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         })),
                         operator: criteria.value.operator
                     };
-                    
+
                     const result = await window.executeAnalyticsQuery(queryData);
                     const data = result?.data || result || [];
                     filteredContacts.value = Array.isArray(data) ? data : [];
@@ -408,10 +426,44 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
+            // Professional formatting helpers
+            const getFieldLabel = (field) => {
+                const f = filterSchema.value.find(i => i.field === field);
+                return f ? f.label : field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            };
+
+            const getOperatorLabel = (op) => {
+                const ops = {
+                    'eq': 'is',
+                    'ne': 'is not',
+                    'gt': 'is greater than',
+                    'lt': 'is less than',
+                    'gte': 'is at least',
+                    'lte': 'is at most',
+                    'contains': 'contains',
+                    'before': 'is before',
+                    'after': 'is after'
+                };
+                return ops[op] || op;
+            };
+
+            const getSegmentSummary = (seg) => {
+                const conditions = seg.criteria?.conditions || seg.conditions || [];
+                if (conditions.length === 0) return "No rules defined";
+
+                const c = conditions[0];
+                if (!c.metric) return "New Segment";
+
+                const base = `${getFieldLabel(c.metric)} ${getOperatorLabel(c.operator)} ${c.value}`;
+                const count = conditions.length - 1;
+                return count > 0 ? `${base} (and ${count} other rules)` : base;
+            };
+
             return {
                 rule, criteria, segmentName, segmentDescription, refreshType,
                 availableFields: filterSchema, filteredContacts, segments, isCreating, isPreviewing,
-                addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating,runPreview
+                addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating, runPreview,
+                getFieldLabel, getOperatorLabel, getSegmentSummary
             };
         }
     });
@@ -460,7 +512,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             async function runPreview(segment) {
                 if (!segment.criteria || !segment.criteria.conditions) return;
-                
+
                 isPreviewLoading.value = true;
                 try {
                     const queryData = {
@@ -473,7 +525,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         })),
                         operator: segment.criteria.operator || 'AND'
                     };
-                    
+
                     const result = await window.executeAnalyticsQuery(queryData);
                     const data = result?.data || result || [];
                     filteredContacts.value = Array.isArray(data) ? data : [];
@@ -484,7 +536,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            return { segments, selectedSegment, isLoading, filteredContacts, isPreviewLoading, viewSegment };
+            const getFieldLabel = (field) => {
+                return field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            };
+
+            const getOperatorLabel = (op) => {
+                const ops = {
+                    'eq': 'is',
+                    'ne': 'is not',
+                    'gt': '>',
+                    'lt': '<',
+                    'gte': '≥',
+                    'lte': '≤',
+                    'contains': 'contains'
+                };
+                return ops[op] || op;
+            };
+
+            const getSegmentSummary = (seg) => {
+                const conditions = seg.criteria?.conditions || [];
+                if (conditions.length === 0) return "No rules defined";
+
+                const c = conditions[0];
+                const base = `${getFieldLabel(c.metric)} ${getOperatorLabel(c.operator)} ${c.value}`;
+                const remaining = conditions.length - 1;
+                return remaining > 0 ? `${base} (+${remaining} more)` : base;
+            };
+
+            return { segments, selectedSegment, isLoading, filteredContacts, isPreviewLoading, viewSegment, getSegmentSummary };
         }
     });
 
@@ -513,7 +592,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             return;
                         }
                     } catch (e) { console.error("API fetch failed, checking local storage"); }
-                    
+
                     const localSegments = JSON.parse(localStorage.getItem('segments') || '[]');
                     const foundLocal = localSegments.find(s => s.name === segmentName);
                     if (foundLocal) segmentData.value = foundLocal;
@@ -663,14 +742,10 @@ document.addEventListener("DOMContentLoaded", function () {
             setup() {
                 const username = ref('');
                 const password = ref('');
-                const code = ref('');
-                const doLogin = ref(true);
-                const doOtp = ref(false);
                 const alert_message = ref('');
                 const alert_error = ref(false);
                 const alert_success = ref(false);
-                const isLoading = ref(false);
-                const baseUrl = 'https://identity.gamesapi.dev';
+                const baseUrl = 'https://identity.mystake.co.ke';
 
                 async function curl(url, data) {
                     const response = await fetch(url, {
@@ -681,48 +756,57 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                         body: JSON.stringify(data)
                     });
-                    return await response.json();
+
+                    // Log raw HTTP status before attempting JSON parse
+                    console.log("HTTP status:", response.status, response.statusText);
+
+                    const rawText = await response.text();
+                    console.log("Raw response body:", rawText);
+
+                    // Only parse if there is a body to parse
+                    if (!rawText || rawText.trim() === '') {
+                        return { status: response.status, message: `Empty response (HTTP ${response.status})` };
+                    }
+
+                    try {
+                        return JSON.parse(rawText);
+                    } catch (parseErr) {
+                        console.error("JSON parse failed — raw body was:", rawText);
+                        return { status: response.status, message: `Non-JSON response: ${rawText.substring(0, 120)}` };
+                    }
                 }
 
                 const login = async () => {
                     console.log("Login function triggered for:", username.value);
 
-                    // Reset alerts
                     alert_error.value = false;
                     alert_success.value = false;
 
-                    // ── Validate BEFORE setting isLoading so the button never
-                    //    gets permanently disabled on a validation failure ──
                     if (!username.value || !password.value) {
                         alert_message.value = 'Phone Number and Password are required';
                         alert_error.value = true;
                         return;
                     }
 
-                    isLoading.value = true;
+                    const payload = {
+                        email: "string",
+                        msisdn: Number(String(username.value || '').replace(/\D/g, '')),
+                        password: password.value,
+                        username: "string"
+                    };
+
+                    console.log("Sending payload:", JSON.stringify(payload, null, 2));
 
                     try {
-                        const res = await curl(`${baseUrl}/user/login?lang=en`, {
-                            email: "",
-                            msisdn: parseInt(String(username.value || '').replace(/\D/g, '')) || 0,
-                            password: password.value,
-                            username: ""
-                        });
+                        const res = await curl(`${baseUrl}/user/login?lang=en`, payload);
 
                         console.log("Identity Service Response:", JSON.stringify(res, null, 2));
 
                         if (res && (parseInt(res.status) === 1 || parseInt(res.status) === 202)) {
-                            if (parseInt(res.status) === 202) {
-                                alert_success.value = true;
-                                alert_message.value = "Enter OTP sent to your phone/email to proceed";
-                                doLogin.value = false;
-                                doOtp.value = true;
-                            } else {
-                                console.log("Authentication successful. Redirecting to dashboard...");
-                                sessionStorage.setItem('api_key', res.auth || '');
-                                sessionStorage.setItem('isLoggedIn', 'true');
-                                window.location.href = 'index.html';
-                            }
+                            console.log("Authentication successful. Redirecting to dashboard...");
+                            sessionStorage.setItem('api_key', res.auth || '');
+                            sessionStorage.setItem('isLoggedIn', 'true');
+                            window.location.href = 'index.html';
                         } else {
                             alert_error.value = true;
                             alert_message.value = (res && res.message) ? res.message : 'Login failed: Invalid credentials';
@@ -731,53 +815,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.error("Login Error:", e);
                         alert_error.value = true;
                         alert_message.value = 'Connection error to identity service';
-                    } finally {
-                        // Always reset loading state — whether success, failure, or error
-                        isLoading.value = false;
-                    }
-                };
-
-                const otp = async () => {
-                    alert_error.value = false;
-
-                    if (!code.value) {
-                        alert_message.value = 'Verification Code is required';
-                        alert_error.value = true;
-                        return;
-                    }
-
-                    isLoading.value = true;
-
-                    try {
-                        const res = await curl(`${baseUrl}/request/post`, {
-                            msisdn: parseInt(String(username.value || '').replace(/\D/g, '')) || 0,
-                            code: parseInt(code.value),
-                            service: 'identity',
-                            route: 'user/login/otp'
-                        });
-
-                        if (res && (res.auth || res.status === 1)) {
-                            sessionStorage.setItem('api_key', res.auth || sessionStorage.getItem('api_key'));
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            window.location.href = 'index.html';
-                        } else {
-                            alert_error.value = true;
-                            alert_message.value = res.data || 'OTP verification failed';
-                        }
-                    } catch (e) {
-                        alert_error.value = true;
-                        alert_message.value = 'Connection error';
-                    } finally {
-                        isLoading.value = false;
                     }
                 };
 
                 return {
-                    username, password, code,
-                    doLogin, doOtp,
+                    username,
+                    password,
                     alert_message, alert_error, alert_success,
-                    isLoading,
-                    login, otp
+                    login
                 };
             }
         });
