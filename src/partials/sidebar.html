@@ -1,5 +1,5 @@
 <!-- ========== Left Sidebar Start ========== -->
-<div class="sidebar-left">
+<div class="sidebar-left vertical-menu">
 
     <div data-simplebar class="h-100">
 
@@ -12,7 +12,7 @@
         <!--- Sidebar-menu -->
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
-            <ul class="left-menu list-unstyled" id="side-menu">
+            <ul class="metismenu left-menu list-unstyled" id="side-menu">
                 <li>
                     <a href="index.html" class="">
                         <i class="fas fa-desktop"></i>
@@ -240,15 +240,6 @@
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
     }
-
-    .sub-menu {
-        display: none;
-        padding-left: 1rem;
-    }
-
-    li.open>.sub-menu {
-        display: block;
-    }
 </style>
 
 <script>
@@ -337,34 +328,6 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-        // --- Sidebar Toggles and Mobile Logic ---
-        const closeSidebarBtn = document.getElementById('close-sidebar');
-
-        if (closeSidebarBtn) {
-            closeSidebarBtn.addEventListener('click', function () {
-                document.body.classList.remove('sidebar-enable');
-            });
-        }
-
-        document.querySelectorAll(".menu-toggle").forEach(toggle => {
-            toggle.addEventListener("click", e => {
-                e.preventDefault();
-                const parentLi = toggle.closest("li");
-
-                // Toggle current sub-menu
-                const wasOpen = parentLi.classList.contains("open");
-
-                // Close other sub-menus (accordion feel)
-                document.querySelectorAll("#side-menu > li.open").forEach(li => {
-                    li.classList.remove("open");
-                });
-
-                if (!wasOpen) {
-                    parentLi.classList.add("open");
-                }
-            });
-        });
-
         // Close sidebar on mobile when a link is clicked (if it's not a toggle)
         document.querySelectorAll("#sidebar-menu a:not(.menu-toggle)").forEach(link => {
             link.addEventListener("click", () => {

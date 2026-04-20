@@ -33,11 +33,25 @@
     <div class="row">
         <!-- Query Builder -->
         <div class="col-12">
-            <div class="card">
+            <div v-if="!isCreating" class="card text-center py-5">
+                <div class="card-body">
+                    <div class="avatar-lg mx-auto mb-4">
+                        <div class="avatar-title bg-primary-subtle text-primary rounded-circle display-4">
+                            <i class="mdi mdi-filter-variant"></i>
+                        </div>
+                    </div>
+                    <h4>Segment your audience</h4>
+                    <p class="text-muted mb-4">Create dynamic segments to drive targeted marketing campaigns based on behavior and attributes.</p>
+                    <button class="btn btn-primary px-5" @click="startCreating">
+                        <i class="mdi mdi-plus-circle me-1"></i> Create New Segment
+                    </button>
+                </div>
+            </div>
+
+            <div v-else class="card">
                 <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom">
-                    <h5 class="card-title mb-0">Create New Segment</h5>
-                    <button class="btn btn-sm btn-outline-primary"><i class="mdi mdi-help-circle-outline me-1"></i>
-                        Guide</button>
+                    <h5 class="card-title mb-0">New Segment Definition</h5>
+                    <button type="button" class="btn-close" @click="isCreating = false"></button>
                 </div>
                 <div class="card-body">
                     <div class="mb-4">
@@ -49,15 +63,27 @@
                                     v-model="segmentName"
                                     placeholder="Enter segment name (e.g., High-Value UK Players)">
                             </div>
-                            <!-- <div class="col-md-4">
-                                    <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Logic
-                                        Pattern</label>
-                                    <select class="form-select form-select-lg border-dashed">
-                                        <option value="and">Match ALL rules (AND)</option>
-                                        <option value="or">Match ANY rule (OR)</option>
-                                    </select>
-                                </div> -->
+                            <div class="col-md-4">
+                                <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Refresh Type</label>
+                                <select class="form-select form-select-lg border-dashed" v-model="refreshType">
+                                    <option value="REAL_TIME">Real-time (Flink)</option>
+                                    <option value="BATCH">Batch (On-demand)</option>
+                                </select>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Description</label>
+                        <textarea class="form-control border-dashed" v-model="segmentDescription" rows="2" placeholder="Describe the purpose of this segment..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Logic Pattern</label>
+                        <select class="form-select border-dashed w-auto" v-model="criteria.operator">
+                            <option value="AND">Match ALL conditions (AND)</option>
+                            <option value="OR">Match ANY condition (OR)</option>
+                        </select>
                     </div>
 
                     <div class="mb-3">
@@ -67,16 +93,16 @@
 
                         <div id="rules-container">
                             <!-- Rule Row -->
-                            <div class="row g-3 align-items-end">
+                            <div v-for="(condition, index) in criteria.conditions" :key="index" class="row g-3 align-items-end mb-3">
                                 <!-- FIELD -->
                                 <div class="col-md-3">
                                     <label class="form-label">Field</label>
-                                    <select class="form-select" v-model="rule.field"
-                                        @change="rule.operator = ''; rule.value = ''">
+                                    <select class="form-select" v-model="condition.metric"
+                                        @change="condition.operator = ''; condition.value = ''">
                                         <option value="" disabled selected hidden>Select field...</option>
-                                        <option v-for="(config, field) in ContactFilterSchema" :key="field"
-                                            :value="field">
-                                            {{ field }}
+                                        <option v-for="config in availableFields" :key="config.field"
+                                            :value="config.field">
+                                            {{ config.label || config.field }}
                                         </option>
                                     </select>
                                 </div>
@@ -84,12 +110,12 @@
                                 <!-- OPERATOR -->
                                 <div class="col-md-3">
                                     <label class="form-label">Operator</label>
-                                    <select class="form-select" v-model="rule.operator" :disabled="!rule.field">
+                                    <select class="form-select" v-model="condition.operator" :disabled="!condition.metric">
                                         <option value="" disabled selected hidden>Select operator...</option>
-                                        <template v-if="rule.field">
-                                            <option v-for="op in ContactFilterSchema[rule.field].operators" :key="op"
-                                                :value="op">
-                                                {{ op }}
+                                        <template v-if="condition.metric">
+                                            <option v-for="op in (availableFields.find(f => f.field === condition.metric)?.operators || ['eq'])" 
+                                                :key="op" :value="op">
+                                                {{ op.toUpperCase() }}
                                             </option>
                                         </template>
                                     </select>
@@ -100,27 +126,27 @@
                                     <label class="form-label">Value</label>
 
                                     <!-- ENUM -->
-                                    <select v-if="rule.field && ContactFilterSchema[rule.field].values"
-                                        v-model="rule.value" class="form-select" :disabled="!rule.operator">
+                                    <select v-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.values"
+                                        v-model="condition.value" class="form-select" :disabled="!condition.operator">
                                         <option value="" disabled selected hidden>Select value...</option>
-                                        <option v-for="val in ContactFilterSchema[rule.field].values" :key="val"
+                                        <option v-for="val in availableFields.find(f => f.field === condition.metric).values" :key="val"
                                             :value="val">{{ val }}</option>
                                     </select>
 
                                     <!-- NUMBER -->
-                                    <input v-else-if="rule.field && ContactFilterSchema[rule.field].type === 'number'"
-                                        type="number" class="form-control" v-model.number="rule.value"
-                                        placeholder="Enter number" :disabled="!rule.operator" />
+                                    <input v-else-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.type === 'number'"
+                                        type="number" class="form-control" v-model.number="condition.value"
+                                        placeholder="Enter number" :disabled="!condition.operator" />
 
                                     <!-- STRING -->
-                                    <input v-else-if="rule.field && ContactFilterSchema[rule.field].type === 'string'"
-                                        type="text" class="form-control" v-model="rule.value" placeholder="Enter text"
-                                        :disabled="!rule.operator" />
+                                    <input v-else-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.type === 'string'"
+                                        type="text" class="form-control" v-model="condition.value" placeholder="Enter text"
+                                        :disabled="!condition.operator" />
 
                                     <!-- DATE -->
-                                    <input v-else-if="rule.field && ContactFilterSchema[rule.field].type === 'date'"
-                                        type="date" class="form-control" v-model="rule.value"
-                                        :disabled="!rule.operator" />
+                                    <input v-else-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.type === 'date'"
+                                        type="date" class="form-control" v-model="condition.value"
+                                        :disabled="!condition.operator" />
 
                                     <!-- PLACEHOLDER when no field selected -->
                                     <input v-else type="text" class="form-control" placeholder="Select a field first"
@@ -129,19 +155,26 @@
 
                                 <!-- DELETE BUTTON -->
                                 <div class="col-md-1 text-center">
-                                    <button class="btn btn-soft-danger btn-sm remove-rule"><i
+                                    <button class="btn btn-soft-danger btn-sm" @click="removeCondition(index)" :disabled="criteria.conditions.length <= 1"><i
                                             class="mdi mdi-trash-can-outline"></i></button>
                                 </div>
                             </div>
                         </div>
 
-                        <button class="btn btn-soft-primary w-100 py-2 border-dashed mt-2" id="add-rule-btn">
+                        <button class="btn btn-soft-primary w-100 py-2 border-dashed mt-2" @click="addCondition">
                             <i class="mdi mdi-plus-circle-outline me-1"></i> Add Condition
                         </button>
                     </div>
 
+                    <div class="mt-4 text-center">
+                        <button class="btn btn-outline-info px-4" @click="runPreview" :disabled="isPreviewing">
+                            <span v-if="isPreviewing" class="spinner-border spinner-border-sm me-1"></span>
+                            <i v-else class="mdi mdi-eye-outline me-1"></i> Preview Audience
+                        </button>
+                    </div>
+
                     <!-- PREVIEW RESULTS TABLE -->
-                    <div v-if="rule.field && rule.operator && rule.value" class="mt-4">
+                    <div v-if="filteredContacts.length > 0 || isPreviewing" class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="mb-0">Preview Results</h6>
                             <span class="badge bg-primary">{{ filteredContacts.length }} contacts match</span>
@@ -192,10 +225,10 @@
                         <div class="text-muted">
                             <span class="badge bg-info-subtle text-info p-2 me-2"><i
                                     class="mdi mdi-account-group me-1"></i>
-                                Estimated Audience: <strong id="audience-count">12,450</strong> users</span>
+                                Estimated Audience: <strong>{{ filteredContacts.length }}</strong> users</span>
                         </div>
                         <div class="hstack gap-2">
-                            <button class="btn btn-light px-4">Clear All</button>
+                            <button class="btn btn-light px-4" @click="isCreating = false">Cancel</button>
                             <button class="btn btn-primary px-4"
                                 @click="saveCurrentSegment(segmentName || 'Unnamed Segment')"><i
                                     class="mdi mdi-content-save-outline me-1"></i>

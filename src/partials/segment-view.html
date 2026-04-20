@@ -43,23 +43,12 @@
                     <hr>
 
                     <!-- Segment Rule Details -->
-                    <div class="row" v-if="segmentData.rules && segmentData.rules[0]">
-                        <div class="col-md-4">
+                    <div class="row" v-if="segmentData.criteria && segmentData.criteria.conditions">
+                        <div class="col-md-4" v-for="condition in segmentData.criteria.conditions" :key="condition.metric">
                             <div class="mb-3">
-                                <label class="form-label text-muted">Field</label>
-                                <div class="fw-medium">{{ segmentData.rules[0].field }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label text-muted">Operator</label>
-                                <div class="fw-medium">{{ segmentData.rules[0].operator }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label text-muted">Value</label>
-                                <div class="fw-medium">{{ segmentData.rules[0].value }}</div>
+                                <span class="badge bg-primary-subtle text-primary text-uppercase me-2">{{ condition.metric }}</span>
+                                <span class="text-muted small">{{ condition.operator }}</span>
+                                <span class="fw-medium ms-2">{{ condition.value }}</span>
                             </div>
                         </div>
                     </div>

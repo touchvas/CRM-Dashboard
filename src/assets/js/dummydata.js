@@ -1,4 +1,4 @@
-export const contacts = [
+window.contacts = [
   {
     id: "c1",
     name: "Amina Hassan",
@@ -61,7 +61,7 @@ export const contacts = [
   }
 ];
 
-export const ContactFilterSchema = {
+window.ContactFilterSchema = {
   name: {
     type: "string",
     operators: ["contains", "equals"]

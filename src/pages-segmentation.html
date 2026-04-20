@@ -6,6 +6,16 @@
 
     @@include("partials/head-css.html")
 
+    <style>
+        /* Prevents content flashing before redirect */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
+
 </head>
 
 @@include("partials/body.html")
@@ -24,10 +34,74 @@
         <div class="page-content">
             <div class="container-fluid">
 
-                @@include("partials/campaign-header.html", {"current_step": "recipients"})
+                <!-- @@include("partials/campaign-header.html", {"current_step": "recipients"}) -->
                 <div class="row justify-content-center">
                     <div class="col-xl-11">
                         @@include("partials/segmentation.html")
+
+                        <!-- Behavioral Rule Builder Integrated Here -->
+                        <div id="ruleBuilderApp" class="card mt-4">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 text-white"><i class="mdi mdi-flash me-2"></i>Event Logic Builder</h5>
+                                <span class="badge bg-success">Real-time (Flink)</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- UI Builder Side -->
+                                    <div class="col-lg-7 border-end">
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold">Define Event Sequence</label>
+                                            <div v-for="(step, index) in rule.steps" :key="index" class="p-3 border rounded mb-2 bg-light position-relative">
+                                                <button @click="removeStep(index)" class="btn-close position-absolute top-0 end-0 m-2" style="font-size: 0.7rem;"></button>
+                                                <div class="row g-2">
+                                                    <div class="col-md-6">
+                                                        <label class="small">Event Type</label>
+                                                        <select v-model="step.event" class="form-select form-select-sm">
+                                                            <option value="deposit">Deposit</option>
+                                                            <option value="bet_placed">Bet Placed</option>
+                                                            <option value="login">Login</option>
+                                                            <option value="withdrawal">Withdrawal</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="small">Value Threshold (>)</label>
+                                                        <input v-model.number="step.threshold" type="number" class="form-control form-select-sm">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button @click="addStep" class="btn btn-sm btn-link text-primary mt-2 p-0"><i class="mdi mdi-plus"></i> Add Event Step</button>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold">Window & Reset Settings</label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="small">Time Limit (Hours)</label>
+                                                    <input v-model.number="rule.window" type="number" class="form-control form-select-sm">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="small">Reset Logic</label>
+                                                    <select v-model="rule.reset_logic" class="form-select form-select-sm">
+                                                        <option value="sliding">Sliding Window</option>
+                                                        <option value="fixed">Fixed Session</option>
+                                                        <option value="immediate">Reset on Completion</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button @click="publishRule" class="btn btn-primary w-100">Publish to Flink Engine</button>
+                                    </div>
+
+                                    <!-- JSON Output Side -->
+                                    <div class="col-lg-5">
+                                        <label class="form-label fw-bold">Generated Master JSON</label>
+                                        <div class="bg-dark rounded p-3 text-success font-monospace" style="min-height: 250px; white-space: pre-wrap; font-size: 0.8rem;">
+                                            {{ JSON.stringify(rule, null, 2) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -48,7 +122,6 @@
 @@include("partials/vendor-scripts.html")
 
 <script src="assets/js/pages/segmentation-data.js"></script>
-<script type="module" src="assets/js/app.js"></script>
 
 </body>
 

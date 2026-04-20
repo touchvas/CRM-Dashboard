@@ -6,6 +6,16 @@
 
     @@include("partials/head-css.html")
 
+    <style>
+        /* Prevents content flashing before redirect */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
+
 </head>
 
 @@include("partials/body.html")
@@ -49,8 +59,6 @@
 @@include("partials/right-sidebar.html")
 
 @@include("partials/vendor-scripts.html")
-
-<script src="assets/js/app.js"></script>
 
 </body>
 

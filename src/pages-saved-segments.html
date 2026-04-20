@@ -18,6 +18,16 @@
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
     <!-- Custom Typography CSS -->
     <link href="assets/css/custom-typography.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        /* Prevents content flashing before redirect */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
 </head>
 
 <body>
@@ -60,9 +70,6 @@
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
-
-    <!-- App js -->
-    <script src="assets/js/app.js" type="module"></script>
 
 </body>
 

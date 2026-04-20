@@ -15,21 +15,31 @@
     <script src="assets/js/pages/layout.js"></script>
 
     <!-- Bootstrap Css -->
-    <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <!-- simplebar css -->
-    <link href="/assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
+    <link href="assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
     <!-- MetisMenu Css -->
-    <link href="/assets/libs/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/metismenu/metisMenu.min.css" rel="stylesheet" type="text/css" />
     <!-- DataTables -->
-    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
     <!-- App Css-->
-    <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
     <!-- Custom Typography CSS -->
-    <link href="/assets/css/custom-typography.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/custom-typography.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        /* Prevents content flashing before redirect */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
 
 </head>
 
@@ -434,7 +444,7 @@
     <!-- End topbar -->
 
     <!-- ========== Left Sidebar Start ========== -->
-    <div class="sidebar-left">
+    <div class="sidebar-left vertical-menu">
 
         <div data-simplebar class="h-100">
 
@@ -447,7 +457,7 @@
             <!--- Sidebar-menu -->
             <div id="sidebar-menu">
                 <!-- Left Menu Start -->
-                <ul class="left-menu list-unstyled" id="side-menu">
+                <ul class="metismenu left-menu list-unstyled" id="side-menu">
                     <li>
                         <a href="index.html" class="">
                             <i class="fas fa-desktop"></i>
@@ -675,15 +685,6 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
-
-        .sub-menu {
-            display: none;
-            padding-left: 1rem;
-        }
-
-        li.open>.sub-menu {
-            display: block;
-        }
     </style>
 
     <script>
@@ -772,34 +773,6 @@
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-            // --- Sidebar Toggles and Mobile Logic ---
-            const closeSidebarBtn = document.getElementById('close-sidebar');
-
-            if (closeSidebarBtn) {
-                closeSidebarBtn.addEventListener('click', function () {
-                    document.body.classList.remove('sidebar-enable');
-                });
-            }
-
-            document.querySelectorAll(".menu-toggle").forEach(toggle => {
-                toggle.addEventListener("click", e => {
-                    e.preventDefault();
-                    const parentLi = toggle.closest("li");
-
-                    // Toggle current sub-menu
-                    const wasOpen = parentLi.classList.contains("open");
-
-                    // Close other sub-menus (accordion feel)
-                    document.querySelectorAll("#side-menu > li.open").forEach(li => {
-                        li.classList.remove("open");
-                    });
-
-                    if (!wasOpen) {
-                        parentLi.classList.add("open");
-                    }
-                });
-            });
-
             // Close sidebar on mobile when a link is clicked (if it's not a toggle)
             document.querySelectorAll("#sidebar-menu a:not(.menu-toggle)").forEach(link => {
                 link.addEventListener("click", () => {
@@ -1067,24 +1040,28 @@
 <!-- Empty right sidebar placeholder -->
 
 <!-- JAVASCRIPT -->
-<script src="/assets/libs/jquery/jquery.min.js"></script>
-<script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/libs/metismenu/metisMenu.min.js"></script>
-<script src="/assets/libs/simplebar/simplebar.min.js"></script>
-<script src="/assets/libs/node-waves/waves.min.js"></script>
+<script src="assets/libs/jquery/jquery.min.js"></script>
+<script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="assets/libs/simplebar/simplebar.min.js"></script>
+<script src="assets/libs/node-waves/waves.min.js"></script>
 
 <!-- ApexCharts -->
-<script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
+<script src="assets/libs/apexcharts/apexcharts.min.js"></script>
 
 <!-- DataTables -->
-<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Vue 3 Global Build -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<!-- Segmentation Service -->
+<script src="assets/js/segmentation.js"></script>
 
 <!-- App js -->
-<script type="module" src="/assets/js/app.js"></script>
-
 <script src="assets/js/app.js"></script>
 
 </body>

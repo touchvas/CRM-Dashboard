@@ -2,9 +2,19 @@
 
 <head>
 
-    @@include("partials/title-meta.html", {"title": "Dashboard"})
+    
 
     @@include("partials/head-css.html")
+
+    <style>
+        /* Prevents content flashing before redirect */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
 
     <style>
         .dropdown-item:hover,
@@ -12,13 +22,31 @@
             color: var(--bs-primary) !important;
             background-color: var(--bs-light) !important;
         }
+        .custom-5-col {
+    flex: 0 0 20%;
+    max-width: 20%;
+}
+
+@media (max-width: 992px) {
+    .custom-5-col {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-5-col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
     </style>
 
 </head>
 
 @@include("partials/body.html")
 
-<div id="layout-wrapper">
+<div id="dashboardApp" class="layout-wrapper">
 
     @@include("partials/menu.html")
 
@@ -27,25 +55,25 @@
     <div class="main-content">
         <div class="page-content">
             <!-- Page Title -->
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 class="mb-0">PLATFORM OVERVIEW</h4>
+                        <h4 class="mb-0">SEGMENT PERFORMANCE OVERVIEW</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">BetAdmin</a></li>
-                                <li class="breadcrumb-item active">Dashboard</li>
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Rules Portal</a></li>
+                                <li class="breadcrumb-item active">Performance Dashboard</li>
                             </ol>
                         </div>
                     </div>
-                    <p class="text-muted mb-4">Real-time betting platform health and performance</p>
+                    <p class="text-muted mb-4">Real-time segment growth and ROI analysis</p>
                 </div>
-            </div>
+            </div> -->
 
             <!-- KPI Cards Row -->
             <div class="row">
                 <!-- Total Bets Today -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <div class="col custom-5-col">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -64,7 +92,7 @@
                     </div>
                 </div>
                 <!-- Total Stake -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <div class="col custom-5-col">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -83,7 +111,7 @@
                     </div>
                 </div>
                 <!-- Total Payout -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <div class="col custom-5-col">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -102,7 +130,7 @@
                     </div>
                 </div>
                 <!-- GGR -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <div class="col custom-5-col">
                     <div class="card bg-success-subtle">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -121,7 +149,7 @@
                     </div>
                 </div>
                 <!-- Active Bettors -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <div class="col custom-5-col">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -140,7 +168,7 @@
                     </div>
                 </div>
                 <!-- House Margin -->
-                <div class="col-xl-2 col-md-4 col-6">
+                <!-- <div class="col-xl-2 col-md-4 col-6">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -158,22 +186,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- end row -->
 
             <div class="row">
-                <!-- LEFT COLUMN -->
-                <div class="col-xl-8">
-                    <!-- Betting Activity Chart -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="card-title">Betting Activity (Last 24 Hours)</h4>
-                            </div>
-                            <div id="betting_activity_chart" class="apex-charts" dir="ltr"></div>
-                        </div>
-                    </div>
-
+                <!-- Main Table Column -->
+                <div class="col-xl-12">
                     <!-- Top Events Table -->
                     <div class="card">
                         <div class="card-body">
@@ -182,7 +200,7 @@
                                 <span class="badge bg-success">Live</span>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-centered table-nowrap mb-0">
+                                <table class="table table-centered table-nowrap mb-0 border-top">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Event</th>
@@ -249,8 +267,10 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- RIGHT COLUMN -->
+            <!-- Bottom Info Cards: Three in a row -->
+            <div class="row">
                 <div class="col-xl-4">
                     <!-- Live Betting Panel -->
                     <div class="card bg-success-subtle border-success">
@@ -289,7 +309,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="col-xl-4">
                     <!-- Risk & Alerts Panel -->
                     <div class="card">
                         <div class="card-body">
@@ -320,7 +342,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="col-xl-4">
                     <!-- Player Activity Panel -->
                     <div class="card">
                         <div class="card-body">
