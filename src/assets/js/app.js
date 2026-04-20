@@ -746,7 +746,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const alert_message = ref('');
                 const alert_error = ref(false);
                 const alert_success = ref(false);
-                const baseUrl = 'https://identity.mystake.co.ke'; // Defined in .env
+                const baseUrl = 'https://identity.gamesapi.dev';
 
                 async function curl(url, data) {
                     const response = await fetch(url, {
@@ -777,8 +777,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     try {
                         const res = await curl(`${baseUrl}/user/login?lang=en`, {
-                            email: "string",
-                            msisdn: Number(String(username.value || '').replace(/\D/g, '')),
+                            email: "",
+                            msisdn: String(username.value || '').replace(/\D/g, ''),
                             password: password.value,
                             username: "string"
                         });
