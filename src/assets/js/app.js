@@ -14,42 +14,27 @@ document.addEventListener("DOMContentLoaded", function () {
             if ($("#side-menu").length > 0) {
                 $("#side-menu").metisMenu();
             }
-            if ($("#side-menu").length > 0) {
-                $("#side-menu").metisMenu();
-            }
         }
 
         function initLeftMenuCollapse() {
-            $('#sidebar-btn').off('click').on('click', function (event) {
             $('#sidebar-btn').off('click').on('click', function (event) {
                 event.preventDefault();
                 if ($(window).width() >= 992) {
                     $('body').toggleClass('sidebar-collapsed');
                     $('body').removeClass('sidebar-enable');
-                    $('body').removeClass('sidebar-enable');
                 } else {
-                    $('body').toggleClass('sidebar-enable');
                     $('body').toggleClass('sidebar-enable');
                     $('body').removeClass('sidebar-collapsed');
                 }
             });
 
             $('#close-sidebar').off('click').on('click', function () {
-            $('#close-sidebar').off('click').on('click', function () {
                 $('body').removeClass('sidebar-enable');
             });
 
             $(document).off('click', '.sidebar-left').on('click', '.sidebar-left', function (e) {
-            $(document).off('click', '.sidebar-left').on('click', '.sidebar-left', function (e) {
                 if ($(e.target).hasClass('sidebar-left')) {
                     $("body").removeClass("sidebar-enable");
-                }
-            });
-
-            // Close sidebar on mobile when a navigation link is clicked
-            $('#sidebar-menu a').off('click').on('click', function () {
-                if ($(window).width() < 992 && !$(this).hasClass('menu-toggle') && !$(this).hasClass('has-arrow')) {
-                    $('body').removeClass('sidebar-enable');
                 }
             });
 
@@ -69,9 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (this.href == pageUrl) {
                     $(this).addClass("active");
                     $(this).parent().addClass("mm-active");
-                    $(this).parents('ul').each(function() {
-                        $(this).addClass("mm-show").parent().addClass("mm-active");
-                    });
                     $(this).parents('ul').each(function() {
                         $(this).addClass("mm-show").parent().addClass("mm-active");
                     });
@@ -318,12 +300,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Handle standard JSON response if available
                     if (response?.dimensions || response?.metrics) {
                         (response.dimensions || []).forEach(d => {
-                    // Handle standard JSON response if available
-                    if (response?.dimensions || response?.metrics) {
-                        (response.dimensions || []).forEach(d => {
                             fields.push({ field: d, label: formatLabel(d), type: 'string', operators: ['eq', 'ne', 'contains'] });
                         });
-                        (response.metrics || []).forEach(m => {
                         (response.metrics || []).forEach(m => {
                             fields.push({ field: m, label: formatLabel(m), type: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte'] });
                         });
@@ -485,9 +463,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 rule, criteria, segmentName, segmentDescription, refreshType,
                 availableFields: filterSchema, filteredContacts, segments, isCreating, isPreviewing,
                 addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating, runPreview,
-                getFieldLabel, getOperatorLabel, getSegmentSummary
-                addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating, runPreview,
-                getFieldLabel, getOperatorLabel, getSegmentSummary
             };
         }
     });
@@ -831,10 +806,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             sessionStorage.setItem('api_key', res.auth || '');
                             sessionStorage.setItem('isLoggedIn', 'true');
                             window.location.href = 'index.html';
-                            console.log("Authentication successful. Redirecting to dashboard...");
-                            sessionStorage.setItem('api_key', res.auth || '');
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            window.location.href = 'index.html';
                         } else {
                             alert_error.value = true;
                             alert_message.value = (res && res.message) ? res.message : 'Login failed: Invalid credentials';
@@ -850,7 +821,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     username,
                     password,
                     alert_message, alert_error, alert_success,
-                    login
                     login
                 };
             }
