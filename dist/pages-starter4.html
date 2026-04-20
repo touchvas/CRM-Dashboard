@@ -66,7 +66,7 @@
                 </a>
 
                 <button type="button" class="btn btn-sm top-icon sidebar-btn" id="sidebar-btn">
-                    <i class="mdi mdi-menu-open align-middle fs-19 d-none d-lg-inline-block"></i>
+                    <i class="mdi mdi-menu align-middle fs-19 d-none d-lg-inline-block"></i>
                     <i class="mdi mdi-menu align-middle fs-24 d-lg-none"></i>
                 </button>
             </div>
@@ -762,18 +762,6 @@
 
         });
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // Close sidebar on mobile when a link is clicked (if it's not a toggle)
-            document.querySelectorAll("#sidebar-menu a:not(.menu-toggle)").forEach(link => {
-                link.addEventListener("click", () => {
-                    if (window.innerWidth < 992) {
-                        document.body.classList.remove("sidebar-enable");
-                    }
-                });
-            });
-        });
-
-
     </script>
 
 
@@ -1030,8 +1018,6 @@
 <script src="assets/js/segmentation.js"></script>
 
 <!-- App js -->
-<script src="assets/js/app.js"></script>
-
 <script src="assets/js/app.js"></script>
 
 </body>

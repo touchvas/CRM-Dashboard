@@ -12,7 +12,6 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-flex px-2 align-items-center justify-content-between">
-                <h4 class="mb-0">Segmentation</h4>
                 <style>
                     .dropdown-item:hover,
                     .dropdown-item:focus {
@@ -50,7 +49,6 @@
 
             <div v-else class="card">
                 <div class="card-header d-flex justify-content-between align-items-center bg-transparent border-bottom">
-                    <h5 class="card-title mb-0">New Segment Definition</h5>
                     <button type="button" class="btn-close" @click="isCreating = false"></button>
                 </div>
                 <div class="card-body">
@@ -74,11 +72,6 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Description</label>
-                        <textarea class="form-control border-dashed" v-model="segmentDescription" rows="2" placeholder="Describe the purpose of this segment..."></textarea>
-                    </div>
-
-                    <div class="mb-4">
                         <label class="form-label font-size-14 fw-semibold text-muted text-uppercase">Logic Pattern</label>
                         <select class="form-select border-dashed w-auto" v-model="criteria.operator">
                             <option value="AND">Match ALL conditions (AND)</option>
@@ -93,11 +86,11 @@
 
                         <div id="rules-container">
                             <!-- Rule Row -->
-                            <div v-for="(condition, index) in criteria.conditions" :key="index" class="row g-3 align-items-end mb-3">
+                            <div v-for="(condition, index) in criteria.conditions" :key="index" class="condition-row row g-3 align-items-end mb-3">
                                 <!-- FIELD -->
-                                <div class="col-md-3">
-                                    <label class="form-label">Field</label>
-                                    <select class="form-select" v-model="condition.metric"
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">User Property</label>
+                                    <select class="form-select border-dashed bg-white" v-model="condition.metric"
                                         @change="condition.operator = ''; condition.value = ''">
                                         <option value="" disabled selected hidden>Select field...</option>
                                         <option v-for="config in availableFields" :key="config.field"
@@ -109,8 +102,8 @@
 
                                 <!-- OPERATOR -->
                                 <div class="col-md-3">
-                                    <label class="form-label">Operator</label>
-                                    <select class="form-select" v-model="condition.operator" :disabled="!condition.metric">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Condition</label>
+                                    <select class="form-select border-dashed bg-white" v-model="condition.operator" :disabled="!condition.metric">
                                         <option value="" disabled selected hidden>Select operator...</option>
                                         <template v-if="condition.metric">
                                             <option v-for="op in (availableFields.find(f => f.field === condition.metric)?.operators || ['eq'])" 
@@ -122,12 +115,12 @@
                                 </div>
 
                                 <!-- VALUE -->
-                                <div class="col-md-5">
-                                    <label class="form-label">Value</label>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Value</label>
 
                                     <!-- ENUM -->
                                     <select v-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.values"
-                                        v-model="condition.value" class="form-select" :disabled="!condition.operator">
+                                        v-model="condition.value" class="form-select border-dashed bg-white" :disabled="!condition.operator">
                                         <option value="" disabled selected hidden>Select value...</option>
                                         <option v-for="val in availableFields.find(f => f.field === condition.metric).values" :key="val"
                                             :value="val">{{ val }}</option>
@@ -135,12 +128,12 @@
 
                                     <!-- NUMBER -->
                                     <input v-else-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.type === 'number'"
-                                        type="number" class="form-control" v-model.number="condition.value"
+                                        type="number" class="form-control border-dashed bg-white" v-model.number="condition.value"
                                         placeholder="Enter number" :disabled="!condition.operator" />
 
                                     <!-- STRING -->
                                     <input v-else-if="condition.metric && availableFields.find(f => f.field === condition.metric)?.type === 'string'"
-                                        type="text" class="form-control" v-model="condition.value" placeholder="Enter text"
+                                        type="text" class="form-control border-dashed bg-white" v-model="condition.value" placeholder="Enter text"
                                         :disabled="!condition.operator" />
 
                                     <!-- DATE -->
