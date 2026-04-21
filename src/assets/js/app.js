@@ -744,7 +744,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const alert_message = ref('');
                 const alert_error = ref(false);
                 const alert_success = ref(false);
-                const baseUrl = 'https://identity.mystake.co.ke';
+                const baseUrl = 'https://identity.gamesapi.dev';
 
                 async function curl(url, data) {
                     const response = await fetch(url, {
@@ -829,5 +829,16 @@ document.addEventListener("DOMContentLoaded", function () {
         loginApp.mount('#loginApp');
         console.log("loginApp mounted successfully.");
     }
+
+    // ─── Global Logout Function ──────────────────────────────────────────────
+    /**
+     * Clears session authentication data and redirects the user to the login page.
+     */
+    window.logout = function () {
+        console.log("Rules Portal: Logging out...");
+        sessionStorage.removeItem('api_key');
+        sessionStorage.removeItem('isLoggedIn');
+        window.location.href = 'auth-login.html';
+    };
 
 }); // end DOMContentLoaded
