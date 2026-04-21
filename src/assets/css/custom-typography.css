@@ -281,52 +281,6 @@ h6,
     overflow: hidden; /* Let SimpleBar handle the scroll */
 }
 
-/* ========================================
-   PROFESSIONAL SEGMENTATION COMPONENTS
-   ======================================== */
-
-.segment-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #fff;
-    position: relative;
-    overflow: hidden;
-}
-
-.segment-card:hover {
-    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
-    border-color: var(--bs-primary);
-    transform: translateY(-2px);
-}
-
-.condition-row {
-    background: #f8fafc;
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    border: 1px solid #edf2f7;
-    transition: border-color 0.2s;
-}
-
-.condition-row:hover {
-    border-color: #cbd5e0;
-}
-
-.segment-summary-text {
-    font-weight: 500;
-    color: #475569;
-    font-size: 1.1rem !important;
-}
-
-.criteria-badge {
-    background: rgba(var(--bs-primary-rgb), 0.1);
-    color: var(--bs-primary);
-    padding: 6px 14px;
-    border-radius: 30px;
-    font-weight: 600;
-}
-
 /* Fix Sidebar positioning to match the larger 85px topbar */
 .vertical-menu {
     top: 85px !important;
@@ -463,81 +417,6 @@ h6,
     color: var(--bs-primary) !important;
 }
 
-/* ========================================
-   PROFESSIONAL SEGMENTATION COMPONENTS
-   ======================================== */
-
-.segment-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    background: #fff;
-}
-
-.segment-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border-color: var(--bs-primary);
-}
-
-.condition-row {
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    border: 1px solid #f1f5f9;
-}
-
-.segment-summary-text {
-    font-weight: 500;
-    color: #475569;
-    font-size: 18px !important;
-}
-
-.criteria-badge {
-    background: #ecfdf5;
-    color: #065f46;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-}
-
-/* ========================================
-   PROFESSIONAL SEGMENTATION COMPONENTS
-   ======================================== */
-
-.segment-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    background: #fff;
-}
-
-.segment-card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border-color: var(--bs-primary);
-}
-
-.condition-row {
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    border: 1px solid #f1f5f9;
-}
-
-.segment-summary-text {
-    font-weight: 500;
-    color: #475569;
-    font-size: 18px !important;
-}
-
-.criteria-badge {
-    background: #ecfdf5;
-    color: #065f46;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-}
 
 /* ========================================
    ALERT IMPROVEMENTS

@@ -1,5 +1,4 @@
 const browsersync = require('browser-sync').create();
-const cached = require('gulp-cached');
 const cssnano = require('gulp-cssnano');
 const del = require('del');
 const fileinclude = require('gulp-file-include');
@@ -116,28 +115,20 @@ gulp.task('jsPages', function () {
 });
 
 gulp.task('scss', function () {
-  // Sass compiler options to reduce deprecation warnings
   const sassOptions = {
-    quietDeps: true, // Suppress deprecation warnings from dependencies (like Bootstrap)
+    quietDeps: true,
     silenceDeprecations: ['legacy-js-api', 'import', 'if-function', 'global-builtin', 'color-functions']
   };
 
-  // generate ltr  
+  // generate ltr
   gulp
     .src(paths.src.scss.main)
     .pipe(sourcemaps.init())
     .pipe(sass(sassOptions).on('error', sass.logError))
-    .pipe(
-      autoprefixer()
-    )
+    .pipe(autoprefixer())
     .pipe(gulp.dest(paths.dist.css.dir))
     .pipe(cleanCSS())
-    .pipe(
-      rename({
-        // 
-        suffix: ".min"
-      })
-    )
+    .pipe(rename({ suffix: ".min" }))
     .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest(paths.dist.css.dir));
 
@@ -146,23 +137,15 @@ gulp.task('scss', function () {
     .src(paths.src.scss.main)
     .pipe(sourcemaps.init())
     .pipe(sass(sassOptions).on('error', sass.logError))
-    .pipe(
-      autoprefixer()
-    )
+    .pipe(autoprefixer())
     .pipe(rtlcss())
     .pipe(gulp.dest(paths.dist.css.dir))
-    // .pipe(cleanCSS())
-    .pipe(
-      rename({
-        // 
-        suffix: "-rtl.min"
-      })
-    )
+    .pipe(rename({ suffix: "-rtl.min" }))
     .pipe(sourcemaps.write("./"))
     .pipe(gulp.dest(paths.dist.css.dir));
 });
 
-gulp.task('fileinclude', function (callback) {
+gulp.task('fileinclude', function () {
   return gulp
     .src([
       paths.src.html.files,
@@ -174,7 +157,6 @@ gulp.task('fileinclude', function (callback) {
       basepath: '@file',
       indent: true,
     }))
-    .pipe(cached())
     .pipe(gulp.dest(paths.dist.base.dir));
 });
 
@@ -224,14 +206,11 @@ gulp.task('html', function () {
     .pipe(replace(/href="(.{0,10})node_modules/g, 'href="$1assets/libs'))
     .pipe(replace(/src="(.{0,10})node_modules/g, 'src="$1assets/libs'))
     .pipe(useref())
-    .pipe(cached())
     .pipe(gulpif('*.js', uglify()))
     .pipe(gulpif('*.css', cssnano({ svgo: false })))
     .pipe(gulp.dest(paths.dist.base.dir));
 });
 
-// gulp.task('build', gulp.series(gulp.parallel('clean:tmp', 'clean:packageLock', 'clean:dist', 'copy:all', 'copy:libs'), 'scss', 'html'));
 gulp.task('build', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'copy:libs'), 'scss', 'html'));
 
-// gulp.task('default', gulp.series(gulp.parallel('fileinclude', 'scss'), gulp.parallel('browsersync', 'watch')));
 gulp.task('default', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'copy:libs', 'fileinclude', 'scss', 'js', 'jsPages', 'html'), gulp.parallel('browsersync', 'watch')));

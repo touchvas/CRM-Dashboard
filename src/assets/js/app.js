@@ -1,4 +1,4 @@
-console.log("Rules Portal: app.js module loading started...");
+console.log("Rules Portal: app.js module loading started... [Build Version: 1.2.4]");
 
 // Destructure Vue globals (loaded via CDN in HTML)
 const { createApp, ref, computed, onMounted, reactive } = Vue;
@@ -463,6 +463,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 rule, criteria, segmentName, segmentDescription, refreshType,
                 availableFields: filterSchema, filteredContacts, segments, isCreating, isPreviewing,
                 addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating, runPreview,
+                getFieldLabel, getOperatorLabel, getSegmentSummary
             };
         }
     });
