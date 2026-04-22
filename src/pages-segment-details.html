@@ -1,0 +1,613 @@
+@@include("partials/main.html")
+
+<head>
+    @@include("partials/title-meta.html", {"title": "Segment Details"})
+    @@include("partials/head-css.html")
+
+    <style>
+        /* ── Performance Trends Card ─────────────────────────── */
+        .perf-card {
+            position: relative;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: visible;
+            /* lets KPI cards float above */
+            background: #fff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .perf-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ── KPI strip that sits ON TOP of the card ───────────── */
+        .kpi-strip {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 12px;
+            padding: 12px 24px 0 24px;
+            flex-wrap: wrap;
+        }
+
+        .kpi-mini {
+            flex: 1 1 0;
+            min-width: 140px;
+            max-width: none;
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 16px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .kpi-mini:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            border-color: var(--bs-primary, #4e7adf);
+            transform: translateY(-2px);
+        }
+
+        .kpi-mini-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .kpi-mini-body {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .kpi-mini-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .kpi-mini-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #111827;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+
+        .kpi-mini-sub {
+            font-size: 11px;
+            color: #10b981;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        /* ── Chart + Controls row ─────────────────────────────── */
+        .perf-body {
+            display: flex;
+            align-items: stretch;
+            padding: 8px 0 8px 0;
+            gap: 0;
+        }
+
+        /* Chart takes 75% */
+        .perf-chart-wrap {
+            flex: 0 0 75%;
+            max-width: 80%;
+            padding: 0 0 10px 16px;
+            min-width: 0;
+        }
+
+        /* Right panel takes remaining 25% */
+        .perf-controls {
+            flex: 0 0 25%;
+            max-width: 20%;
+            padding: 8px 24px 12px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .perf-controls-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .perf-controls-sub {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .perf-controls-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        /* Field toggle rows */
+        .field-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .field-toggle-row:hover {
+            background: #f3f4f6;
+        }
+
+        .field-toggle-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: var(--field-color, #6366f1);
+        }
+
+        .field-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .field-toggle-label {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        /* Dark mode support */
+        [data-bs-theme="dark"] .perf-card {
+            background: #1e2330;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+            border-color: #374151;
+        }
+
+        [data-bs-theme="dark"] .kpi-mini {
+            background: #262d3f;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+            border-color: #374151;
+        }
+
+        [data-bs-theme="dark"] .kpi-mini-value {
+            color: #f9fafb;
+        }
+
+        [data-bs-theme="dark"] .kpi-mini-label {
+            color: #9ca3af;
+        }
+
+        [data-bs-theme="dark"] .perf-controls {
+            border-left-color: #374151;
+        }
+
+        [data-bs-theme="dark"] .perf-controls-title {
+            color: #f9fafb;
+        }
+
+        [data-bs-theme="dark"] .field-toggle-row:hover {
+            background: #2d3748;
+        }
+
+        [data-bs-theme="dark"] .field-toggle-label {
+            color: #d1d5db;
+        }
+
+        /* ========================================
+           RESPONSIVE SEGMENT DETAILS
+           ======================================== */
+
+        /* Mobile (max-width: 767px) */
+        @media (max-width: 767px) {
+            .kpi-mini {
+                flex: 0 1 calc(50% - 6px);
+                min-width: 120px;
+            }
+
+            .kpi-strip {
+                padding: 16px 16px 0 16px;
+                gap: 10px;
+            }
+
+            .perf-body {
+                flex-direction: column;
+                padding: 12px 0 8px 0;
+            }
+
+            .perf-chart-wrap {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0 0 8px 0;
+            }
+
+            .perf-controls {
+                flex: 0 0 auto;
+                max-width: 100%;
+                padding: 12px 16px;
+                border-left: none;
+                border-top: 1px solid #e5e7eb;
+                margin-top: 8px;
+            }
+
+            .perf-card {
+                margin-bottom: 16px;
+            }
+        }
+
+        /* Tablet (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .kpi-mini {
+                flex: 0 1 calc(50% - 6px);
+            }
+
+            .perf-chart-wrap {
+                flex: 0 0 70%;
+                max-width: 70%;
+            }
+
+            .perf-controls {
+                flex: 0 0 30%;
+                max-width: 30%;
+                padding: 8px 16px 12px 16px;
+            }
+        }
+
+        /* Responsive font sizing for zoom levels */
+        @media (max-width: 480px) {
+            .kpi-mini-value {
+                font-size: 16px;
+            }
+
+            .kpi-mini-label {
+                font-size: 10px;
+            }
+
+            .perf-controls-title {
+                font-size: 13px;
+            }
+
+            .field-toggle-label {
+                font-size: 12px;
+            }
+        }
+
+        /* ── xxl: stretch perf-card to fill main column so both columns bottom-align ── */
+        @media (min-width: 1400px) {
+            .main-analytics-col {
+                display: flex;
+                flex-direction: column;
+            }
+            .main-analytics-col .perf-card {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 0; /* row g-3 gap handles spacing */
+            }
+            .main-analytics-col .perf-card .perf-body {
+                flex: 1 1 auto;
+            }
+            .main-analytics-col .perf-card .perf-chart-wrap {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+            }
+            .main-analytics-col .perf-card .perf-chart-wrap #segmentTrendChart {
+                flex: 1;
+                min-height: 280px;
+                max-height: 280px; /* Reduced to tighten the main performance card */
+            }
+        }
+    </style>
+</head>
+
+@@include("partials/body.html")
+
+<!-- Begin page -->
+<div id="layout-wrapper">
+
+    @@include("partials/menu.html")
+
+    <div class="main-content" id="segmentViewApp">
+        <div class="page-content">
+            <div class="container-fluid" v-if="segmentData">
+
+                <!-- Page Header -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm me-3">
+                                    <span class="avatar-title rounded-circle bg-soft-warning text-warning fs-20">
+                                        <i class="mdi mdi-crown-outline" v-if="segmentData.id === 'seg1'"></i>
+                                        <i class="mdi mdi-account-group" v-else></i>
+                                    </span>
+                                </div>
+                                <div>
+                                    <h4 class="mb-1">{{ segmentData.name }}</h4>
+                                    <p class="text-muted mb-0">{{ segmentData.description }}</p>
+                                </div>
+                            </div>
+                            <div class="page-title-right">
+                                <a href="pages-saved-segments.html" class="btn btn-outline-secondary btn-sm">
+                                    <i class="mdi mdi-arrow-left me-1"></i>Back to Segments
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <!-- ─── Main Analytics Column (3/4 only when Zoomed Out / XXL) ─── -->
+                    <div class="col-12 col-xxl-8 main-analytics-col">
+
+                        <!-- Performance Trends Card -->
+                        <div class="perf-card">
+                            <div class="card-header bg-transparent border-bottom py-2 ps-4">
+                                <h5 class="card-title mb-0">Performance Trends</h5>
+                            </div>
+                            <div class="kpi-strip">
+                                <!-- Total Players -->
+                                <div class="kpi-mini">
+                                    <div class="kpi-mini-icon bg-primary-subtle">
+                                        <i class="mdi mdi-account-group text-primary"></i>
+                                    </div>
+                                    <div class="kpi-mini-body">
+                                        <span class="kpi-mini-label">Players</span>
+                                        <span class="kpi-mini-value">{{ segmentData.total_players }}</span>
+                                        <span class="kpi-mini-sub"><i class="mdi mdi-circle text-success"
+                                                style="font-size:8px"></i> {{ segmentData.active_players }}
+                                            active</span>
+                                    </div>
+                                </div>
+                                <!-- Total Deposits -->
+                                <div class="kpi-mini">
+                                    <div class="kpi-mini-icon bg-info-subtle">
+                                        <i class="mdi mdi-cash-multiple text-info"></i>
+                                    </div>
+                                    <div class="kpi-mini-body">
+                                        <span class="kpi-mini-label">Deposits</span>
+                                        <span class="kpi-mini-value">KES {{ fmtShort(segmentData.total_deposits)
+                                            }}</span>
+                                        <span class="kpi-mini-sub text-muted">Lifetime</span>
+                                    </div>
+                                </div>
+                                <!-- Total Bets -->
+                                <div class="kpi-mini">
+                                    <div class="kpi-mini-icon bg-warning-subtle">
+                                        <i class="mdi mdi-dice-multiple text-warning"></i>
+                                    </div>
+                                    <div class="kpi-mini-body">
+                                        <span class="kpi-mini-label">Total Bets</span>
+                                        <span class="kpi-mini-value">KES {{ fmtShort(segmentData.total_bets) }}</span>
+                                        <span class="kpi-mini-sub text-muted">Stake vol.</span>
+                                    </div>
+                                </div>
+                                <!-- Withdrawals -->
+                                <div class="kpi-mini">
+                                    <div class="kpi-mini-icon bg-danger-subtle">
+                                        <i class="mdi mdi-cash-remove text-danger"></i>
+                                    </div>
+                                    <div class="kpi-mini-body">
+                                        <span class="kpi-mini-label">Withdrawals</span>
+                                        <span class="kpi-mini-value">KES {{ fmtShort(segmentData.total_withdrawals)
+                                            }}</span>
+                                        <span class="kpi-mini-sub text-danger">Outflow</span>
+                                    </div>
+                                </div>
+
+                            </div><!-- /kpi-strip -->
+
+
+                            <div class="perf-body">
+                                <div class="perf-chart-wrap">
+                                    <div id="segmentTrendChart" class="apex-charts"></div>
+                                </div>
+                                <div class="perf-controls">
+                                    <div class="perf-controls-title">Chart Fields</div>
+                                    <div class="perf-controls-sub">Toggle series display</div>
+                                    <label class="field-toggle-row" v-for="field in chartFields" :key="field.key">
+                                        <input class="form-check-input m-0" type="checkbox" v-model="activeFields"
+                                            :value="field.key" :style="{ accentColor: field.color }">
+                                        <span class="field-dot" :style="{ background: field.color }"></span>
+                                        <span class="field-toggle-label">{{ field.label }}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div><!-- /perf-card -->
+
+                        <!-- Segment Analytics Metrics Row -->
+                        <div class="row g-2 mt-2 mb-3">
+                            <div class="col-md-4">
+                                <div class="card border-0 h-100 bg-danger-subtle bg-opacity-10">
+                                    <div class="card-body p-4">
+                                        <p class="text-muted small text-uppercase mb-1 fw-semibold">Growth Rate</p>
+                                        <h4 class="mb-0 text-danger">{{ growthRate }}% <i
+                                                :class="growthRate >= 0 ? 'mdi mdi-trending-up' : 'mdi mdi-trending-down'"
+                                                class="ms-1"></i></h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 h-100 bg-info-subtle bg-opacity-10">
+                                    <div class="card-body p-4">
+                                        <p class="text-muted small text-uppercase mb-1 fw-semibold">Projected Value</p>
+                                        <h4 class="mb-0 text-info">KES {{ fmtShort(projectedValue) }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card border-0 h-100 bg-warning-subtle bg-opacity-10">
+                                    <div class="card-body p-4">
+                                        <p class="text-muted small text-uppercase mb-1 fw-semibold">NGGR</p>
+                                        <h4 class="mb-0 text-warning">KES {{ fmtShort(nggr) }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Casino Game Distribution (Moved to main column) -->
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-header bg-transparent border-bottom py-2">
+                                <h6 class="mb-0">Casino Distribution (Stake Volume)</h6>
+                            </div>
+                            <div class="card-body p-3" style="min-height: 260px;">
+                                <div id="casinoGamesChart" class="apex-charts"></div>
+                            </div>
+                        </div>
+                    </div> <!-- /col-xxl-9 -->
+
+                    <!-- ─── Sidebar Analytics Column (1/4 only when Zoomed Out / XXL) ─── -->
+                    <div class="col-12 col-xxl-4">
+                        <div class="row g-3">
+                            <!-- Sales Analytics -->
+                            <div class="col-md-6 col-xxl-12">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-transparent border-bottom py-2">
+                                        <h6 class="mb-0">Sales Analytics</h6>
+                                    </div>
+                                    <div class="card-body p-3" style="min-height: 240px;">
+                                        <div id="salesAnalyticsChart" class="apex-charts"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Monthly Cash Flow -->
+                            <div class="col-md-6 col-xxl-12">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-transparent border-bottom py-2">
+                                        <h6 class="mb-0">Monthly Cash Flow</h6>
+                                    </div>
+                                    <div class="card-body p-3" style="min-height: 220px;">
+                                        <div id="monthlyCashFlowChart" class="apex-charts"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Player Engagement -->
+                            <div class="col-md-6 col-xxl-12">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-transparent border-bottom py-2">
+                                        <h6 class="mb-0">Engagement Status</h6>
+                                    </div>
+                                    <div class="card-body p-3" style="min-height: 220px;">
+                                        <div id="playerStatusChart" class="apex-charts"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /nested row -->
+                    </div> <!-- /col-xxl-3 -->
+                </div> <!-- /row g-3 (Layout Wrapper) -->
+
+                <!-- Player Table (Moved out of grid to spread full width) -->
+                <div class="row g-3 mt-1">
+                    <div class="col-12">
+                        <div class="card border-dashed">
+                            <div
+                                class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Segment Players</h5>
+                                <div class="hstack gap-2">
+                                    <input type="text" v-model="search"
+                                        class="form-control form-control-sm border-dashed" placeholder="Search..."
+                                        style="width: 160px;">
+                                    <select v-model="statusFilter" class="form-select form-select-sm border-dashed"
+                                        style="width: 110px;">
+                                        <option value="all">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="dormant">Dormant</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-centered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th @click="handleSort('name')" style="cursor:pointer">Name <i
+                                                        class="mdi mdi-sort ms-1 small"></i></th>
+                                                <th>Email</th>
+                                                <th>Country</th>
+                                                <th>Status</th>
+                                                <th @click="handleSort('total_deposits')" style="cursor:pointer">Total
+                                                    Deposits <i class="mdi mdi-sort ms-1 small"></i></th>
+                                                <th>Registered</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="p in filteredPlayers" :key="p.id">
+                                                <td class="fw-bold">{{ p.name }}</td>
+                                                <td>{{ p.email }}</td>
+                                                <td>{{ p.country }}</td>
+                                                <td><span class="badge"
+                                                        :class="p.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">{{
+                                                        p.status.toUpperCase() }}</span></td>
+                                                <td>KES {{ (p.total_deposits || p.lifetime_deposits ||
+                                                    0).toLocaleString() }}</td>
+                                                <td>{{ p.registered_at }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div><!-- /v-if="segmentData" -->
+
+            <!-- Loading / Error States -->
+            <div class="container-fluid text-center py-5" v-else>
+                <div v-if="isLoading" class="spinner-border text-primary" role="status"></div>
+                <div v-else>
+                    <i class="mdi mdi-alert-circle-outline font-size-48 text-danger mb-3"></i>
+                    <h5>Segment Not Found</h5>
+                    <p>The requested segment ID does not exist in our data.</p>
+                    <a href="pages-saved-segments.html" class="btn btn-primary mt-2">Back to Segments</a>
+                </div>
+            </div>
+
+        </div>
+        @@include("partials/footer.html")
+    </div>
+</div>
+
+@@include("partials/vendor-scripts.html")
+<script src="assets/js/dummydata.js"></script>
+<script src="assets/js/segdummy.js"></script>
+</body>
+
+</html>

@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            // Close sidebar on mobile when a navigation link is clicked
             $('#sidebar-menu a').off('click').on('click', function () {
                 if ($(window).width() < 992 && !$(this).hasClass('menu-toggle') && !$(this).hasClass('has-arrow')) {
                     $('body').removeClass('sidebar-enable');
@@ -54,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (this.href == pageUrl) {
                     $(this).addClass("active");
                     $(this).parent().addClass("mm-active");
-                    $(this).parents('ul').each(function() {
+                    $(this).parents('ul').each(function () {
                         $(this).addClass("mm-show").parent().addClass("mm-active");
                     });
                     $(this).parents('li').addClass("mm-active");
@@ -261,221 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
     })(jQuery);
 
 
-    // ─── Segment / Create App ─────────────────────────────────────────────────
-    const app = createApp({
-        setup() {
-            const rule = ref({
-                field: '',
-                operator: '',
-                value: ''
-            });
-
-            const criteria = ref({
-                operator: 'AND',
-                conditions: [
-                    { metric: '', operator: 'eq', value: '' }
-                ]
-            });
-
-            const segmentName = ref('');
-            const segmentDescription = ref('');
-            const refreshType = ref('REAL_TIME');
-            const allContacts = ref([]);
-            const segments = ref([]);
-            const filterSchema = ref([]);
-            const isCreating = ref(false);
-
-            const startCreating = () => {
-                isCreating.value = true;
-                if (filterSchema.value.length === 0) loadSchema();
-            };
-
-            const loadSchema = async () => {
-                try {
-                    console.log("Segmentation: Fetching schema...");
-                    const response = await window.fetchAnalyticsSchema();
-                    const fields = [];
-                    const formatLabel = (str) => str.replace(/([A-Z])/g, ' $1').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()).trim();
-
-                    // Handle standard JSON response if available
-                    if (response?.dimensions || response?.metrics) {
-                        (response.dimensions || []).forEach(d => {
-                            fields.push({ field: d, label: formatLabel(d), type: 'string', operators: ['eq', 'ne', 'contains'] });
-                        });
-                        (response.metrics || []).forEach(m => {
-                            fields.push({ field: m, label: formatLabel(m), type: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte'] });
-                        });
-                    } 
-                    else {
-                        // Fallback: Parse the legacy string format "{[dims] [metrics] [times]}"
-                        const rawData = typeof response?.data === 'string' ? response.data : JSON.stringify(response);
-                        const matches = Array.from(rawData.matchAll(/\[(.*?)\]/g));
-
-                        if (matches.length >= 1) {
-                            // Group 1: Dimensions
-                            matches[0][1].split(' ').filter(s => s).forEach(d => {
-                                fields.push({ field: d, label: formatLabel(d), type: 'string', operators: ['eq', 'ne', 'contains'] });
-                            });
-                        }
-                        if (matches.length >= 2) {
-                            // Group 2: Metrics
-                            matches[1][1].split(' ').filter(s => s).forEach(m => {
-                                fields.push({ field: m, label: formatLabel(m), type: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte'] });
-                            });
-                        }
-                        if (matches.length >= 3) {
-                            // Group 3: Timestamps
-                            matches[2][1].split(' ').filter(s => s).forEach(t => {
-                                fields.push({ field: t, label: formatLabel(t), type: 'date', operators: ['before', 'after'] });
-                            });
-                        }
-                    }
-
-                    filterSchema.value = fields;
-                    console.log("Segmentation: Schema processed successfully.");
-                } catch (error) {
-                    console.error("Segmentation: Error parsing schema:", error);
-                }
-            };
-
-            const loadSegments = async () => {
-                try {
-                    const res = await window.fetchSegments();
-                    segments.value = res?.data || res || [];
-                } catch (error) {
-                    console.error("Failed to load segments:", error);
-                    segments.value = JSON.parse(localStorage.getItem('segments') || '[]');
-                }
-            };
-
-            onMounted(() => {
-                loadSchema();
-                loadSegments();
-            });
-
-             const isPreviewing = ref(false);
-            const filteredContacts = ref([]);
-
-            const runPreview = async () => {
-                if (criteria.value.conditions.length === 0 || !criteria.value.conditions[0].metric) return;
-
-                isPreviewing.value = true;
-                try {
-                    const queryData = {
-                        measure: "count",
-                        measure_field: "profileId",
-                        filters: criteria.value.conditions.map(c => ({
-                            field: c.metric,
-                            operator: c.operator,
-                            value: c.value
-                        })),
-                        operator: criteria.value.operator
-                    };
-
-                    const result = await window.executeAnalyticsQuery(queryData);
-                    const data = result?.data || result || [];
-                    filteredContacts.value = Array.isArray(data) ? data : [];
-                    console.log("Preview results:", result);
-                } catch (error) {
-                    console.error("Preview failed:", error);
-                } finally {
-                    isPreviewing.value = false;
-                }
-            };
-
-            const addCondition = () => {
-                criteria.value.conditions.push({ metric: '', operator: 'eq', value: '' });
-            };
-
-            const removeCondition = (index) => {
-                if (criteria.value.conditions.length > 1) {
-                    criteria.value.conditions.splice(index, 1);
-                }
-            };
-
-            async function saveCurrentSegment(name) {
-                if (!name) {
-                    alert('Please enter a segment name.');
-                    return;
-                }
-                try {
-                    const result = await createSegment(
-                        name,
-                        segmentDescription.value,
-                        refreshType.value,
-                        criteria.value
-                    );
-                    console.log("Segment created successfully:", result);
-                    await loadSegments();
-                    segmentName.value = '';
-                    segmentDescription.value = '';
-                    isCreating.value = false;
-                    alert(`Segment "${name}" successfully created and synchronized!`);
-                } catch (error) {
-                    alert("Failed to create segment. Please check the console for details.");
-                }
-            }
-
-            function loadSegment(segment) {
-                segmentName.value = segment.name;
-                rule.value.field = segment.rules[0].field;
-                rule.value.operator = segment.rules[0].operator;
-                rule.value.value = segment.rules[0].value;
-                if (segment.criteria) {
-                    criteria.value = JSON.parse(JSON.stringify(segment.criteria));
-                }
-            }
-
-            // Professional formatting helpers
-            const getFieldLabel = (field) => {
-                const f = filterSchema.value.find(i => i.field === field);
-                return f ? f.label : field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-            };
-
-            const getOperatorLabel = (op) => {
-                const ops = {
-                    'eq': 'is',
-                    'ne': 'is not',
-                    'gt': 'is greater than',
-                    'lt': 'is less than',
-                    'gte': 'is at least',
-                    'lte': 'is at most',
-                    'contains': 'contains',
-                    'before': 'is before',
-                    'after': 'is after'
-                };
-                return ops[op] || op;
-            };
-
-            const getSegmentSummary = (seg) => {
-                const conditions = seg.criteria?.conditions || seg.conditions || [];
-                if (conditions.length === 0) return "No rules defined";
-
-                const c = conditions[0];
-                if (!c.metric) return "New Segment";
-
-                const base = `${getFieldLabel(c.metric)} ${getOperatorLabel(c.operator)} ${c.value}`;
-                const count = conditions.length - 1;
-                return count > 0 ? `${base} (and ${count} other rules)` : base;
-            };
-
-            return {
-                rule, criteria, segmentName, segmentDescription, refreshType,
-                availableFields: filterSchema, filteredContacts, segments, isCreating, isPreviewing,
-                addCondition, removeCondition, saveCurrentSegment, loadSegment, startCreating, runPreview,
-                getFieldLabel, getOperatorLabel, getSegmentSummary
-            };
-        }
-    });
-
-    // Mount to whichever element exists first (Vue apps can only mount once)
-    const mountEl = document.getElementById('createSegmentApp') || document.getElementById('app');
-    if (mountEl) {
-        app.mount(mountEl);
-        console.log(`Segmentation App mounted to #${mountEl.id}`);
-    }
-
-
     // ─── Saved Segments App ───────────────────────────────────────────────────
     const savedSegmentsApp = createApp({
         setup() {
@@ -485,10 +269,39 @@ document.addEventListener("DOMContentLoaded", function () {
             const filteredContacts = ref([]);
             const isPreviewLoading = ref(false);
 
+            const isCreating = ref(false);
+            const filterSchema = ref([]);
+            const segmentName = ref('');
+            const segmentDescription = ref('');
+            const refreshType = ref('REAL_TIME');
+            const criteria = ref({
+                operator: 'AND',
+                rules: [{ field: '', operator: 'eq', value: '' }]
+            });
+
+            const showInitialCreateButton = computed(() => segments.value.length === 0 && !isCreating.value && !isLoading.value);
+            const previewContacts = computed(() => filteredContacts.value.slice(0, 5));
+
+            const goToDetails = (segment) => {
+                const id = segment.id || segment.name;
+                window.location.href = `pages-segment-details.html?id=${id}`;
+            };
+
+            const loadSchema = async () => {
+                try {
+                    filterSchema.value = window.getProcessedFilterSchema();
+                } catch (e) { console.error("Schema fetch failed", e); }
+            };
+
+            const startCreating = async () => {
+                isCreating.value = true;
+                if (filterSchema.value.length === 0) await loadSchema();
+            };
+
             const loadSavedSegments = async () => {
                 isLoading.value = true;
                 try {
-                    const res = await window.fetchSegments();
+                    const res = await window.fetchSegmentsDummy();
                     segments.value = res?.data || res || [];
                 } catch (error) {
                     console.error("Error loading saved segments:", error);
@@ -498,72 +311,65 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
 
-            onMounted(loadSavedSegments);
+            const addCondition = () => criteria.value.rules.push({ field: '', operator: 'eq', value: '' });
+            const removeCondition = (idx) => { if (criteria.value.rules.length > 1) criteria.value.rules.splice(idx, 1); };
+
+            const saveCurrentSegment = async () => {
+                if (!segmentName.value) { alert('Name required'); return; }
+                try {
+                    isLoading.value = true;
+                    await window.createSegmentDummy(segmentName.value, segmentDescription.value, refreshType.value, {
+                        operator: criteria.value.operator,
+                        rules: criteria.value.rules.map(r => ({ field: r.field, operator: r.operator, value: r.value }))
+                    });
+                    isCreating.value = false;
+                    segmentName.value = '';
+                    await loadSavedSegments();
+                } catch (e) { alert("Save failed"); } finally { isLoading.value = false; }
+            };
+
+            onMounted(async () => {
+                await loadSavedSegments();
+            });
 
             async function viewSegment(segment) {
-                if (selectedSegment.value && selectedSegment.value.name === segment.name) {
+                if (isCreating.value) return;
+                const isAlreadySelected = selectedSegment.value &&
+                    (selectedSegment.value.id === segment.id || selectedSegment.value.name === segment.name);
+                if (isAlreadySelected) {
                     selectedSegment.value = null;
                     filteredContacts.value = [];
                 } else {
                     selectedSegment.value = segment;
-                    await runPreview(segment);
+                    filteredContacts.value = [];
+                    isPreviewLoading.value = true;
+                    try {
+                        filteredContacts.value = await window.getPlayersForSegment(segment);
+                    } catch (e) {
+                        console.error("Preview resolution failed", e);
+                    } finally {
+                        isPreviewLoading.value = false;
+                    }
                 }
             }
 
-            async function runPreview(segment) {
-                if (!segment.criteria || !segment.criteria.conditions) return;
-
-                isPreviewLoading.value = true;
-                try {
-                    const queryData = {
-                        measure: "count",
-                        measure_field: "profileId",
-                        filters: segment.criteria.conditions.map(c => ({
-                            field: c.metric,
-                            operator: c.operator,
-                            value: c.value
-                        })),
-                        operator: segment.criteria.operator || 'AND'
-                    };
-
-                    const result = await window.executeAnalyticsQuery(queryData);
-                    const data = result?.data || result || [];
-                    filteredContacts.value = Array.isArray(data) ? data : [];
-                } catch (error) {
-                    console.error("Preview failed for saved segment:", error);
-                } finally {
-                    isPreviewLoading.value = false;
-                }
-            }
-
-            const getFieldLabel = (field) => {
-                return field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            const fmtShort = (n) => {
+                if (!n) return '0';
+                if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+                if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
+                return String(n);
             };
 
-            const getOperatorLabel = (op) => {
-                const ops = {
-                    'eq': 'is',
-                    'ne': 'is not',
-                    'gt': '>',
-                    'lt': '<',
-                    'gte': '≥',
-                    'lte': '≤',
-                    'contains': 'contains'
-                };
-                return ops[op] || op;
+            return {
+                segments, selectedSegment, isLoading, filteredContacts, isPreviewLoading,
+                viewSegment,
+                getSegmentSummary: window.getSegmentSummary,
+                isCreating, startCreating, showInitialCreateButton,
+                segmentName, segmentDescription, refreshType, criteria, filterSchema,
+                addCondition, removeCondition, saveCurrentSegment, previewContacts, goToDetails,
+                getFieldLabel: window.getFieldLabel,
+                getOperatorLabel: window.getOperatorLabel
             };
-
-            const getSegmentSummary = (seg) => {
-                const conditions = seg.criteria?.conditions || [];
-                if (conditions.length === 0) return "No rules defined";
-
-                const c = conditions[0];
-                const base = `${getFieldLabel(c.metric)} ${getOperatorLabel(c.operator)} ${c.value}`;
-                const remaining = conditions.length - 1;
-                return remaining > 0 ? `${base} (+${remaining} more)` : base;
-            };
-
-            return { segments, selectedSegment, isLoading, filteredContacts, isPreviewLoading, viewSegment, getSegmentSummary };
         }
     });
 
@@ -576,55 +382,581 @@ document.addEventListener("DOMContentLoaded", function () {
     // ─── Segment View App ─────────────────────────────────────────────────────
     const segmentViewApp = createApp({
         setup() {
-            const segmentData = ref({});
+            const segmentData = ref(null);
+            const isLoading = ref(true);
+            const search = ref('');
+            const statusFilter = ref('all');
+            const sort = reactive({ key: 'total_deposits', dir: 'desc' });
+
+            // ── Chart field definitions (colours drive both the chart lines and the right-panel dots) ──
+            const chartFields = [
+                { key: 'deposits', label: 'Deposits', color: '#4e7adf' },
+                { key: 'stake', label: 'Stake', color: '#ffd166' },
+                { key: 'withdrawals', label: 'Withdrawals', color: '#38c66c' },
+                { key: 'bets', label: 'Bet Count', color: '#f76b6b' },
+                { key: 'players', label: 'Active Players', color: '#a78bfa' },
+            ];
+            const activeFields = ref(['deposits', 'stake', 'withdrawals', 'bets', 'players']);
+
+            // Chart instance refs — kept so we can destroy before re-render
+            let chartInstance = null;
+            let salesChartInstance = null;
+            let cashFlowChartInstance = null;
+            let statusChartInstance = null;
+            let casinoChartInstance = null;
 
             const urlParams = new URLSearchParams(window.location.search);
-            const segmentName = urlParams.get('name');
+            const segmentId = urlParams.get('id');
 
-            onMounted(async () => {
-                if (segmentName) {
-                    try {
-                        const res = await window.fetchSegments();
-                        const segmentsList = res?.data || res || [];
-                        const found = segmentsList.find(s => s.name === segmentName);
-                        if (found) {
-                            segmentData.value = found;
-                            return;
-                        }
-                    } catch (e) { console.error("API fetch failed, checking local storage"); }
+            // ── Shared formatter ─────────────────────────────────────────────
+            const fmtShort = (n) => {
+                if (!n && n !== 0) return '0';
+                if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+                if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
+                return String(n);
+            };
 
-                    const localSegments = JSON.parse(localStorage.getItem('segments') || '[]');
-                    const foundLocal = localSegments.find(s => s.name === segmentName);
-                    if (foundLocal) segmentData.value = foundLocal;
-                }
+            // ── Computed ─────────────────────────────────────────────────────
+            const filteredPlayers = computed(() => {
+                if (!segmentData.value?.players) return [];
+                return segmentData.value.players
+                    .filter(p => {
+                        const matchStatus = statusFilter.value === 'all' || p.status === statusFilter.value;
+                        const q = search.value.toLowerCase();
+                        const matchSearch = p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q);
+                        return matchStatus && matchSearch;
+                    })
+                    .sort((a, b) => {
+                        const [va, vb] = [a[sort.key], b[sort.key]];
+                        const dir = sort.dir === 'asc' ? 1 : -1;
+                        return (va < vb ? -1 : va > vb ? 1 : 0) * dir;
+                    });
             });
 
-            function getFieldLabel(field) {
-                const fieldConfig = (window.filterSchema || []).find(f => f.field === field);
-                return fieldConfig ? fieldConfig.label : field;
-            }
+            const growthRate = computed(() => {
+                const trend = segmentData.value?.monthly_trend;
+                if (!trend || trend.length < 2) return 0;
+                const last = trend[trend.length - 1].deposits;
+                const prev = trend[trend.length - 2].deposits;
+                if (!prev) return 0;
+                return (((last - prev) / prev) * 100).toFixed(1);
+            });
 
-            function getOperatorLabel(operator) {
-                const operators = {
-                    'equals': 'Equals',
-                    'contains': 'Contains',
-                    'gte': 'Greater than or equal to',
-                    'lte': 'Less than or equal to'
+            const projectedValue = computed(() => {
+                if (!segmentData.value?.total_players) return 0;
+                const avg = segmentData.value.total_deposits / segmentData.value.total_players / 6;
+                return Math.round(avg * 12 * segmentData.value.total_players);
+            });
+
+            const nggr = computed(() => {
+                if (!segmentData.value) return 0;
+                return segmentData.value.total_bets - segmentData.value.total_withdrawals;
+            });
+
+            // ── 1. Performance Trends — Area chart ───────────────────────────
+            const initChart = () => {
+                const el = document.querySelector('#segmentTrendChart');
+                if (!el || !segmentData.value) return;
+
+                const trend = segmentData.value.monthly_trend || [];
+                const categories = trend.map(d => d.month);
+
+                const buildSeries = () =>
+                    chartFields // Ensure only active fields are included in the series
+                        .filter(f => activeFields.value.includes(f.key))
+                        .map(f => ({
+                            name: f.label,
+                            data: trend.map(d => d[f.key] ?? 0),
+                            yaxisIndex: (f.key === 'bets' || f.key === 'players') ? 1 : 0, // Assign to appropriate Y-axis
+                        }));
+
+                const activeColors = () =>
+                    chartFields.filter(f => activeFields.value.includes(f.key)).map(f => f.color);
+
+                const options = {
+                    series: buildSeries(),
+                    chart: {
+                        height: 260,
+                        type: 'area',
+                        toolbar: { show: false },
+                        animations: { enabled: true, speed: 400 },
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: '#475569',
+                    },
+                    colors: activeColors(),
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
+                    markers: {
+                        strokeWidth: 2,
+                        hover: { size: 6 }
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 90, 100] },
+                    },
+                    xaxis: {
+                        categories,
+                        axisTicks: { show: false },
+                        labels: { style: { fontSize: '13px', fontWeight: 500, colors: '#6b7280' } },
+                    },
+                    yaxis: [
+                        {
+                            title: { text: 'Value (KES)', style: { fontSize: '12px', color: '#475569', fontWeight: 600 } },
+                            labels: { formatter: v => fmtShort(v), style: { fontSize: '12px', colors: '#475569' } },
+                        },
+                        {
+                            opposite: true,
+                            labels: {
+                                formatter: v => `${fmtShort(v)}`, // For Count series
+                                style: { fontSize: '12px', colors: '#475569' }
+                            },
+                        },
+                    ],
+                    grid: { borderColor: '#e5e7eb', strokeDashArray: 3, padding: { left: 10, right: 10 } },
+                    legend: { show: false }, // legend lives in right panel
+                    tooltip: {
+                        theme: 'dark',
+                        style: { fontSize: '13px' },
+                        y: [
+                            { formatter: v => `KES ${fmtShort(v)}` }, // For Value (KES) series
+                            { formatter: v => `${fmtShort(v)}` },     // For Count series
+                        ],
+                    },
+                    responsive: [
+                        { breakpoint: 1024, options: { chart: { height: 350 } } },
+                        { breakpoint: 768, options: { chart: { height: 300 } } },
+                    ],
                 };
-                return operators[operator] || operator;
-            }
 
-            function deleteSegment() {
-                if (confirm(`Are you sure you want to delete "${segmentData.value.name}"?`)) {
-                    const segments = JSON.parse(localStorage.getItem('segments') || '[]');
-                    const filtered = segments.filter(s => s.name !== segmentData.value.name);
-                    localStorage.setItem('segments', JSON.stringify(filtered));
-                    alert('Segment deleted!');
-                    window.location.href = 'pages-segmentation.html';
+                if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+                chartInstance = new ApexCharts(el, options);
+                chartInstance.render();
+            };
+
+            // Reactively update series when fields are toggled
+            Vue.watch(activeFields, () => {
+                if (!chartInstance || !segmentData.value) return;
+                const newSeries = chartFields
+                    .filter(f => activeFields.value.includes(f.key))
+                    .map(f => ({
+                        name: f.label,
+                        data: segmentData.value.monthly_trend.map(d => d[f.key] ?? 0),
+                        yaxisIndex: (f.key === 'bets' || f.key === 'players') ? 1 : 0,
+                    }));
+                chartInstance.updateSeries(newSeries, true);
+            }, { deep: true });
+
+            // ── 2. Sales Analytics — Donut: Sportsbook vs Casino ─────────────
+            const initSalesAnalyticsChart = () => {
+                const el = document.querySelector('#salesAnalyticsChart');
+                if (!el || !segmentData.value) return;
+
+                const sportsbookTotal = segmentData.value.monthly_trend
+                    .reduce((acc, d) => acc + Math.round((d.bets ?? 0) * 1.5), 0);
+                const casinoTotal = segmentData.value.monthly_trend
+                    .reduce((acc, d) => acc + Math.round((d.bets ?? 0) * 0.8), 0);
+                const grandTotal = sportsbookTotal + casinoTotal;
+
+                const options = {
+                    series: [sportsbookTotal, casinoTotal],
+                    labels: ['Sportsbook', 'Casino'],
+                    chart: {
+                        height: 240,
+                        type: 'donut',
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: '#475569',
+                    },
+                    colors: ['#4e7adf', '#38c66c', '#ffd166'],
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '68%',
+                                labels: {
+                                    show: true,
+                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#64748b', offsetY: -6 },
+                                    value: {
+                                        show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4,
+                                        formatter: v => `KES ${fmtShort(parseInt(v || 0))}`
+                                    },
+                                    total: {
+                                        show: true, label: 'Total Revenue', fontSize: '11px', color: '#9ca3af',
+                                        formatter: () => `KES ${fmtShort(grandTotal)}`
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => `${Number(val).toFixed(1)}%`,
+                        style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] },
+                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
+                    },
+                    legend: {
+                        position: 'bottom',
+                        fontWeight: 600,
+                        fontSize: '13px',
+                        offsetY: 4,
+                        itemMargin: { horizontal: 8, vertical: 4 },
+                        formatter: (val, opts) => {
+                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
+                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
+                            return `${val} • ${p}%`; // short: name + percentage only
+                        },
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        style: { fontSize: '13px' },
+                        y: { formatter: v => `KES ${fmtShort(v)}` },
+                    },
+                    states: { hover: { filter: { type: 'darken', value: 0.12 } } },
+                };
+                if (salesChartInstance) { salesChartInstance.destroy(); salesChartInstance = null; }
+                salesChartInstance = new ApexCharts(el, options);
+                salesChartInstance.render();
+            };
+
+            // ── 3. Monthly Cash Flow — Grouped Bar: Deposits vs Withdrawals ──
+            const initMonthlyCashFlowChart = () => {
+                const el = document.querySelector('#monthlyCashFlowChart');
+                if (!el || !segmentData.value) return;
+
+                const trend = segmentData.value.monthly_trend || [];
+                const categories = trend.map(d => d.month);
+                const deposits = trend.map(d => d.deposits ?? 0);
+                const withdrawals = trend.map(d => -(Math.abs(d.withdrawals ?? 0))); // both positive
+
+                const options = {
+                    series: [
+                        { name: 'Deposits', data: deposits },
+                        { name: 'Withdrawals', data: withdrawals },
+                    ],
+                    chart: {
+                        height: 230,
+                        type: 'bar',
+                        toolbar: { show: false },
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: '#475569',
+                        animations: { enabled: true, speed: 500, easing: 'easeinout' },
+                    },
+                    colors: ['#10b981', '#f43f5e'],
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shade: 'light',
+                            type: 'vertical',
+                            shadeIntensity: 0.25,
+                            gradientToColors: ['#059669', '#e11d48'],
+                            inverseColors: false,
+                            opacityFrom: 1,
+                            opacityTo: 0.85,
+                            stops: [0, 100],
+                        },
+                    },
+                    plotOptions: {
+                        bar: {
+                            columnWidth: '58%',
+                            borderRadius: 4,
+                            borderRadiusApplication: 'end',
+                            dataLabels: { position: 'top' },
+                        },
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: v => v > 0 ? fmtShort(Math.abs(v)) : '',
+                        offsetY: -22,
+                        style: { fontSize: '10px', fontWeight: 700, colors: ['#374151'] },
+                        background: { enabled: false },
+                    },
+                    xaxis: {
+                        categories,
+                        axisBorder: { show: true, color: '#94a3b8', height: 2 },
+                        axisTicks: { show: true, color: '#cbd5e1', height: 4 },
+                        labels: { style: { fontSize: '11px', fontWeight: 600, colors: '#64748b' } },
+                        crosshairs: {
+                            show: true,
+                            fill: { type: 'solid', color: '#f1f5f9' },
+                            opacity: 0.5,
+                        },
+                    },
+                    yaxis: {
+                        title: { text: 'KES', style: { fontSize: '11px', color: '#94a3b8', fontWeight: 600 } },
+                        labels: { formatter: v => fmtShort(Math.abs(v)), style: { fontSize: '11px', colors: '#94a3b8' } },
+                    },
+                    legend: {
+                        position: 'top',
+                        horizontalAlign: 'right',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        markers: { radius: 3, width: 10, height: 10 },
+                        itemMargin: { horizontal: 8 },
+                    },
+                    grid: {
+                        borderColor: '#cacfd3ff',
+                        strokeDashArray: 4,
+                        yaxis: { lines: { show: true } },
+                        xaxis: { lines: { show: false } },
+                        padding: { top: 4, right: 8, bottom: 0, left: 8 },
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        shared: true,
+                        intersect: false,
+                        style: { fontSize: '12px' },
+                        y: { formatter: v => `KES ${fmtShort(Math.abs(v))}` },
+                    },
+                    states: {
+                        hover: { filter: { type: 'lighten', value: 0.08 } },
+                        active: { filter: { type: 'darken', value: 0.1 } },
+                    },
+                    responsive: [
+                        { breakpoint: 768, options: { chart: { height: 240 }, dataLabels: { enabled: false } } },
+                    ],
+                };
+
+                if (cashFlowChartInstance) { cashFlowChartInstance.destroy(); cashFlowChartInstance = null; }
+                cashFlowChartInstance = new ApexCharts(el, options);
+                cashFlowChartInstance.render();
+            };
+
+            // ── 4. Player Status — Half Donut: Active vs Dormant ─────────────
+            const initStatusChart = () => {
+                const el = document.querySelector('#playerStatusChart');
+                if (!el || !segmentData.value) return;
+
+                const active = segmentData.value.active_players || 0;
+                const dormant = segmentData.value.dormant_players || 0;
+                const total = active + dormant;
+
+                const options = {
+                    series: [active, dormant],
+                    labels: ['Active', 'Dormant'],
+                    chart: {
+                        height: 230,
+                        type: 'donut',
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: '#475569',
+                    },
+                    colors: ['#10b981', '#fbbf24'],
+                    plotOptions: {
+                        pie: {
+                            startAngle: -90,
+                            endAngle: 90,
+                            offsetY: 10,
+                            donut: {
+                                size: '75%',
+                                labels: {
+                                    show: true,
+                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -10 },
+                                    value: {
+                                        show: true, fontSize: '22px', fontWeight: 700, color: '#0f172a', offsetY: 4,
+                                        formatter: v => `${v || 0}`
+                                    },
+                                    total: {
+                                        show: true, label: 'Total Players', fontSize: '12px', color: '#9ca3af',
+                                        formatter: () => `${total}`
+                                    },
+                                },
+                            },
+                        }
+                    },
+                    // Pull the chart up so the flat bottom doesn't waste space
+                    grid: { padding: { bottom: -110 } },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => `${Number(val).toFixed(0)}%`,
+                        style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] },
+                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
+                    },
+                    legend: {
+                        position: 'bottom',
+                        horizontalAlign: 'center',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        formatter: (val, opts) => {
+                            const s = opts.w.globals.series[opts.seriesIndex] || 0;
+                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
+                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
+                            return `${val}: ${s} (${p}%)`;
+                        },
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        style: { fontSize: '13px' },
+                        y: { formatter: v => `${v} Players` },
+                    },
+                    states: { hover: { filter: { type: 'darken', value: 0.12 } } },
+                    responsive: [
+                        { breakpoint: 768, options: { chart: { height: 280 } } },
+                    ],
+                };
+
+                if (statusChartInstance) { statusChartInstance.destroy(); statusChartInstance = null; }
+                statusChartInstance = new ApexCharts(el, options);
+                statusChartInstance.render();
+            };
+
+            // ── 5. Casino Games — Full Donut: Bets by game ───────────────────
+            const initCasinoGamesChart = () => {
+                const el = document.querySelector('#casinoGamesChart');
+                if (!el || !segmentData.value) return;
+
+                const stats = segmentData.value.casino_stats || [];
+                if (!stats.length) return;
+
+                const total = stats.reduce((a, s) => a + (s.bets || 0), 0);
+
+                const options = {
+                    series: stats.map(s => s.bets),
+                    labels: stats.map(s => s.game),
+                    chart: {
+                        height: 250,
+                        type: 'donut',
+                        fontFamily: 'Inter, sans-serif',
+                        foreColor: '#475569',
+                    },
+                    colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '65%',
+                                labels: {
+                                    show: true,
+                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 },
+                                    value: {
+                                        show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4,
+                                        formatter: v => `KES ${fmtShort(parseInt(v || 0))}`
+                                    },
+                                    total: {
+                                        show: true, label: 'Total Casino', fontSize: '11px', color: '#9ca3af',
+                                        formatter: () => `KES ${fmtShort(total)}`
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: (val) => `${Number(val).toFixed(1)}%`,
+                        style: { fontSize: '11px', fontWeight: 700, colors: ['#fff'] },
+                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
+                    },
+                    legend: {
+                        position: 'right',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        formatter: (val, opts) => {
+                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
+                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
+                            return `${val}: ${p}%`;
+                        },
+                        itemMargin: { vertical: 4 },
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        style: { fontSize: '13px' },
+                        y: { formatter: v => `KES ${fmtShort(v)}` },
+                    },
+                    responsive: [
+                        {
+                            breakpoint: 1024,
+                            options: { chart: { height: 280 }, legend: { position: 'bottom' } },
+                        },
+                        {
+                            breakpoint: 768,
+                            options: { chart: { height: 260 }, legend: { position: 'bottom' } },
+                        },
+                    ],
+                };
+
+                if (casinoChartInstance) { casinoChartInstance.destroy(); casinoChartInstance = null; }
+                casinoChartInstance = new ApexCharts(el, options);
+                casinoChartInstance.render();
+            };
+
+            onMounted(async () => {
+                if (segmentId) {
+                    let found = (window.segments || []).find(s => s.id === segmentId || s.name === segmentId);
+
+                    if (!found) {
+                        const local = JSON.parse(localStorage.getItem('dummy_segments') || '[]');
+                        found = local.find(s => s.id === segmentId || s.name === segmentId);
+                    }
+
+                    if (found) {
+                        const players = await window.getPlayersForSegment(found);
+                        found.players = players;
+
+                        // ── Fallback: build monthly_trend for custom/dynamic segments ──
+                        if (!found.monthly_trend || found.monthly_trend.length === 0) {
+                            const totalDep = players.reduce((a, b) => a + (b.total_deposits || b.lifetime_deposits || 0), 0);
+                            const totalBet = players.reduce((a, b) => a + (b.total_bets || b.lifetime_bets || 0), 0);
+                            const totalWith = players.reduce((a, b) => a + (b.total_withdrawals || b.lifetime_withdrawals || 0), 0);
+
+                            found.total_deposits = totalDep;
+                            found.total_bets = totalBet;
+                            found.total_withdrawals = totalWith;
+                            found.total_players = players.length;
+                            found.active_players = players.filter(p => p.status === 'active').length;
+                            found.dormant_players = players.filter(p => p.status === 'dormant').length;
+
+                            const months = ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'];
+                            found.monthly_trend = months.map((m, i) => ({
+                                month: m,
+                                deposits: Math.round(totalDep * (0.10 + i * 0.02)),
+                                stake: Math.round(totalBet * (0.10 + i * 0.02)),
+                                bets: Math.round(players.length * (3 + i)),
+                                withdrawals: Math.round(totalWith * (0.10 + i * 0.015)),
+                                players: Math.round(found.active_players * (0.80 + i * 0.04)),
+                            }));
+                        }
+
+                        // ── Fallback: build casino_stats if missing ──
+                        if (!found.casino_stats || found.casino_stats.length === 0) {
+                            const tb = found.total_bets || 1000;
+                            found.casino_stats = [
+                                { game: 'Aviator', bets: Math.round(tb * 0.40) },
+                                { game: 'Sweet Bonanza', bets: Math.round(tb * 0.30) },
+                                { game: 'Crazy Time', bets: Math.round(tb * 0.20) },
+                                { game: 'Others', bets: Math.round(tb * 0.10) },
+                            ];
+                        }
+
+                        segmentData.value = found;
+
+                        // Debugging: Log the state before chart initialization
+                        console.log("Segment Data loaded:", segmentData.value);
+                        console.log("Chart elements check:", {
+                            segmentTrendChart: document.querySelector('#segmentTrendChart'),
+                            salesAnalyticsChart: document.querySelector('#salesAnalyticsChart'),
+                            monthlyCashFlowChart: document.querySelector('#monthlyCashFlowChart'),
+                            playerStatusChart: document.querySelector('#playerStatusChart'),
+                            casinoGamesChart: document.querySelector('#casinoGamesChart'),
+                        });
+                        // Stagger inits so DOM is fully painted before ApexCharts measures containers
+                        setTimeout(() => {
+                            initChart();
+                            initSalesAnalyticsChart();
+                            initMonthlyCashFlowChart();
+                            initStatusChart();
+                            initCasinoGamesChart();
+                        }, 120);
+                    }
                 }
-            }
+                isLoading.value = false;
+            }); // end onMounted
 
-            return { segmentData, filteredContacts: ref([]), getFieldLabel, getOperatorLabel, deleteSegment };
+            return {
+                segmentData, isLoading,
+                search, statusFilter, sort, filteredPlayers,
+                fmtShort,
+                activeFields, chartFields,
+                growthRate, projectedValue, nggr,
+                handleSort: (key) => {
+                    if (sort.key === key) sort.dir = sort.dir === 'desc' ? 'asc' : 'desc';
+                    else { sort.key = key; sort.dir = 'desc'; }
+                },
+            };
         }
     });
 
@@ -634,68 +966,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // ─── Rule Builder App ─────────────────────────────────────────────────────
-    const ruleBuilderApp = createApp({
-        setup() {
-            const rule = ref({
-                steps: [{ event: 'deposit', threshold: 0 }],
-                window: 24,
-                reset_logic: 'sliding'
-            });
-
-            const existingRules = ref([]);
-
-            const addStep = () => {
-                rule.value.steps.push({ event: 'deposit', threshold: 0 });
-            };
-
-            const removeStep = (index) => {
-                rule.value.steps.splice(index, 1);
-            };
-
-            const publishToEngine = async () => {
-                try {
-                    console.log("Publishing Master JSON:", JSON.stringify(rule.value, null, 2));
-                    const result = await publishRule(rule.value);
-                    alert("Rule successfully published to Flink Engine!");
-                    await loadRules();
-                } catch (error) {
-                    alert("Failed to publish rule. Check console for details.");
-                }
-            };
-
-            const loadRules = async () => {
-                try {
-                    const data = await fetchRules();
-                    existingRules.value = data;
-                    console.log("Successfully loaded rules:", data);
-                } catch (error) {
-                    console.error("Failed to load rules:", error);
-                }
-            };
-
-            onMounted(loadRules);
-
-            return { rule, existingRules, addStep, removeStep, publishRule: publishToEngine };
-        }
-    });
-
-    if (document.getElementById('ruleBuilderApp')) {
-        ruleBuilderApp.mount('#ruleBuilderApp');
-        console.log("ruleBuilderApp mounted.");
-    }
-
-
     // ─── Dashboard Analytics App ──────────────────────────────────────────────
     if (document.getElementById('dashboardApp')) {
         const dashboardApp = createApp({
             setup() {
-                const stats = ref({
-                    totalBets: 0,
-                    totalStake: 0,
-                    totalPayout: 0,
-                    activeBettors: 0
-                });
+                const stats = ref({ totalBets: 0, totalStake: 0, totalPayout: 0, activeBettors: 0 });
 
                 const formatAmount = (num) => {
                     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -706,7 +981,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const fetchDashboardData = async () => {
                     const today = new Date().toISOString().split('T')[0];
                     const timeRange = { from: today, to: today, granularity: "day" };
-
                     try {
                         const [bets, stake, payout, players] = await Promise.all([
                             executeAnalyticsQuery({ measure: "count", measure_field: "bet_id", time_range: timeRange }),
@@ -714,20 +988,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             executeAnalyticsQuery({ measure: "sum", measure_field: "amount", filters: [{ field: "type", operator: "equals", value: "payout" }], time_range: timeRange }),
                             executeAnalyticsQuery({ measure: "count_distinct", measure_field: "customer_id", time_range: timeRange })
                         ]);
-
-                        stats.value = {
-                            totalBets: bets.value || 0,
-                            totalStake: stake.value || 0,
-                            totalPayout: payout.value || 0,
-                            activeBettors: players.value || 0
-                        };
+                        stats.value = { totalBets: bets.value || 0, totalStake: stake.value || 0, totalPayout: payout.value || 0, activeBettors: players.value || 0 };
                     } catch (error) {
                         console.error("Failed to fetch dashboard analytics:", error);
                     }
                 };
 
                 onMounted(fetchDashboardData);
-
                 return { stats, formatAmount };
             }
         });
@@ -747,96 +1014,132 @@ document.addEventListener("DOMContentLoaded", function () {
                 const alert_success = ref(false);
                 const baseUrl = 'https://identity.gamesapi.dev';
 
+                const showNotification = (message, type = 'error') => {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
+                    }
+                    alert_message.value = message;
+                    if (type === 'error') alert_error.value = true; else alert_success.value = true;
+                    setTimeout(() => { alert_error.value = false; alert_success.value = false; }, 4000);
+                };
+
                 async function curl(url, data) {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'accept': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    // Log raw HTTP status before attempting JSON parse
+                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'accept': 'application/json' }, body: JSON.stringify(data) });
                     console.log("HTTP status:", response.status, response.statusText);
-
                     const rawText = await response.text();
-                    console.log("Raw response body:", rawText);
-
-                    // Only parse if there is a body to parse
-                    if (!rawText || rawText.trim() === '') {
-                        return { status: response.status, message: `Empty response (HTTP ${response.status})` };
-                    }
-
-                    try {
-                        return JSON.parse(rawText);
-                    } catch (parseErr) {
-                        console.error("JSON parse failed — raw body was:", rawText);
-                        return { status: response.status, message: `Non-JSON response: ${rawText.substring(0, 120)}` };
-                    }
+                    if (!rawText || rawText.trim() === '') return { status: response.status, message: `Empty response (HTTP ${response.status})` };
+                    try { return JSON.parse(rawText); } catch (e) { return { status: response.status, message: `Non-JSON response: ${rawText.substring(0, 120)}` }; }
                 }
 
                 const login = async () => {
-                    console.log("Login function triggered for:", username.value);
-
-                    alert_error.value = false;
-                    alert_success.value = false;
-
-                    if (!username.value || !password.value) {
-                        alert_message.value = 'Phone Number and Password are required';
-                        alert_error.value = true;
-                        return;
-                    }
-
-                    const payload = {
-                        email: "string",
-                        msisdn: Number(String(username.value || '').replace(/\D/g, '')),
-                        password: password.value,
-                        username: "string"
-                    };
-
-                    console.log("Sending payload:", JSON.stringify(payload, null, 2));
-
+                    alert_error.value = false; alert_success.value = false;
+                    if (!username.value || !password.value) { showNotification('Phone Number and Password are required'); return; }
+                    const payload = { email: "string", msisdn: Number(String(username.value || '').replace(/\D/g, '')), password: password.value, username: "string" };
                     try {
                         const res = await curl(`${baseUrl}/user/login?lang=en`, payload);
-
-                        console.log("Identity Service Response:", JSON.stringify(res, null, 2));
-
                         if (res && (parseInt(res.status) === 1 || parseInt(res.status) === 202)) {
-                            console.log("Authentication successful. Redirecting to dashboard...");
                             sessionStorage.setItem('api_key', res.auth || '');
                             sessionStorage.setItem('isLoggedIn', 'true');
                             window.location.href = 'index.html';
                         } else {
-                            alert_error.value = true;
-                            alert_message.value = (res && res.message) ? res.message : 'Login failed: Invalid credentials';
+                            showNotification((res && res.message) ? res.message : 'Login failed: Invalid credentials');
                         }
-                    } catch (e) {
-                        console.error("Login Error:", e);
-                        alert_error.value = true;
-                        alert_message.value = 'Connection error to identity service';
-                    }
+                    } catch (e) { showNotification('Connection error to identity service'); }
                 };
 
-                return {
-                    username,
-                    password,
-                    alert_message, alert_error, alert_success,
-                    login
-                };
+                return { username, password, alert_message, alert_error, alert_success, login };
             }
         });
-
         loginApp.mount('#loginApp');
         console.log("loginApp mounted successfully.");
     }
 
-    // ─── Global Logout Function ──────────────────────────────────────────────
-    /**
-     * Clears session authentication data and redirects the user to the login page.
-     */
+
+    // ─── Register App ─────────────────────────────────────────────────────────
+    if (document.getElementById('registerApp')) {
+        const registerApp = createApp({
+            setup() {
+                const isLoading = ref(false);
+                const form = reactive({ username: '', password: '' });
+                const baseUrl = 'https://identity.gamesapi.dev';
+
+                const showNotification = (message, type = 'error') => {
+                    if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
+                };
+
+                const register = async () => {
+                    isLoading.value = true;
+                    const payload = { address: "string", browser: navigator.userAgent, btag: "string", channel: "web", channel_id: 0, click_id: "string", code: "string", country_code: "KE", date_of_birth: "1990-01-01", device_id: 0, device_info: "web-browser", email: "string", engine: "string", fbclid: "string", first_name: "string", gclid: "string", id_number: "string", ip_address: "127.0.0.1", lang: "en", last_name: "string", msisdn: Number(String(form.username).replace(/\D/g, '')), nationality: "Kenyan", password: form.password, referrer: document.referrer || "direct", username: form.username, utm_campaign: "string", utm_content: "string", utm_medium: "string", utm_source: "string", utm_term: "string", version_info: "1.0.0" };
+                    try {
+                        const response = await fetch(`${baseUrl}/signup?lang=en`, { method: 'POST', headers: { 'accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const res = await response.json();
+                        if (response.ok && (parseInt(res.status) === 1 || parseInt(res.status) === 201)) {
+                            showNotification('Account created successfully! Redirecting to login...', 'success');
+                            setTimeout(() => { window.location.href = 'auth-login.html'; }, 2500);
+                        } else { showNotification(res.message || 'Registration failed. Please check your details.'); }
+                    } catch (error) { showNotification('Connection error to identity service'); }
+                    finally { isLoading.value = false; }
+                };
+
+                return { form, isLoading, register };
+            }
+        });
+        registerApp.mount('#registerApp');
+        console.log("registerApp mounted successfully.");
+    }
+
+
+    // ─── Recover Password App ─────────────────────────────────────────────────
+    if (document.getElementById('recoverPwApp')) {
+        const recoverPwApp = createApp({
+            setup() {
+                const isLoading = ref(false);
+                const phoneNumber = ref(''); const otp = ref(''); const newPassword = ref(''); const confirmNewPassword = ref('');
+                const step = ref(1);
+                const baseUrl = 'https://identity.gamesapi.dev';
+
+                const showNotification = (message, type = 'error') => {
+                    if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
+                };
+
+                const handleRecover = async () => {
+                    if (!phoneNumber.value) { showNotification('Please enter your phone number'); return; }
+                    isLoading.value = true;
+                    try {
+                        const payload = { country_code: "KE", email: "string", msisdn: Number(String(phoneNumber.value).replace(/\D/g, '')), username: "string" };
+                        const response = await fetch(`${baseUrl}/password/forgot?lang=en`, { method: 'PATCH', headers: { 'accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const res = await response.json();
+                        if (response.ok) { showNotification('Recovery OTP sent to your email!', 'success'); step.value = 2; }
+                        else { showNotification(res.message || 'Recovery failed. Please try again.'); }
+                    } catch (error) { showNotification('Connection error to identity service'); }
+                    finally { isLoading.value = false; }
+                };
+
+                const handleResetPassword = async () => {
+                    if (!otp.value || !newPassword.value || !confirmNewPassword.value) { showNotification('All fields are required.'); return; }
+                    if (newPassword.value !== confirmNewPassword.value) { showNotification('Passwords do not match.'); return; }
+                    if (newPassword.value.length < 6) { showNotification('Password must be at least 6 characters.'); return; }
+                    isLoading.value = true;
+                    try {
+                        const payload = { code: Number(otp.value), country_code: "KE", email: "string", msisdn: Number(String(phoneNumber.value).replace(/\D/g, '')), password: newPassword.value, username: "string" };
+                        const response = await fetch(`${baseUrl}/password/reset?lang=en`, { method: 'PATCH', headers: { 'accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const res = await response.json();
+                        if (response.ok) { showNotification('Password reset successfully! Redirecting...', 'success'); setTimeout(() => { window.location.href = 'auth-login.html'; }, 3000); }
+                        else { showNotification(res.message || 'Password reset failed. Check your OTP and try again.'); }
+                    } catch (error) { showNotification('Connection error to identity service'); }
+                    finally { isLoading.value = false; }
+                };
+
+                return { phoneNumber, otp, newPassword, confirmNewPassword, isLoading, step, handleRecover, handleResetPassword };
+            }
+        });
+        recoverPwApp.mount('#recoverPwApp');
+        console.log("recoverPwApp mounted successfully.");
+    }
+
+
+    // ─── Global Logout ────────────────────────────────────────────────────────
     window.logout = function () {
-        console.log("Rules Portal: Logging out...");
         sessionStorage.removeItem('api_key');
         sessionStorage.removeItem('isLoggedIn');
         window.location.href = 'auth-login.html';

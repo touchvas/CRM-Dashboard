@@ -46,7 +46,7 @@
 
 @@include("partials/body.html")
 
-<div class="layout-wrapper">
+<div id="layout-wrapper">
 
     @@include("partials/menu.html")
 
@@ -55,215 +55,82 @@
     <div class="main-content">
         <div class="page-content">
             <!-- Page Title -->
-            <!-- <div class="row">
-                <div class="col-12">
-                    <div class="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 class="mb-0">SEGMENT PERFORMANCE OVERVIEW</h4>
-                        <div class="page-title-right">
-                            <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="javascript: void(0);">Rules Portal</a></li>
-                                <li class="breadcrumb-item active">Performance Dashboard</li>
-                            </ol>
-                        </div>
-                    </div>
-                    <p class="text-muted mb-4">Real-time segment growth and ROI analysis</p>
-                </div>
-            </div> -->
-
-            <!-- KPI Cards Row -->
+          
             <div class="row">
-                <!-- Total Bets Today -->
-                <div class="col custom-5-col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-0 font-size-6 text-uppercase">Total Bets Today</p>
-                                    <h6 class="mb-0">12,547</h6>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-success-subtle text-success d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-chart-bar font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Total Stake -->
-                <div class="col custom-5-col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-0 font-size-6 text-uppercase">Total Stake</p>
-                                    <h6 class="mb-0">KES 2.4M</h6>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-light text-primary d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-cash-multiple font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Total Payout -->
-                <div class="col custom-5-col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-0 font-size-6 text-uppercase">Total Payout</p>
-                                    <h6 class="mb-0">KES 1.8M</h6>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-danger-subtle text-danger d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-arrow-down-bold font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- GGR -->
-                <div class="col custom-5-col">
-                    <div class="card bg-success-subtle">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-success mb-2 font-size-6 text-uppercase fw-bold">GGR</p>
-                                    <h5 class="mb-0 text-success">KES 624K</h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-white text-success d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-trending-up font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Active Bettors -->
-                <div class="col custom-5-col">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-2 font-size-6 text-uppercase">Active Bettors</p>
-                                    <h5 class="mb-0">3,847</h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-primary-subtle text-primary d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-account-group font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- House Margin -->
-                <!-- <div class="col-xl-2 col-md-4 col-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-2 font-size-6 text-uppercase">House Margin</p>
-                                    <h5 class="mb-0">26.2%</h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-sm rounded bg-warning-subtle text-warning d-flex align-items-center justify-content-center">
-                                        <i class="mdi mdi-percent font-size-20"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- end row -->
-
-            <div class="row">
-                <!-- Main Table Column -->
                 <div class="col-xl-12">
-                    <!-- Top Events Table -->
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body" style="border-radius: 0;">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h4 class="card-title">Top Events (High Volume)</h4>
+                                <h4 class="card-title">Top Events Performance</h4>
                                 <span class="badge bg-success">Live</span>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-centered table-nowrap mb-0 border-top">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Event</th>
-                                            <th>Bets</th>
-                                            <th>Total Stake</th>
-                                            <th>Potential Payout</th>
-                                            <th>Risk</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Arsenal vs Man City</h5>
-                                                <p class="text-muted mb-0 font-size-12">Premier League</p>
-                                            </td>
-                                            <td>2,847</td>
-                                            <td class="text-success">KES 384,500</td>
-                                            <td class="text-danger">KES 892,300</td>
-                                            <td><span class="badge bg-danger">High</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Lakers vs Warriors</h5>
-                                                <p class="text-muted mb-0 font-size-12">NBA</p>
-                                            </td>
-                                            <td>1,523</td>
-                                            <td class="text-success">KES 245,800</td>
-                                            <td class="text-danger">KES 478,200</td>
-                                            <td><span class="badge bg-warning">Medium</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Real Madrid vs Barcelona</h5>
-                                                <p class="text-muted mb-0 font-size-12">La Liga</p>
-                                            </td>
-                                            <td>3,142</td>
-                                            <td class="text-success">KES 521,400</td>
-                                            <td class="text-danger">KES 1.2M</td>
-                                            <td><span class="badge bg-danger">High</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Gor Mahia vs AFC Leopards</h5>
-                                                <p class="text-muted mb-0 font-size-12">KPL</p>
-                                            </td>
-                                            <td>987</td>
-                                            <td class="text-success">KES 142,300</td>
-                                            <td class="text-danger">KES 286,700</td>
-                                            <td><span class="badge bg-success">Low</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h5 class="font-size-14 mb-1">Man United vs Chelsea</h5>
-                                                <p class="text-muted mb-0 font-size-12">Premier League</p>
-                                            </td>
-                                            <td>1,854</td>
-                                            <td class="text-success">KES 298,600</td>
-                                            <td class="text-danger">KES 623,400</td>
-                                            <td><span class="badge bg-warning">Medium</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+                            <!-- KPI Cards nested within the big card -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <div class="p-3 bg-white rounded-0 border-dashed shadow-sm position-relative" style="z-index: 100; border-color: #fff !important;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Active Bets</p>
+                                                <h5 class="mb-0">9,247 <small class="text-success ms-1"><i class="mdi mdi-arrow-up"></i> 12%</small></h5>
+                                            </div>
+                                            <div class="flex-shrink-0 ms-2">
+                                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="background-color: #eaf9f0 !important; width: 42px; height: 42px;">
+                                                    <i class="mdi mdi-chart-timeline-variant text-success" style="font-size: 20px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 bg-white rounded-0 border-dashed shadow-sm position-relative" style="z-index: 100; border-color: #fff !important;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Avg. Odds</p>
+                                                <h5 class="mb-0">2.14 <small class="text-muted ms-1"><i class="mdi mdi-minus"></i></small></h5>
+                                            </div>
+                                            <div class="flex-shrink-0 ms-2">
+                                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="background-color: #eaf9f0 !important; width: 42px; height: 42px;">
+                                                    <i class="mdi mdi-numeric text-primary" style="font-size: 20px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 bg-white rounded-0 border-dashed shadow-sm position-relative" style="z-index: 100; border-color: #fff !important;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Risk Exposure</p>
+                                                <h5 class="mb-0">KES 4.2M <small class="text-danger ms-1"><i class="mdi mdi-alert-outline"></i></small></h5>
+                                            </div>
+                                            <div class="flex-shrink-0 ms-2">
+                                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="background-color: #eaf9f0 !important; width: 42px; height: 42px;">
+                                                    <i class="mdi mdi-alert-decagram-outline text-danger" style="font-size: 20px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="p-3 bg-white rounded-0 border-dashed shadow-sm position-relative" style="z-index: 100; border-color: #fff !important;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Est. Margin</p>
+                                                <h5 class="mb-0">14.2% <small class="text-success ms-1"><i class="mdi mdi-arrow-up"></i> 0.5%</small></h5>
+                                            </div>
+                                            <div class="flex-shrink-0 ms-2">
+                                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="background-color: #eaf9f0 !important; width: 42px; height: 42px;">
+                                                    <i class="mdi mdi-finance text-warning" style="font-size: 20px;"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Chart container -->
+                            <div id="top_events_analysis_chart" data-colors='["--bs-success", "--bs-info"]' class="apex-charts" dir="ltr"></div>
                         </div>
                     </div>
                 </div>
@@ -409,6 +276,65 @@
 <!-- <script src="assets/js/pages/dashboard.init.js"></script> -->
 
 <script src="assets/js/pages/dashboard.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function getChartColorsArray(chartId) {
+            if (document.getElementById(chartId) !== null) {
+                var colors = document.getElementById(chartId).getAttribute("data-colors");
+                if (colors) {
+                    colors = JSON.parse(colors);
+                    return colors.map(function (value) {
+                        var newValue = value.replace(" ", "");
+                        if (newValue.indexOf(",") === -1) {
+                            var color = getComputedStyle(document.documentElement).getPropertyValue(newValue);
+                            if (color) return color;
+                            else return newValue;
+                        } else {
+                            var val = value.split(',');
+                            if (val.length == 2) {
+                                var rgbaColor = getComputedStyle(document.documentElement).getPropertyValue(val[0]);
+                                rgbaColor = "rgba(" + rgbaColor + "," + val[1] + ")";
+                                return rgbaColor;
+                            } else {
+                                return newValue;
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        var chartColors = getChartColorsArray("top_events_analysis_chart");
+        if (chartColors) {
+            var options = {
+                series: [{
+                    name: 'Bets Count',
+                    data: [2847, 1523, 3142, 987, 1854]
+                }, {
+                    name: 'Stake Volume (x100)',
+                    data: [3845, 2458, 5214, 1423, 2986]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: { show: false }
+                },
+                plotOptions: {
+                    bar: { horizontal: false, columnWidth: '55%', borderRadius: 6 },
+                },
+                dataLabels: { enabled: false },
+                stroke: { show: true, width: 2, colors: ['transparent'] },
+                colors: chartColors,
+                xaxis: { categories: ['Arsenal v City', 'Lakers v Warriors', 'Real v Barca', 'Gor v AFC', 'United v Chelsea'] },
+                fill: { opacity: 1 },
+                grid: { borderColor: '#f1f1f1', strokeDashArray: 3 }
+            };
+            var chart = new ApexCharts(document.querySelector("#top_events_analysis_chart"), options);
+            chart.render();
+        }
+    });
+</script>
 
 </body>
 

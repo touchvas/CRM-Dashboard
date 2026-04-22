@@ -36,39 +36,53 @@
                         <i class="mdi mdi-folder-outline font-size-48 d-block mb-3"></i>
                         <h5>No saved segments yet</h5>
                         <p class="mb-3">Create your first segment to start organizing your contacts</p>
-                        <a href="pages-create-segment.html" class="btn btn-primary">
+                        <a href="pages-segmentation.html" class="btn btn-primary">
                             <i class="mdi mdi-plus-circle me-1"></i>Create Segment
                         </a>
                     </div>
 
                     <!-- Segments List -->
-                    <div v-else class="list-group list-group-flush">
-                        <div v-for="seg in segments" :key="seg.name" @click="viewSegment(seg)"
-                            class="list-group-item list-group-item-action p-4 segment-card mb-3 mx-3" style="cursor: pointer;">
-                            <div class="d-flex w-100 justify-content-between align-items-start">
-                                <div class="flex-grow-1">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 me-3">
-                                            <i class="mdi mdi-account-group me-1"></i> Segment
-                                        </span>
-                                        <h4 class="mb-0 text-dark fw-bold">{{ seg.name }}</h4>
+                    <div v-else class="row g-3 p-3">
+                        <div v-for="seg in segments" :key="seg.id || seg.name" class="col-md-6">
+                            <div @click="viewSegment(seg)"
+                                class="card segment-card h-80 border-dashed mb-0" 
+                                :class="{'border-primary bg-primary-subtle bg-opacity-10': selectedSegment?.name === seg.name}"
+                                style="cursor: pointer; transition: all 0.2s ease;">
+                                <div class="card-body p-4">
+                                    <div class="d-flex w-100 justify-content-between align-items-start mb-3">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 me-3">
+                                                    <i class="mdi mdi-account-group me-1"></i> Segment
+                                                </span>
+                                                <h5 class="mb-0 text-dark fw-bold">{{ seg.name }}</h5>
+                                            </div>
+                                            <div class="segment-summary-text mb-3 ps-1 text-muted small text-truncate" style="max-width: 250px;">
+                                                {{ getSegmentSummary(seg) }}
+                                            </div>
+                                            <div class="d-flex align-items-center text-muted small ps-1">
+                                                <span class="me-3"><i class="mdi mdi-calendar-clock me-1"></i>Created Today</span>
+                                                <span class="criteria-badge" v-if="seg.criteria?.rules">
+                                                    <i class="mdi mdi-filter-variant me-1"></i>{{ seg.criteria.rules.length }} Rules
+                                                </span>
+                                                <span class="criteria-badge" v-else>
+                                                    <i class="mdi mdi-account me-1"></i>{{ seg.total_players || 0 }} Players
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <i class="mdi" :class="selectedSegment?.name === seg.name ? 'mdi-chevron-down text-primary' : 'mdi-chevron-right text-muted'" style="font-size: 20px;"></i>
+                                        </div>
                                     </div>
-                                    <div class="segment-summary-text mb-3 ps-1">
-                                        {{ getSegmentSummary(seg) }}
+                                    <div class="d-flex justify-content-end pt-2 border-top">
+                                        <button @click="goToDetails(seg)" class="btn btn-sm btn-outline-primary">
+                                            <i class="mdi mdi-arrow-right me-1"></i>View More
+                                        </button>
                                     </div>
-                                    <div class="d-flex align-items-center text-muted small ps-1">
-                                        <span class="me-3"><i class="mdi mdi-calendar-clock me-1"></i>Created Today</span>
-                                        <span class="criteria-badge">{{ seg.criteria?.conditions?.length || 0 }} Active Rules</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -89,7 +103,7 @@
                         <h6 class="mb-0">Matching Contacts</h6>
                         <div class="hstack gap-2">
                             <div v-if="isPreviewLoading" class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                            <span class="badge bg-primary">{{ filteredContacts.length }} contacts match</span>
+                            <span class="badge bg-primary">{{ filteredContacts.length }} players match</span>
                         </div>
                     </div>
 
@@ -101,36 +115,37 @@
                                     <th>Email</th>
                                     <th>Country</th>
                                     <th>Status</th>
-                                    <th>Total Spend</th>
-                                    <th>Created At</th>
+                                    <th>Total Deposits</th>
+                                    <th>Registered</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-if="filteredContacts.length === 0">
+                                <tr v-if="previewContacts.length === 0">
                                     <td colspan="6" class="text-center text-muted py-4">
                                         <i class="mdi mdi-alert-circle-outline font-size-20 d-block mb-2"></i>
                                         No contacts match this criteria
                                     </td>
                                 </tr>
-                                <tr v-else v-for="contact in filteredContacts" :key="contact.id">
+                                <tr v-else v-for="contact in previewContacts" :key="contact.id">
                                     <td>{{ contact.name }}</td>
                                     <td>{{ contact.email }}</td>
                                     <td>{{ contact.country }}</td>
                                     <td>
-                                        <span class="badge" :class="{
-                                            'bg-success': contact.status === '2',
-                                            'bg-warning': contact.status === '1',
-                                            'bg-info': contact.status === '0'
-                                        }">
-                                            {{ contact.status === '2' ? 'Customer' : contact.status === '1' ?
-                                            'Prospect' : 'Lead' }}
+                                        <span class="badge" :class="contact.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                            {{ contact.status.toUpperCase() }}
                                         </span>
                                     </td>
-                                    <td>${{ contact.total_spend.toLocaleString() }}</td>
-                                    <td>{{ contact.created_at }}</td>
+                                    <td>KES {{ (contact.total_deposits || contact.lifetime_deposits || 0).toLocaleString() }}</td>
+                                    <td>{{ contact.registered_at }}</td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="text-center mt-3" v-if="filteredContacts.length > 5">
+                        <button class="btn btn-soft-primary" @click="goToDetails(selectedSegment)">
+                            View more <i class="mdi mdi-arrow-right ms-1"></i>
+                        </button>
                     </div>
                 </div>
             </div>

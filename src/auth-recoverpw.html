@@ -1,0 +1,133 @@
+@@include("partials/main.html")
+
+<head>
+    @@include("partials/title-meta.html", {"title": "Rules Manager - Recover Password"})
+    @@include("partials/head-css.html") 
+    <style>
+        .auth-card {
+            min-height: 580px;
+            display: flex;
+            flex-direction: column;
+        }
+        .auth-icon-container {
+            background-color: #eaf9f0 !important;
+            border-color: rgba(56, 198, 108, 0.1) !important;
+            width: 55px;
+            justify-content: center;
+        }
+        .auth-icon-container i { font-size: 22px !important; color: #38c66c !important; }
+        .border-dashed { border-style: dashed !important; }
+    </style>
+</head> 
+
+<body class="bg-light">
+
+<div class="container-fluid" id="recoverPwApp">
+    <div class="row align-items-center justify-content-center vh-100">
+        <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="card border-0 shadow-sm auth-card">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="text-center mb-4 mt-2">
+                        <a href="index.html" class="logo d-block mb-4">
+                            <img src="assets/images/logo-dark.png" alt="Clivax Logo" height="24" class="mx-auto">
+                        </a>
+                        <h4 class="text-primary fw-bold">Reset Password</h4>
+                    </div>
+
+                    <div class="flex-grow-1 d-flex flex-column justify-content-center">
+                        <form @submit.prevent="step === 1 ? handleRecover() : handleResetPassword()">
+                            <!-- Instruction text updates based on the current step -->
+                            <p class="text-muted small w-100 mb-2 text-start">
+                                {{ step === 1 ? 'Enter your username to receive a verification code.' : 'Enter the OTP sent to your phone and your new password.' }}
+                            </p>
+
+                            <!-- Phone number remains visible but becomes read-only in step 2 -->
+                            <div class="input-group mb-4 w-100">
+                                <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                    <i class="mdi mdi-phone-outline"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    v-model="phoneNumber"
+                                    class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                    placeholder="+254 700 000 000"
+                                    required
+                                    :readonly="step === 2"
+                                >
+                            </div>
+
+                            <div v-if="step === 1">
+                                <button type="submit" class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light" :disabled="isLoading">
+                                    Receive Code
+                                </button>
+                            </div>
+
+                            <div v-if="step === 2">
+                                <div class="input-group mb-3 w-100">
+                                    <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                        <i class="mdi mdi-numeric-0-box-multiple-outline"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        v-model="otp"
+                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        placeholder="Enter OTP"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="input-group mb-3 w-100">
+                                    <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                        <i class="mdi mdi-lock-outline"></i>
+                                    </span>
+                                    <input
+                                        type="password"
+                                        v-model="newPassword"
+                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        placeholder="New Password"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="input-group mb-4 w-100">
+                                    <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                        <i class="mdi mdi-lock-check-outline"></i>
+                                    </span>
+                                    <input
+                                        type="password"
+                                        v-model="confirmNewPassword"
+                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        placeholder="Confirm New Password"
+                                        required
+                                    >
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light" :disabled="isLoading">
+                                   
+                                    Reset Password
+                                </button>
+
+                                <div class="mt-2 text-center">
+                                    <a href="#" @click.prevent="step = 1" class="text-muted small text-decoration-none"><i class="mdi mdi-arrow-left small me-1"></i>Back to Number Entry</a>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 text-center">
+                                <p class="mb-0 text-muted small">Remember it ? <a href="auth-login.html" class="fw-semibold text-primary"> Login </a> </p>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="mt-auto text-center pt-3">
+                        <p class="mb-0 text-muted small">© <script>document.write(new Date().getFullYear())</script> Clivax. Crafted with <i class="mdi mdi-heart text-danger"></i></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@@include("partials/vendor-scripts.html")
+
+</body>
+</html>

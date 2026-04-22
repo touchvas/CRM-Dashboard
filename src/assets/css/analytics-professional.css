@@ -1,0 +1,468 @@
+/* ========================================
+   PROFESSIONAL ANALYTICS & CHARTS
+   CSS for all visualization pages
+   ======================================== */
+
+/* ========================================
+   ANALYTICS PAGE STYLING
+   ======================================== */
+
+.page-content {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    min-height: 100vh;
+}
+
+/* KPI Card Styling */
+.card {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    transform: translateY(-4px) !important;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f3f4f6 100%) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1.25rem !important;
+}
+
+.card-title {
+    font-weight: 700 !important;
+    color: #111827 !important;
+    font-size: 1.1rem !important;
+    margin-bottom: 0 !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* KPI Value Cards */
+.card-body h3,
+.card-body h4,
+.card-body h5 {
+    color: #111827 !important;
+    font-weight: 800 !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+}
+
+.card-body p {
+    font-size: 13px !important;
+    color: #6b7280 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Success/Highlight Card */
+.bg-success-subtle {
+    background: rgba(16, 185, 129, 0.08) !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+/* ========================================
+   FILTER & CONTROL STYLING
+   ======================================== */
+
+.form-select,
+.form-control {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background-color: #fff !important;
+    color: #111827 !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: var(--bs-primary, #4e7adf) !important;
+    box-shadow: 0 0 0 3px rgba(78, 122, 223, 0.1) !important;
+}
+
+.form-label {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    font-size: 13px !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* ========================================
+   CHART CONTAINER STYLING
+   ======================================== */
+
+.apex-charts {
+    position: relative;
+    width: 100% !important;
+}
+
+.apexcharts-canvas {
+    max-width: 100% !important;
+}
+
+/* Chart Tooltip - Professional dark style */
+.apexcharts-tooltip {
+    background: #1f2937 !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.apexcharts-tooltip-text {
+    font-size: 13px !important;
+    color: #fff !important;
+    font-weight: 500 !important;
+}
+
+.apexcharts-tooltip-title {
+    color: #f3f4f6 !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+}
+
+.apexcharts-tooltip-custom {
+    padding: 8px 0 !important;
+}
+
+.apexcharts-tooltip-y {
+    margin-top: 4px !important;
+}
+
+/* Chart Legend */
+.apexcharts-legend {
+    margin-top: 16px !important;
+    padding-top: 12px !important;
+}
+
+.apexcharts-legend-text {
+    font-size: 13px !important;
+    color: #374151 !important;
+    font-weight: 500 !important;
+}
+
+.apexcharts-legend-marker {
+    border-radius: 3px !important;
+}
+
+/* Chart Grid */
+.apexcharts-gridline {
+    stroke: #e5e7eb !important;
+    stroke-dasharray: 3, 3 !important;
+    stroke-linecap: round !important;
+}
+
+.apexcharts-xaxis line {
+    stroke: #e5e7eb !important;
+    stroke-opacity: 0.3 !important;
+}
+
+.apexcharts-yaxis line {
+    stroke: #e5e7eb !important;
+    stroke-opacity: 0.1 !important;
+}
+
+/* Chart Axis Labels */
+.apexcharts-text {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+    font-weight: 500 !important;
+}
+
+.apexcharts-xaxis-label,
+.apexcharts-yaxis-label {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+}
+
+/* ========================================
+   TABLE STYLING - PROFESSIONAL
+   ======================================== */
+
+.table {
+    margin-bottom: 0 !important;
+    font-size: 14px !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.table thead th {
+    background: #f8fafc !important;
+    color: #374151 !important;
+    font-weight: 700 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding: 1rem 1.1rem !important;
+    font-size: 13px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.table tbody td {
+    padding: 1rem 1.1rem !important;
+    color: #111827 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease !important;
+}
+
+.table tbody tr:hover {
+    background-color: #f8fafc !important;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #fff !important;
+}
+
+.table-striped tbody tr:nth-child(even) {
+    background-color: #f9fafb !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f3f4f6 !important;
+}
+
+.table-responsive {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ========================================
+   BADGE & STATUS STYLING
+   ======================================== */
+
+.badge {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    letter-spacing: 0.3px !important;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+}
+
+.badge-warning {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #f59e0b !important;
+}
+
+.badge-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #3b82f6 !important;
+}
+
+/* ========================================
+   RESPONSIVE ANALYTICS LAYOUT
+   ======================================== */
+
+/* Mobile devices */
+@media (max-width: 767px) {
+    .card {
+        margin-bottom: 1rem !important;
+    }
+
+    .card-body {
+        padding: 1.2rem !important;
+    }
+
+    .table {
+        font-size: 12px !important;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 0.8rem !important;
+    }
+
+    .apexcharts-canvas {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+    }
+
+    .form-label {
+        font-size: 12px !important;
+    }
+}
+
+/* Tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .card {
+        margin-bottom: 1.2rem !important;
+    }
+
+    .col-md-4 {
+        flex: 0 0 calc(50% - 8px) !important;
+        max-width: calc(50% - 8px) !important;
+    }
+
+    .col-md-6 {
+        flex: 0 0 calc(50% - 8px) !important;
+        max-width: calc(50% - 8px) !important;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+    .col-xl-2 {
+        flex: 0 0 calc(16.666% - 8px) !important;
+        max-width: calc(16.666% - 8px) !important;
+    }
+
+    .col-xl-3 {
+        flex: 0 0 calc(25% - 8px) !important;
+        max-width: calc(25% - 8px) !important;
+    }
+
+    .col-xl-4 {
+        flex: 0 0 calc(33.333% - 8px) !important;
+        max-width: calc(33.333% - 8px) !important;
+    }
+
+    .col-xl-6 {
+        flex: 0 0 calc(50% - 8px) !important;
+        max-width: calc(50% - 8px) !important;
+    }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+[data-bs-theme="dark"] .page-content {
+    background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+}
+
+[data-bs-theme="dark"] .card {
+    background: #1e2330 !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background: #252d3f !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .card-title {
+    color: #f9fafb !important;
+}
+
+[data-bs-theme="dark"] .card-body h3,
+[data-bs-theme="dark"] .card-body h4,
+[data-bs-theme="dark"] .card-body h5 {
+    color: #f9fafb !important;
+}
+
+[data-bs-theme="dark"] .card-body p {
+    color: #9ca3af !important;
+}
+
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .form-control {
+    background-color: #262d3f !important;
+    color: #f9fafb !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .form-label {
+    color: #d1d5db !important;
+}
+
+[data-bs-theme="dark"] .table {
+    color: #d1d5db !important;
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background: #252d3f !important;
+    color: #e5e7eb !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .table tbody td {
+    border-color: #2d3748 !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: #2d3748 !important;
+}
+
+[data-bs-theme="dark"] .table-striped tbody tr:nth-child(even) {
+    background-color: #1a2332 !important;
+}
+
+[data-bs-theme="dark"] .apexcharts-legend-text {
+    color: #d1d5db !important;
+}
+
+[data-bs-theme="dark"] .apexcharts-text {
+    color: #9ca3af !important;
+}
+
+[data-bs-theme="dark"] .apexcharts-gridline {
+    stroke: #374151 !important;
+}
+
+/* ========================================
+   ANIMATION & TRANSITIONS
+   ======================================== */
+
+/* Smooth page transitions */
+.page-content {
+    animation: fadeIn 0.3s ease-in !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card entrance animation */
+.card {
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation for multiple cards */
+.row > div {
+    animation-delay: calc(0.05s * var(--item-index, 1)) !important;
+}

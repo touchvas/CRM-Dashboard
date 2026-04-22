@@ -350,7 +350,8 @@ h6,
 /* Completely remove default template font icons from both pseudo-elements */
 .metismenu .has-arrow::after,
 .metismenu .has-arrow::before {
-    content: "" !important;
+    display:none !important;
+    content: none !important;
     font-family: inherit !important;
 }
 
@@ -488,4 +489,488 @@ small,
 .page-content {
     padding-top: 115px !important;
     /* 85px header + 30px spacing */
+}
+
+/* ========================================
+   PROFESSIONAL CHART & VISUALIZATION ENHANCEMENTS
+   ======================================== */
+
+/* General chart containers */
+.apex-charts {
+    position: relative;
+    width: 100% !important;
+}
+
+/* Chart cards - professional styling */
+.card {
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.card-header {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    padding: 1rem 1.25rem !important;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* Chart text styling for better readability */
+.apexcharts-text {
+    font-size: 14px !important;
+}
+
+.apexcharts-legend-text {
+    font-size: 15px !important;
+    color: #374151 !important;
+}
+
+.apexcharts-tooltip {
+    background: #1f2937 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.apexcharts-tooltip-text {
+    font-size: 14px !important;
+    color: #fff !important;
+}
+
+.apexcharts-tooltip-title {
+    color: #f3f4f6 !important;
+    font-weight: 600 !important;
+}
+
+/* Grid improvements */
+.apexcharts-gridline {
+    stroke-dasharray: 3, 3 !important;
+    opacity: 0.3 !important;
+}
+
+.apexcharts-xaxis line {
+    stroke-opacity: 0.2 !important;
+}
+
+.apexcharts-yaxis line {
+    stroke-opacity: 0.1 !important;
+}
+
+/* ========================================
+   RESPONSIVE CHART LAYOUT
+   ======================================== */
+
+/* Mobile screens (< 768px) */
+@media (max-width: 767px) {
+    /* Stack charts vertically on small screens */
+    .col-md-4,
+    .col-md-6 {
+        width: 100% !important;
+    }
+
+    /* Adjust chart heights for mobile */
+    .apexcharts-canvas {
+        max-width: 100% !important;
+    }
+
+    /* Adjust KPI mini cards for mobile */
+    .kpi-mini {
+        min-width: 100px !important;
+        flex: 0 1 calc(50% - 6px) !important;
+    }
+
+    .kpi-strip {
+        gap: 8px !important;
+        padding: 12px 16px 0 16px !important;
+    }
+
+    /* Chart legends on mobile */
+    .apexcharts-legend {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        margin-top: 12px !important;
+    }
+
+    .apexcharts-legend-item {
+        margin: 4px !important;
+    }
+
+    /* Adjust sidebar on small screens */
+    .perf-controls {
+        padding: 12px 16px !important;
+    }
+
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    .card-header {
+        padding: 0.8rem 1rem !important;
+    }
+
+    .perf-body {
+        flex-direction: column !important;
+    }
+
+    .perf-chart-wrap {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding: 0 0 10px 0 !important;
+    }
+
+    .perf-controls {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding: 12px 16px !important;
+    }
+}
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .kpi-mini {
+        min-width: 120px !important;
+        flex: 1 1 0 !important;
+    }
+
+    .perf-chart-wrap {
+        flex: 0 0 70% !important;
+        max-width: 70% !important;
+    }
+
+    .perf-controls {
+        flex: 0 0 30% !important;
+        max-width: 30% !important;
+    }
+
+    .col-md-4,
+    .col-md-6 {
+        flex: 0 0 calc(50% - 6px) !important;
+        max-width: calc(50% - 6px) !important;
+    }
+
+    .col-xxl-3 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    .col-xxl-9 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* Large screens (> 1025px) */
+@media (min-width: 1025px) {
+    .col-xxl-9 {
+        flex: 0 0 74.5% !important;
+        max-width: 74.5% !important;
+    }
+
+    .col-xxl-3 {
+        flex: 0 0 25.5% !important;
+        max-width: 25.5% !important;
+    }
+
+    .col-xxl-12 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ========================================
+   ZOOM LEVEL RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+/* Zoom 75% - enhance readability */
+@media (min-width: 1400px) {
+    body {
+        font-size: 16px !important;
+    }
+
+    .kpi-mini-value {
+        font-size: 18px !important;
+    }
+
+    .card-title {
+        font-size: 1.1rem !important;
+    }
+
+    h4 {
+        font-size: 1.3rem !important;
+    }
+
+    .table {
+        font-size: 16px !important;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.8rem 0.9rem !important;
+    }
+}
+
+/* Zoom 100% - standard */
+@media (min-width: 1200px) and (max-width: 1399px) {
+    body {
+        font-size: 18px !important;
+    }
+}
+
+/* Zoom 125% - maintain readability */
+@media (min-width: 960px) and (max-width: 1199px) {
+    body {
+        font-size: 22px !important;
+    }
+
+    .kpi-mini {
+        min-width: 130px !important;
+    }
+
+    .table {
+        font-size: 18px !important;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.9rem 1rem !important;
+    }
+
+    .page-content {
+        padding-top: 120px !important;
+    }
+}
+
+/* Zoom 150% - increase spacing */
+@media (min-width: 768px) and (max-width: 959px) {
+    body {
+        font-size: 24px !important;
+    }
+
+    .kpi-strip {
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .kpi-mini {
+        flex: 0 1 calc(50% - 5px) !important;
+    }
+
+    .perf-chart-wrap {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    .perf-controls {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    .page-title-box {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .page-title-right {
+        width: 100% !important;
+    }
+}
+
+/* ========================================
+   PERFORMANCE TRENDS CARD RESPONSIVE
+   ======================================== */
+
+.perf-card {
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.perf-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.perf-card .card-header {
+    border-bottom: 1px solid #e2e8f0 !important;
+    background: #f8fafc !important;
+}
+
+/* KPI Mini improvements */
+.kpi-mini-value {
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+}
+
+.kpi-mini-label {
+    letter-spacing: 0.5px !important;
+    font-weight: 600 !important;
+}
+
+/* ========================================
+   TABLE RESPONSIVE IMPROVEMENTS
+   ======================================== */
+
+.table-responsive {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #f1f5f9 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.table tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+.table-centered td,
+.table-centered th {
+    vertical-align: middle !important;
+}
+
+.table thead th {
+    background: #f8fafc !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+/* ========================================
+   STATUS BADGE IMPROVEMENTS
+   ======================================== */
+
+.badge {
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 0.8rem !important;
+}
+
+.bg-success-subtle {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.bg-danger-subtle {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+/* ========================================
+   SIDEBAR DROPDOWN ARROW STYLING
+   ======================================== */
+
+#sidebar-menu .has-arrow {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+#sidebar-menu .has-arrow span {
+    flex: 1 !important;
+    margin-left: 12px !important;
+}
+
+#sidebar-menu .has-arrow::after {
+    content: '' !important;
+    position: absolute !important;
+    right: 20px !important;
+    width: 5px !important;
+    height: 5px !important;
+    border-top: 2px solid currentColor !important;
+    border-right: 2px solid currentColor !important;
+    transform: rotate(45deg) !important;
+    transition: transform 0.3s ease !important;
+    opacity: 0.7 !important;
+}
+
+#sidebar-menu .mm-active > .has-arrow::after,
+#sidebar-menu .has-arrow[aria-expanded="true"]::after {
+    transform: rotate(135deg) !important;
+    opacity: 1 !important;
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+[data-bs-theme="dark"] .card {
+    background: #1e2330 !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background: #252d3f !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .table {
+    background: #1e2330 !important;
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background: #252d3f !important;
+    color: #e5e7eb !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr {
+    border-color: #2d3748 !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background: #2d3748 !important;
+}
+
+[data-bs-theme="dark"] .apexcharts-legend-text {
+    color: #d1d5db !important;
+}
+
+[data-bs-theme="dark"] .perf-card {
+    background: #1e2330 !important;
+    border-color: #374151 !important;
+}
+
+[data-bs-theme="dark"] .condition-row {
+    background: #252d3f !important;
+    border-color: #374151 !important;
+}
+
+/* ========================================
+   SCROLL & OVERFLOW HANDLING
+   ======================================== */
+
+.table-responsive {
+    overflow-x: auto !important;
+}
+
+/* Fix chart overflow on mobile */
+@media (max-width: 767px) {
+    .apexcharts-svg {
+        overflow: visible !important;
+    }
+
+    .apexcharts-canvas {
+        overflow: visible !important;
+    }
 }
