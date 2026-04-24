@@ -372,8 +372,8 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const grandTotal = sbFinal + casFinal;
                 const options = {
                     series: [sbFinal, casFinal], labels: ['Sportsbook', 'Casino'],
-                    chart: { height: 300, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, grid: { padding: { bottom: 40 } }, colors: ['#4e7adf', '#38c66c'],
-                    plotOptions: { pie: { donut: { size: '72%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#64748b', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, total: { show: true, label: 'Total Stake', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(grandTotal)}` } } } } },
+                    chart: { height: 300, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, grid: { padding: { bottom: 40 } }, colors: ['#4e7adf', '#38c66c'], // Removed grid padding bottom
+                    plotOptions: { pie: { donut: { size: '72%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#64748b' }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, total: { show: true, label: 'Total Stake', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(grandTotal)}` } } } } },
                     dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(1)}%`, style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] } },
                     legend: { position: 'bottom', fontWeight: 600, fontSize: '13px', offsetY: 0, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val} • ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
                     tooltip: { theme: 'dark', style: { fontSize: '13px' }, y: { formatter: v => `KES ${fmtShort(v)}` } }
@@ -388,7 +388,7 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const categories = trend.map(d => d.month); const deposits = trend.map(d => d.deposits ?? 0); const withdrawals = trend.map(d => -(Math.abs(d.withdrawals ?? 0)));
                 const options = {
                     series: [{ name: 'Deposits', data: deposits }, { name: 'Withdrawals', data: withdrawals }],
-                    chart: { height: 230, type: 'bar', toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#475569' },
+                    chart: { height: 290, type: 'bar', toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#475569' },
                     colors: ['#10b981', '#f43f5e'], plotOptions: { bar: { columnWidth: '58%', borderRadius: 4, borderRadiusApplication: 'end' } },
                     dataLabels: { enabled: false }, xaxis: { categories, labels: { style: { fontSize: '11px', fontWeight: 600, colors: '#64748b' } } },
                     yaxis: { labels: { formatter: v => fmtShort(Math.abs(v)), style: { fontSize: '11px', colors: '#94a3b8' } } },
@@ -404,8 +404,8 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const active = segmentData.value.active_players || 0; const dormant = segmentData.value.dormant_players || 0; const total = active + dormant;
                 const options = {
                     series: [active, dormant], labels: ['Active', 'Dormant'],
-                    chart: { height: 230, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#10b981', '#fbbf24'],
-                    plotOptions: { pie: { startAngle: -90, endAngle: 90, offsetY: 10, donut: { size: '75%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -10 }, value: { show: true, fontSize: '22px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `${v || 0}` }, total: { show: true, label: 'Total Players', fontSize: '12px', color: '#9ca3af', formatter: () => `${total}` } } } } },
+                    chart: { height: 230, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#10b981', '#fbbf24'], // Removed grid padding bottom
+                    plotOptions: { pie: { startAngle: -90, endAngle: 90, donut: { size: '75%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569' }, value: { show: true, fontSize: '22px', fontWeight: 700, color: '#0f172a', formatter: v => `${v || 0}` }, total: { show: true, label: 'Total Players', fontSize: '12px', color: '#9ca3af', formatter: () => `${total}` } } } } },
                     grid: { padding: { bottom: -110 } }, dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(0)}%`, style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] } },
                     legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '13px', fontWeight: 500, formatter: (val, opts) => { const s = opts.w.globals.series[opts.seriesIndex] || 0; const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${s} (${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%)`; } },
                     tooltip: { theme: 'dark', y: { formatter: v => `${v} Players` } }
@@ -419,9 +419,12 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const stats = segmentData.value.casino_stats || []; if (!stats.length) return;
                 const total = stats.reduce((a, s) => a + (s.bets || 0), 0);
                 const options = {
-                    series: stats.map(s => s.bets), labels: stats.map(s => s.game),
+                    series: stats.map(s => s.bets), labels: stats.map(s => s.game), // Removed grid padding bottom
                     chart: { height: 250, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
-                    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, total: { show: true, label: 'Total Casino', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(total)}` } } } } },
+                      plotOptions: { pie: { donut: { size: '65%', labels: { show: true, 
+                          name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569' }, 
+                        value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, 
+                        total: { show: true, label: 'Total Casino', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(total)}` } } } } },
                     dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(1)}%`, style: { fontSize: '11px', fontWeight: 700, colors: ['#fff'] } },
                     legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '12px', fontWeight: 500, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
                     tooltip: { theme: 'dark', y: { formatter: v => `KES ${fmtShort(v)}` } }
@@ -434,9 +437,12 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const el = document.querySelector('#casinoBetsChart'); if (!el || !segmentData.value) return;
                 const stats = segmentData.value.casino_stats1 || segmentData.value.casino_stats || []; if (!stats.length) return;
                 const options = {
-                    series: stats.map(s => s.bets || s.total_rounds || 0), labels: stats.map(s => s.game),
+                    series: stats.map(s => s.bets || s.total_rounds || 0), labels: stats.map(s => s.game), // Removed grid padding bottom
                     chart: { height: 250, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
-                    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => fmtShort(parseInt(v || 0)) }, total: { show: true, label: 'Total Bets', fontSize: '11px', color: '#9ca3af', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) } } } } },
+                     plotOptions: { pie: { donut: { size: '65%', labels: { show: true, 
+                         name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569' }, 
+                        value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', formatter: v => fmtShort(parseInt(v || 0)) }, 
+                        total: { show: true, label: 'Total Bets', fontSize: '11px', color: '#9ca3af', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) } } } } },
                     dataLabels: { enabled: false }, legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '12px', fontWeight: 500, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
                     tooltip: { theme: 'dark', y: { formatter: v => `${v} Bets` } }
                 };
@@ -496,11 +502,107 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                     const csv = [h, ...d].map(r => r.join(',')).join('\n');
                     const b = new Blob([csv], { type: 'text/csv' }); const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download = 'players.csv'; l.click();
                 },
+                goToPlayers: () => {
+                    const params = new URLSearchParams(window.location.search);
+                    const id = params.get('id');
+                    if (id) window.location.href = `pages-segment-view.html?id=${encodeURIComponent(id)}`;
+                },
                 getFieldLabel: window.getFieldLabel, getOperatorLabel: window.getOperatorLabel, deleteSegment: () => Swal.fire('Warning', 'Restricted in dummy mode', 'warning')
             };
         }
     }).mount('#segmentViewApp');
     console.log("segmentViewApp mounted.");
+    }
+
+    // ─── Saved Segments App ───────────────────────────────────────────────────
+    const savedSegmentsContainer = document.getElementById('savedSegmentsApp');
+    if (savedSegmentsContainer && typeof Vue !== 'undefined') {
+        const savedSegmentsApp = Vue.createApp({
+            setup() {
+                const segments = Vue.ref([]);
+                const isLoading = Vue.ref(true);
+
+                const fetchSegments = async () => {
+                    isLoading.value = true;
+                    try {
+                        const res = await window.fetchSegmentsDummy();
+                        // Assign unique colors if missing to keep the UI consistent with the cards
+                        const colors = ['#4e7adf', '#38c66c', '#ffd166', '#f43f5e', '#a78bfa', '#fb923c'];
+                        segments.value = (res || []).map((s, i) => ({
+                            ...s,
+                            color: s.color || colors[i % colors.length]
+                        }));
+                    } catch (e) {
+                        console.error("Error loading segments:", e);
+                    } finally {
+                        isLoading.value = false;
+                    }
+                };
+
+                const favoriteSegments = Vue.computed(() => 
+                    segments.value.filter(s => s.is_favorite)
+                );
+
+                const toggleFavorite = async (seg) => {
+                    if (window.toggleSegmentFavoriteDummy) {
+                        await window.toggleSegmentFavoriteDummy(seg.id);
+                        await fetchSegments(); // Refresh the list to reflect favorite status
+                    }
+                };
+
+                const goToDetails = (seg) => {
+                    window.location.href = `pages-segment-details.html?id=${encodeURIComponent(seg.id)}`;
+                };
+
+                const fmtShort = (n) => {
+                    if (!n && n !== 0) return '0';
+                    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+                    if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+                    return n.toLocaleString();
+                };
+
+                Vue.onMounted(fetchSegments);
+
+                return { 
+                    segments, favoriteSegments, isLoading, 
+                    toggleFavorite, goToDetails, fmtShort 
+                };
+            }
+        });
+        savedSegmentsApp.mount('#savedSegmentsApp');
+        console.log("savedSegmentsApp mounted successfully.");
+    }
+
+    // ─── Login App ───────────────────────────────────────────────────────────
+    if (document.getElementById('loginApp')) {
+        const loginApp = Vue.createApp({
+            setup() {
+                const username = Vue.ref('');
+                const password = Vue.ref('');
+                const isLoading = Vue.ref(false);
+
+                const handleLogin = async () => {
+                    if (!username.value || !password.value) {
+                        if (window.showToast) window.showToast('Error', 'Email and Password are required', 'error');
+                        else alert('Email and Password are required');
+                        return;
+                    }
+
+                    isLoading.value = true;
+                    // Simulating login logic for the portal
+                    setTimeout(() => {
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                        sessionStorage.setItem('user_email', username.value);
+                        window.location.href = 'index.html';
+                        isLoading.value = false;
+                    }, 800);
+                };
+
+                return { username, password, isLoading, handleLogin };
+            }
+        });
+        loginApp.mount('#loginApp');
+        console.log("loginApp mounted successfully.");
     }
 
     // ─── Dashboard Analytics App ──────────────────────────────────────────────

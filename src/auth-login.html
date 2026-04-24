@@ -39,7 +39,7 @@
 
                     <!-- Login form -->
                     <div class="flex-grow-1 d-flex flex-column justify-content-center px-lg-4">
-                        <form @submit.prevent="login">
+                        <form @submit.prevent="handleLogin">
                             <div class="input-group mb-3 w-100">
                                 <span class="input-group-text border-dashed border-end-0 auth-icon-container">
                                     <i class="mdi mdi-account-outline"></i>
@@ -68,8 +68,9 @@
                                 <a href="auth-recoverpw.html" class="text-primary small d-block w-100 text-end">Forgot password?</a>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light">
-                                Login
+                            <button type="submit" class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light" :disabled="isLoading">
+                                <span  class="spinner-border spinner-border-sm me-1"></span>
+                                login
                             </button>
 
                             <div class="mt-4 text-center">
