@@ -1,4 +1,13 @@
 <!-- Segment Players View -->
+
+<div id="layout-wrapper">
+    @@include("partials/menu.html")
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+        <div class="page-content">
 <div id="segmentViewApp" v-if="segmentData" class="container-fluid">
     <!-- Header Section -->
     <div class="row mb-4">
@@ -135,6 +144,16 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+</div>
+
+        @@include("partials/footer.html")
+    </div> <!-- end main content-->
+</div> <!-- End layout-wrapper -->
+
+@@include("partials/vendor-scripts.html")
+</body>
 
 <style>
     .cursor-pointer {
@@ -145,3 +164,4 @@
         background-color: rgba(0,0,0,0.05);
     }
 </style>
+

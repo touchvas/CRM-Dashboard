@@ -522,6 +522,78 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                 const segments = Vue.ref([]);
                 const isLoading = Vue.ref(true);
 
+                // ── Builder state (used on pages-segmentation.html) ───────────
+                const segmentName = Vue.ref('');
+                const segmentDescription = Vue.ref('');
+                const refreshType = Vue.ref('REAL_TIME');
+                const matchCount = Vue.ref(0);
+
+                let _uid = Date.now();
+                const uid = () => 'qb-' + (_uid++);
+
+                const makeRule = () => ({
+                    _id: uid(),
+                    _type: 'rule',
+                    field: '',
+                    operator: '',
+                    value: '',
+                });
+
+                const makeGroup = () => ({
+                    _id: uid(),
+                    _type: 'group',
+                    operator: 'AND',
+                    rules: [makeRule()],
+                });
+
+                const criteria = Vue.ref({
+                    operator: 'AND',
+                    rules: [makeRule()],
+                });
+
+                const fieldCategories = Vue.computed(() => window.QBFieldCategories || []);
+
+                const getFieldConfig = (fieldKey) =>
+                    window.getFieldConfig ? window.getFieldConfig(fieldKey) : null;
+
+                const getOperators = (fieldKey) =>
+                    window.getOperatorsForField ? window.getOperatorsForField(fieldKey) : [];
+
+                const addRule = (rulesList) => rulesList.push(makeRule());
+                const addGroup = (rulesList) => rulesList.push(makeGroup());
+                const removeItem = (rulesList, idx) => {
+                    if (rulesList.length > 1) rulesList.splice(idx, 1);
+                };
+
+                const runPreview = async () => {
+                    if (!window.filterPlayersByCriteria) return;
+                    const cleanCriteria = JSON.parse(JSON.stringify(criteria.value));
+                    const res = await window.filterPlayersByCriteria(cleanCriteria);
+                    matchCount.value = (res.data || []).length;
+                };
+
+                const saveCurrentSegment = async () => {
+                    if (!segmentName.value.trim()) {
+                        if (window.showToast) window.showToast('Validation', 'Segment name is required', 'warning');
+                        else alert('Segment name is required');
+                        return;
+                    }
+                    try {
+                        isLoading.value = true;
+                        const cleanCriteria = JSON.parse(JSON.stringify(criteria.value));
+                        await window.createSegmentDummy(segmentName.value.trim(), segmentDescription.value.trim(), refreshType.value, cleanCriteria);
+                        if (window.showToast) window.showToast('Success', 'Segment created and saved!', 'success');
+                        setTimeout(() => { window.location.href = 'pages-saved-segments.html'; }, 1000);
+                    } catch (e) {
+                        console.error("Error saving segment:", e);
+                    } finally {
+                        isLoading.value = false;
+                    }
+                };
+
+                // Auto-preview on criteria change
+                Vue.watch(criteria, runPreview, { deep: true });
+
                 const fetchSegments = async () => {
                     isLoading.value = true;
                     try {
@@ -561,11 +633,18 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                     return n.toLocaleString();
                 };
 
-                Vue.onMounted(fetchSegments);
+                Vue.onMounted(async () => {
+                    await fetchSegments();
+                    await runPreview();
+                });
 
                 return { 
                     segments, favoriteSegments, isLoading, 
-                    toggleFavorite, goToDetails, fmtShort 
+                    toggleFavorite, goToDetails, fmtShort,
+                    // Builder exports
+                    segmentName, segmentDescription, refreshType, matchCount, criteria,
+                    fieldCategories, getFieldConfig, getOperators,
+                    addRule, addGroup, removeItem, runPreview, saveCurrentSegment
                 };
             }
         });
