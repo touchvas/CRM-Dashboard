@@ -1,10 +1,14 @@
-console.log("Rules Portal: app.js module loading started... [Build Version: 1.2.4]");
-
-// Destructure Vue globals (loaded via CDN in HTML)
-const { createApp, ref, computed, onMounted, reactive } = Vue;
-
 // ─── Wait for DOM before running any jQuery / Vue init ───────────────────────
 document.addEventListener("DOMContentLoaded", function () {
+
+    // Guard against multiple initializations if app.js is loaded twice
+    if (window.__CLIVAX_APP_INITIALIZED__) {
+        console.warn("app.js already initialized. Skipping second load.");
+        return;
+    }
+    window.__CLIVAX_APP_INITIALIZED__ = true;
+
+    console.log("Rules Portal: app.js module loading started... [Build Version: 1.2.4]");
 
     (function ($) {
 
@@ -259,718 +263,251 @@ document.addEventListener("DOMContentLoaded", function () {
 
     })(jQuery);
 
-
-    // ─── Saved Segments App ───────────────────────────────────────────────────
-    const savedSegmentsApp = createApp({
+const segmentViewContainer = document.getElementById('segmentViewApp');
+if (segmentViewContainer && typeof Vue !== 'undefined') {
+    const segmentViewApp = Vue.createApp({
         setup() {
-            const segments = ref([]);
-            const selectedSegment = ref(null);
-            const isLoading = ref(false);
-            const filteredContacts = ref([]);
-            const isPreviewLoading = ref(false);
+            const segmentData = Vue.ref(null);
+            const isLoading = Vue.ref(true);
+            const search = Vue.ref('');
+            const statusFilter = Vue.ref('all');
+            const sort = Vue.reactive({ key: 'total_deposits', dir: 'desc' });
+            const showPlayers = Vue.ref(false);
 
-            const isCreating = ref(false);
-            const filterSchema = ref([]);
-            const segmentName = ref('');
-            const segmentDescription = ref('');
-            const refreshType = ref('REAL_TIME');
-            const criteria = ref({
-                operator: 'AND',
-                rules: [{ field: '', operator: 'eq', value: '' }]
-            });
-
-            const showInitialCreateButton = computed(() => segments.value.length === 0 && !isCreating.value && !isLoading.value);
-            const previewContacts = computed(() => filteredContacts.value.slice(0, 5));
-
-            const goToDetails = (segment) => {
-                const id = segment.id || segment.name;
-                window.location.href = `pages-segment-details.html?id=${id}`;
-            };
-
-            const loadSchema = async () => {
-                try {
-                    filterSchema.value = window.getProcessedFilterSchema();
-                } catch (e) { console.error("Schema fetch failed", e); }
-            };
-
-            const startCreating = async () => {
-                isCreating.value = true;
-                if (filterSchema.value.length === 0) await loadSchema();
-            };
-
-            const loadSavedSegments = async () => {
-                isLoading.value = true;
-                try {
-                    const res = await window.fetchSegmentsDummy();
-                    segments.value = res?.data || res || [];
-                } catch (error) {
-                    console.error("Error loading saved segments:", error);
-                    segments.value = JSON.parse(localStorage.getItem('segments') || '[]');
-                } finally {
-                    isLoading.value = false;
-                }
-            };
-
-            const addCondition = () => criteria.value.rules.push({ field: '', operator: 'eq', value: '' });
-            const removeCondition = (idx) => { if (criteria.value.rules.length > 1) criteria.value.rules.splice(idx, 1); };
-
-            const saveCurrentSegment = async () => {
-                if (!segmentName.value) { alert('Name required'); return; }
-                try {
-                    isLoading.value = true;
-                    await window.createSegmentDummy(segmentName.value, segmentDescription.value, refreshType.value, {
-                        operator: criteria.value.operator,
-                        rules: criteria.value.rules.map(r => ({ field: r.field, operator: r.operator, value: r.value }))
-                    });
-                    isCreating.value = false;
-                    segmentName.value = '';
-                    await loadSavedSegments();
-                } catch (e) { alert("Save failed"); } finally { isLoading.value = false; }
-            };
-
-            onMounted(async () => {
-                await loadSavedSegments();
-            });
-
-            async function viewSegment(segment) {
-                if (isCreating.value) return;
-                const isAlreadySelected = selectedSegment.value &&
-                    (selectedSegment.value.id === segment.id || selectedSegment.value.name === segment.name);
-                if (isAlreadySelected) {
-                    selectedSegment.value = null;
-                    filteredContacts.value = [];
-                } else {
-                    selectedSegment.value = segment;
-                    filteredContacts.value = [];
-                    isPreviewLoading.value = true;
-                    try {
-                        filteredContacts.value = await window.getPlayersForSegment(segment);
-                    } catch (e) {
-                        console.error("Preview resolution failed", e);
-                    } finally {
-                        isPreviewLoading.value = false;
-                    }
-                }
-            }
-
-            const fmtShort = (n) => {
-                if (!n) return '0';
-                if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
-                if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
-                return String(n);
-            };
-
-            return {
-                segments, selectedSegment, isLoading, filteredContacts, isPreviewLoading,
-                viewSegment,
-                getSegmentSummary: window.getSegmentSummary,
-                isCreating, startCreating, showInitialCreateButton,
-                segmentName, segmentDescription, refreshType, criteria, filterSchema,
-                addCondition, removeCondition, saveCurrentSegment, previewContacts, goToDetails,
-                getFieldLabel: window.getFieldLabel,
-                getOperatorLabel: window.getOperatorLabel
-            };
-        }
-    });
-
-    if (document.getElementById('savedSegmentsApp')) {
-        savedSegmentsApp.mount('#savedSegmentsApp');
-        console.log("savedSegmentsApp mounted.");
-    }
-
-
-    // ─── Segment View App ─────────────────────────────────────────────────────
-    const segmentViewApp = createApp({
-        setup() {
-            const segmentData = ref(null);
-            const isLoading = ref(true);
-            const search = ref('');
-            const statusFilter = ref('all');
-            const sort = reactive({ key: 'total_deposits', dir: 'desc' });
-
-            // ── Chart field definitions (colours drive both the chart lines and the right-panel dots) ──
-            const chartFields = [
-                { key: 'deposits', label: 'Deposits', color: '#4e7adf' },
-                { key: 'stake', label: 'Stake', color: '#ffd166' },
-                { key: 'withdrawals', label: 'Withdrawals', color: '#38c66c' },
-                { key: 'bets', label: 'Bet Count', color: '#f76b6b' },
-                { key: 'players', label: 'Active Players', color: '#a78bfa' },
-            ];
-            const activeFields = ref(['deposits', 'stake', 'withdrawals', 'bets', 'players']);
-
-            // Chart instance refs — kept so we can destroy before re-render
-            let chartInstance = null;
-            let salesChartInstance = null;
-            let cashFlowChartInstance = null;
-            let statusChartInstance = null;
-            let casinoChartInstance = null;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const segmentId = urlParams.get('id');
-
-            // ── Shared formatter ─────────────────────────────────────────────
-            const fmtShort = (n) => {
-                if (!n && n !== 0) return '0';
-                if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-                if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-                return String(n);
-            };
-
-            // ── Computed ─────────────────────────────────────────────────────
-            const filteredPlayers = computed(() => {
-                if (!segmentData.value?.players) return [];
-                return segmentData.value.players
-                    .filter(p => {
-                        const matchStatus = statusFilter.value === 'all' || p.status === statusFilter.value;
-                        const q = search.value.toLowerCase();
-                        const matchSearch = p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q);
-                        return matchStatus && matchSearch;
-                    })
-                    .sort((a, b) => {
-                        const [va, vb] = [a[sort.key], b[sort.key]];
-                        const dir = sort.dir === 'asc' ? 1 : -1;
-                        return (va < vb ? -1 : va > vb ? 1 : 0) * dir;
-                    });
-            });
-
-            const growthRate = computed(() => {
+            // Computed KPIs derived from monthly_trend
+            const growthRate = Vue.computed(() => {
                 const trend = segmentData.value?.monthly_trend;
                 if (!trend || trend.length < 2) return 0;
-                const last = trend[trend.length - 1].deposits;
-                const prev = trend[trend.length - 2].deposits;
-                if (!prev) return 0;
-                return (((last - prev) / prev) * 100).toFixed(1);
+                const first = trend[0].deposits || 1;
+                const last  = trend[trend.length - 1].deposits || 0;
+                return Math.round(((last - first) / first) * 100);
             });
 
-            const projectedValue = computed(() => {
-                if (!segmentData.value?.total_players) return 0;
-                const avg = segmentData.value.total_deposits / segmentData.value.total_players / 6;
-                return Math.round(avg * 12 * segmentData.value.total_players);
+            const projectedValue = Vue.computed(() => {
+                const trend = segmentData.value?.monthly_trend;
+                if (!trend || trend.length === 0) return 0;
+                const last = trend[trend.length - 1];
+                return Math.round((last.deposits || 0) * 1.15);
             });
 
-            const nggr = computed(() => {
-                if (!segmentData.value) return 0;
-                return segmentData.value.total_bets - segmentData.value.total_withdrawals;
+            const nggr = Vue.computed(() => {
+                const d = segmentData.value;
+                if (!d) return 0;
+                return Math.round((d.total_deposits || 0) - (d.total_withdrawals || 0));
             });
 
-            // ── 1. Performance Trends — Area chart ───────────────────────────
+            const filteredPlayers = Vue.computed(() => {
+                let players = segmentData.value?.players || [];
+                if (search.value) {
+                    const q = search.value.toLowerCase();
+                    players = players.filter(p =>
+                        (p.name || '').toLowerCase().includes(q) ||
+                        (p.email || '').toLowerCase().includes(q)
+                    );
+                }
+                if (statusFilter.value !== 'all') {
+                    players = players.filter(p => p.status === statusFilter.value);
+                }
+                return [...players].sort((a, b) => {
+                    const va = a[sort.key] ?? 0;
+                    const vb = b[sort.key] ?? 0;
+                    return sort.dir === 'desc' ? vb - va : va - vb;
+                });
+            });
+
+            const chartFields = [
+                { key: 'deposits',        label: 'Deposits',        color: '#4e7adf' },
+                { key: 'stake',           label: 'Stake',           color: '#ffd166' },
+                { key: 'withdrawals',     label: 'Withdrawals',     color: '#38c66c' },
+                { key: 'active_players',  label: 'Active Players',  color: '#a78bfa' },
+                { key: 'dormant_players', label: 'Dormant Players', color: '#fb923c' },
+                { key: 'new_players',     label: 'New Players',     color: '#10b981' },
+                { key: 'deposit_count',   label: 'Deposit Count',   color: '#06b6d4' },
+                { key: 'failed_deposits', label: 'Failed Deposits', color: '#ef4444' },
+                { key: 'sb_bets',         label: 'Sports Bets',     color: '#8b5cf6' },
+                { key: 'casino_rounds',   label: 'Casino Rounds',   color: '#f43f5e' },
+                { key: 'sb_stake',        label: 'Sports Stake',    color: '#0ea5e9' },
+                { key: 'casino_stake',    label: 'Casino Stake',    color: '#d946ef' },
+                { key: 'total_ggr',       label: 'Total GGR',       color: '#22c55e' },
+            ];
+            const activeFields = Vue.ref(['deposits', 'stake', 'withdrawals']);
+
+            // Use global fmtShort if available
+            const fmtShort = window.fmtShort || ((n) => n.toLocaleString());
+
+            let chartInstance = null; let salesChartInstance = null; let cashFlowChartInstance = null;
+            let statusChartInstance = null; let casinoChartInstance = null; let casinoBetsChartInstance = null;
+
             const initChart = () => {
                 const el = document.querySelector('#segmentTrendChart');
                 if (!el || !segmentData.value) return;
-
-                const trend = segmentData.value.monthly_trend || [];
-                const categories = trend.map(d => d.month);
-
-                const buildSeries = () =>
-                    chartFields // Ensure only active fields are included in the series
-                        .filter(f => activeFields.value.includes(f.key))
-                        .map(f => ({
-                            name: f.label,
-                            data: trend.map(d => d[f.key] ?? 0),
-                            yaxisIndex: (f.key === 'bets' || f.key === 'players') ? 1 : 0, // Assign to appropriate Y-axis
-                        }));
-
-                const activeColors = () =>
-                    chartFields.filter(f => activeFields.value.includes(f.key)).map(f => f.color);
-
+                const categories = segmentData.value.monthly_trend.map(d => d.month);
+                const buildSeries = () => chartFields.filter(f => activeFields.value.includes(f.key)).map(f => ({ name: f.label, data: segmentData.value.monthly_trend.map(d => d[f.key] ?? 0) }));
+                const activeColors = () => chartFields.filter(f => activeFields.value.includes(f.key)).map(f => f.color);
                 const options = {
-                    series: buildSeries(),
-                    chart: {
-                        height: 260,
-                        type: 'area',
-                        toolbar: { show: false },
-                        animations: { enabled: true, speed: 400 },
-                        fontFamily: 'Inter, sans-serif',
-                        foreColor: '#475569',
-                    },
-                    colors: activeColors(),
-                    dataLabels: { enabled: false },
-                    stroke: { curve: 'smooth', width: 3 },
-                    markers: {
-                        strokeWidth: 2,
-                        hover: { size: 6 }
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 90, 100] },
-                    },
-                    xaxis: {
-                        categories,
-                        axisTicks: { show: false },
-                        labels: { style: { fontSize: '13px', fontWeight: 500, colors: '#6b7280' } },
-                    },
-                    yaxis: [
-                        {
-                            title: { text: 'Value (KES)', style: { fontSize: '12px', color: '#475569', fontWeight: 600 } },
-                            labels: { formatter: v => fmtShort(v), style: { fontSize: '12px', colors: '#475569' } },
-                        },
-                        {
-                            opposite: true,
-                            labels: {
-                                formatter: v => `${fmtShort(v)}`, // For Count series
-                                style: { fontSize: '12px', colors: '#475569' }
-                            },
-                        },
-                    ],
-                    grid: { borderColor: '#e5e7eb', strokeDashArray: 3, padding: { left: 10, right: 10 } },
-                    legend: { show: false }, // legend lives in right panel
-                    tooltip: {
-                        theme: 'dark',
-                        style: { fontSize: '13px' },
-                        y: [
-                            { formatter: v => `KES ${fmtShort(v)}` }, // For Value (KES) series
-                            { formatter: v => `${fmtShort(v)}` },     // For Count series
-                        ],
-                    },
-                    responsive: [
-                        { breakpoint: 1024, options: { chart: { height: 350 } } },
-                        { breakpoint: 768, options: { chart: { height: 300 } } },
-                    ],
+                    series: buildSeries(), chart: { height: 300, type: 'area', toolbar: { show: false }, animations: { enabled: true, speed: 400 }, fontFamily: 'Inter, sans-serif', foreColor: '#475569' },
+                    colors: activeColors(), dataLabels: { enabled: false }, stroke: { curve: 'smooth', width: 3 }, markers: { strokeWidth: 2, hover: { size: 6 } },
+                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.05, stops: [0, 90, 100] } },
+                    xaxis: { categories, axisTicks: { show: false }, labels: { style: { fontSize: '13px', fontWeight: 500, colors: '#6b7280' } }, lines: { show: true, borderColor: '#e5e7eb', strokeDashArray: 3 } },
+                    yaxis: { labels: { formatter: v => fmtShort(v), style: { fontSize: '12px', colors: '#475569' } } },
+                    grid: { borderColor: '#e5e7eb', strokeDashArray: 3, padding: { left: 10, right: 10 } }, legend: { show: false },
+                    tooltip: { theme: 'dark', style: { fontSize: '13px' }, y: { formatter: v => fmtShort(v) } }
                 };
-
-                if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-                chartInstance = new ApexCharts(el, options);
-                chartInstance.render();
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new ApexCharts(el, options); chartInstance.render();
             };
 
-            // Reactively update series when fields are toggled
             Vue.watch(activeFields, () => {
                 if (!chartInstance || !segmentData.value) return;
-                const newSeries = chartFields
-                    .filter(f => activeFields.value.includes(f.key))
-                    .map(f => ({
-                        name: f.label,
-                        data: segmentData.value.monthly_trend.map(d => d[f.key] ?? 0),
-                        yaxisIndex: (f.key === 'bets' || f.key === 'players') ? 1 : 0,
-                    }));
-                chartInstance.updateSeries(newSeries, true);
+                const newSeries = chartFields.filter(f => activeFields.value.includes(f.key)).map(f => ({ name: f.label, data: segmentData.value.monthly_trend.map(d => d[f.key] ?? 0) }));
+                const newColors = chartFields.filter(f => activeFields.value.includes(f.key)).map(f => f.color);
+                chartInstance.updateOptions({ colors: newColors }, false, false); chartInstance.updateSeries(newSeries, true);
             }, { deep: true });
 
-            // ── 2. Sales Analytics — Donut: Sportsbook vs Casino ─────────────
             const initSalesAnalyticsChart = () => {
-                const el = document.querySelector('#salesAnalyticsChart');
-                if (!el || !segmentData.value) return;
-
-                const sportsbookTotal = segmentData.value.monthly_trend
-                    .reduce((acc, d) => acc + Math.round((d.bets ?? 0) * 1.5), 0);
-                const casinoTotal = segmentData.value.monthly_trend
-                    .reduce((acc, d) => acc + Math.round((d.bets ?? 0) * 0.8), 0);
-                const grandTotal = sportsbookTotal + casinoTotal;
-
-                const options = {
-                    series: [sportsbookTotal, casinoTotal],
-                    labels: ['Sportsbook', 'Casino'],
-                    chart: {
-                        height: 240,
-                        type: 'donut',
-                        fontFamily: 'Inter, sans-serif',
-                        foreColor: '#475569',
-                    },
-                    colors: ['#4e7adf', '#38c66c', '#ffd166'],
-                    plotOptions: {
-                        pie: {
-                            donut: {
-                                size: '68%',
-                                labels: {
-                                    show: true,
-                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#64748b', offsetY: -6 },
-                                    value: {
-                                        show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4,
-                                        formatter: v => `KES ${fmtShort(parseInt(v || 0))}`
-                                    },
-                                    total: {
-                                        show: true, label: 'Total Revenue', fontSize: '11px', color: '#9ca3af',
-                                        formatter: () => `KES ${fmtShort(grandTotal)}`
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: (val) => `${Number(val).toFixed(1)}%`,
-                        style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] },
-                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
-                    },
-                    legend: {
-                        position: 'bottom',
-                        fontWeight: 600,
-                        fontSize: '13px',
-                        offsetY: 4,
-                        itemMargin: { horizontal: 8, vertical: 4 },
-                        formatter: (val, opts) => {
-                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
-                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
-                            return `${val} • ${p}%`; // short: name + percentage only
-                        },
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        style: { fontSize: '13px' },
-                        y: { formatter: v => `KES ${fmtShort(v)}` },
-                    },
-                    states: { hover: { filter: { type: 'darken', value: 0.12 } } },
-                };
-                if (salesChartInstance) { salesChartInstance.destroy(); salesChartInstance = null; }
-                salesChartInstance = new ApexCharts(el, options);
-                salesChartInstance.render();
-            };
-
-            // ── 3. Monthly Cash Flow — Grouped Bar: Deposits vs Withdrawals ──
-            const initMonthlyCashFlowChart = () => {
-                const el = document.querySelector('#monthlyCashFlowChart');
-                if (!el || !segmentData.value) return;
-
+                const el = document.querySelector('#salesAnalyticsChart'); if (!el || !segmentData.value) return;
                 const trend = segmentData.value.monthly_trend || [];
-                const categories = trend.map(d => d.month);
-                const deposits = trend.map(d => d.deposits ?? 0);
-                const withdrawals = trend.map(d => -(Math.abs(d.withdrawals ?? 0))); // both positive
-
+                const sbFinal = trend.reduce((acc, d) => acc + (d.sb_stake || d.stake || 0), 0);
+                const casFinal = trend.reduce((acc, d) => acc + (d.casino_stake || 0), 0);
+                const grandTotal = sbFinal + casFinal;
                 const options = {
-                    series: [
-                        { name: 'Deposits', data: deposits },
-                        { name: 'Withdrawals', data: withdrawals },
-                    ],
-                    chart: {
-                        height: 230,
-                        type: 'bar',
-                        toolbar: { show: false },
-                        fontFamily: 'Inter, sans-serif',
-                        foreColor: '#475569',
-                        animations: { enabled: true, speed: 500, easing: 'easeinout' },
-                    },
-                    colors: ['#10b981', '#f43f5e'],
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            shade: 'light',
-                            type: 'vertical',
-                            shadeIntensity: 0.25,
-                            gradientToColors: ['#059669', '#e11d48'],
-                            inverseColors: false,
-                            opacityFrom: 1,
-                            opacityTo: 0.85,
-                            stops: [0, 100],
-                        },
-                    },
-                    plotOptions: {
-                        bar: {
-                            columnWidth: '58%',
-                            borderRadius: 4,
-                            borderRadiusApplication: 'end',
-                            dataLabels: { position: 'top' },
-                        },
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: v => v > 0 ? fmtShort(Math.abs(v)) : '',
-                        offsetY: -22,
-                        style: { fontSize: '10px', fontWeight: 700, colors: ['#374151'] },
-                        background: { enabled: false },
-                    },
-                    xaxis: {
-                        categories,
-                        axisBorder: { show: true, color: '#94a3b8', height: 2 },
-                        axisTicks: { show: true, color: '#cbd5e1', height: 4 },
-                        labels: { style: { fontSize: '11px', fontWeight: 600, colors: '#64748b' } },
-                        crosshairs: {
-                            show: true,
-                            fill: { type: 'solid', color: '#f1f5f9' },
-                            opacity: 0.5,
-                        },
-                    },
-                    yaxis: {
-                        title: { text: 'KES', style: { fontSize: '11px', color: '#94a3b8', fontWeight: 600 } },
-                        labels: { formatter: v => fmtShort(Math.abs(v)), style: { fontSize: '11px', colors: '#94a3b8' } },
-                    },
-                    legend: {
-                        position: 'top',
-                        horizontalAlign: 'right',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        markers: { radius: 3, width: 10, height: 10 },
-                        itemMargin: { horizontal: 8 },
-                    },
-                    grid: {
-                        borderColor: '#cacfd3ff',
-                        strokeDashArray: 4,
-                        yaxis: { lines: { show: true } },
-                        xaxis: { lines: { show: false } },
-                        padding: { top: 4, right: 8, bottom: 0, left: 8 },
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        shared: true,
-                        intersect: false,
-                        style: { fontSize: '12px' },
-                        y: { formatter: v => `KES ${fmtShort(Math.abs(v))}` },
-                    },
-                    states: {
-                        hover: { filter: { type: 'lighten', value: 0.08 } },
-                        active: { filter: { type: 'darken', value: 0.1 } },
-                    },
-                    responsive: [
-                        { breakpoint: 768, options: { chart: { height: 240 }, dataLabels: { enabled: false } } },
-                    ],
+                    series: [sbFinal, casFinal], labels: ['Sportsbook', 'Casino'],
+                    chart: { height: 300, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, grid: { padding: { bottom: 40 } }, colors: ['#4e7adf', '#38c66c'],
+                    plotOptions: { pie: { donut: { size: '72%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#64748b', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, total: { show: true, label: 'Total Stake', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(grandTotal)}` } } } } },
+                    dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(1)}%`, style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] } },
+                    legend: { position: 'bottom', fontWeight: 600, fontSize: '13px', offsetY: 0, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val} • ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
+                    tooltip: { theme: 'dark', style: { fontSize: '13px' }, y: { formatter: v => `KES ${fmtShort(v)}` } }
                 };
-
-                if (cashFlowChartInstance) { cashFlowChartInstance.destroy(); cashFlowChartInstance = null; }
-                cashFlowChartInstance = new ApexCharts(el, options);
-                cashFlowChartInstance.render();
+                if (salesChartInstance) salesChartInstance.destroy();
+                salesChartInstance = new ApexCharts(el, options); salesChartInstance.render();
             };
 
-            // ── 4. Player Status — Half Donut: Active vs Dormant ─────────────
+            const initMonthlyCashFlowChart = () => {
+                const el = document.querySelector('#monthlyCashFlowChart'); if (!el || !segmentData.value) return;
+                const trend = segmentData.value.monthly_trend || [];
+                const categories = trend.map(d => d.month); const deposits = trend.map(d => d.deposits ?? 0); const withdrawals = trend.map(d => -(Math.abs(d.withdrawals ?? 0)));
+                const options = {
+                    series: [{ name: 'Deposits', data: deposits }, { name: 'Withdrawals', data: withdrawals }],
+                    chart: { height: 230, type: 'bar', toolbar: { show: false }, fontFamily: 'Inter, sans-serif', foreColor: '#475569' },
+                    colors: ['#10b981', '#f43f5e'], plotOptions: { bar: { columnWidth: '58%', borderRadius: 4, borderRadiusApplication: 'end' } },
+                    dataLabels: { enabled: false }, xaxis: { categories, labels: { style: { fontSize: '11px', fontWeight: 600, colors: '#64748b' } } },
+                    yaxis: { labels: { formatter: v => fmtShort(Math.abs(v)), style: { fontSize: '11px', colors: '#94a3b8' } } },
+                    legend: { position: 'top', horizontalAlign: 'right', fontSize: '12px', fontWeight: 600 }, grid: { borderColor: '#e5e7eb', strokeDashArray: 4 },
+                    tooltip: { theme: 'dark', shared: true, intersect: false, y: { formatter: v => `KES ${fmtShort(Math.abs(v))}` } }
+                };
+                if (cashFlowChartInstance) cashFlowChartInstance.destroy();
+                cashFlowChartInstance = new ApexCharts(el, options); cashFlowChartInstance.render();
+            };
+
             const initStatusChart = () => {
-                const el = document.querySelector('#playerStatusChart');
-                if (!el || !segmentData.value) return;
-
-                const active = segmentData.value.active_players || 0;
-                const dormant = segmentData.value.dormant_players || 0;
-                const total = active + dormant;
-
+                const el = document.querySelector('#playerStatusChart'); if (!el || !segmentData.value) return;
+                const active = segmentData.value.active_players || 0; const dormant = segmentData.value.dormant_players || 0; const total = active + dormant;
                 const options = {
-                    series: [active, dormant],
-                    labels: ['Active', 'Dormant'],
-                    chart: {
-                        height: 230,
-                        type: 'donut',
-                        fontFamily: 'Inter, sans-serif',
-                        foreColor: '#475569',
-                    },
-                    colors: ['#10b981', '#fbbf24'],
-                    plotOptions: {
-                        pie: {
-                            startAngle: -90,
-                            endAngle: 90,
-                            offsetY: 10,
-                            donut: {
-                                size: '75%',
-                                labels: {
-                                    show: true,
-                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -10 },
-                                    value: {
-                                        show: true, fontSize: '22px', fontWeight: 700, color: '#0f172a', offsetY: 4,
-                                        formatter: v => `${v || 0}`
-                                    },
-                                    total: {
-                                        show: true, label: 'Total Players', fontSize: '12px', color: '#9ca3af',
-                                        formatter: () => `${total}`
-                                    },
-                                },
-                            },
-                        }
-                    },
-                    // Pull the chart up so the flat bottom doesn't waste space
-                    grid: { padding: { bottom: -110 } },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: (val) => `${Number(val).toFixed(0)}%`,
-                        style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] },
-                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
-                    },
-                    legend: {
-                        position: 'bottom',
-                        horizontalAlign: 'center',
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        formatter: (val, opts) => {
-                            const s = opts.w.globals.series[opts.seriesIndex] || 0;
-                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
-                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
-                            return `${val}: ${s} (${p}%)`;
-                        },
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        style: { fontSize: '13px' },
-                        y: { formatter: v => `${v} Players` },
-                    },
-                    states: { hover: { filter: { type: 'darken', value: 0.12 } } },
-                    responsive: [
-                        { breakpoint: 768, options: { chart: { height: 280 } } },
-                    ],
+                    series: [active, dormant], labels: ['Active', 'Dormant'],
+                    chart: { height: 230, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#10b981', '#fbbf24'],
+                    plotOptions: { pie: { startAngle: -90, endAngle: 90, offsetY: 10, donut: { size: '75%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -10 }, value: { show: true, fontSize: '22px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `${v || 0}` }, total: { show: true, label: 'Total Players', fontSize: '12px', color: '#9ca3af', formatter: () => `${total}` } } } } },
+                    grid: { padding: { bottom: -110 } }, dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(0)}%`, style: { fontSize: '12px', fontWeight: 700, colors: ['#fff'] } },
+                    legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '13px', fontWeight: 500, formatter: (val, opts) => { const s = opts.w.globals.series[opts.seriesIndex] || 0; const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${s} (${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%)`; } },
+                    tooltip: { theme: 'dark', y: { formatter: v => `${v} Players` } }
                 };
-
-                if (statusChartInstance) { statusChartInstance.destroy(); statusChartInstance = null; }
-                statusChartInstance = new ApexCharts(el, options);
-                statusChartInstance.render();
+                if (statusChartInstance) statusChartInstance.destroy();
+                statusChartInstance = new ApexCharts(el, options); statusChartInstance.render();
             };
 
-            // ── 5. Casino Games — Full Donut: Bets by game ───────────────────
             const initCasinoGamesChart = () => {
-                const el = document.querySelector('#casinoGamesChart');
-                if (!el || !segmentData.value) return;
-
-                const stats = segmentData.value.casino_stats || [];
-                if (!stats.length) return;
-
+                const el = document.querySelector('#casinoGamesChart'); if (!el || !segmentData.value) return;
+                const stats = segmentData.value.casino_stats || []; if (!stats.length) return;
                 const total = stats.reduce((a, s) => a + (s.bets || 0), 0);
-
                 const options = {
-                    series: stats.map(s => s.bets),
-                    labels: stats.map(s => s.game),
-                    chart: {
-                        height: 250,
-                        type: 'donut',
-                        fontFamily: 'Inter, sans-serif',
-                        foreColor: '#475569',
-                    },
-                    colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
-                    plotOptions: {
-                        pie: {
-                            donut: {
-                                size: '65%',
-                                labels: {
-                                    show: true,
-                                    name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 },
-                                    value: {
-                                        show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4,
-                                        formatter: v => `KES ${fmtShort(parseInt(v || 0))}`
-                                    },
-                                    total: {
-                                        show: true, label: 'Total Casino', fontSize: '11px', color: '#9ca3af',
-                                        formatter: () => `KES ${fmtShort(total)}`
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        formatter: (val) => `${Number(val).toFixed(1)}%`,
-                        style: { fontSize: '11px', fontWeight: 700, colors: ['#fff'] },
-                        dropShadow: { enabled: true, blur: 3, opacity: 0.4 },
-                    },
-                    legend: {
-                        position: 'right',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        formatter: (val, opts) => {
-                            const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0;
-                            const p = Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1);
-                            return `${val}: ${p}%`;
-                        },
-                        itemMargin: { vertical: 4 },
-                    },
-                    tooltip: {
-                        theme: 'dark',
-                        style: { fontSize: '13px' },
-                        y: { formatter: v => `KES ${fmtShort(v)}` },
-                    },
-                    responsive: [
-                        {
-                            breakpoint: 1024,
-                            options: { chart: { height: 280 }, legend: { position: 'bottom' } },
-                        },
-                        {
-                            breakpoint: 768,
-                            options: { chart: { height: 260 }, legend: { position: 'bottom' } },
-                        },
-                    ],
+                    series: stats.map(s => s.bets), labels: stats.map(s => s.game),
+                    chart: { height: 250, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
+                    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => `KES ${fmtShort(parseInt(v || 0))}` }, total: { show: true, label: 'Total Casino', fontSize: '11px', color: '#9ca3af', formatter: () => `KES ${fmtShort(total)}` } } } } },
+                    dataLabels: { enabled: true, formatter: val => `${Number(val).toFixed(1)}%`, style: { fontSize: '11px', fontWeight: 700, colors: ['#fff'] } },
+                    legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '12px', fontWeight: 500, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
+                    tooltip: { theme: 'dark', y: { formatter: v => `KES ${fmtShort(v)}` } }
                 };
-
-                if (casinoChartInstance) { casinoChartInstance.destroy(); casinoChartInstance = null; }
-                casinoChartInstance = new ApexCharts(el, options);
-                casinoChartInstance.render();
+                if (casinoChartInstance) casinoChartInstance.destroy();
+                casinoChartInstance = new ApexCharts(el, options); casinoChartInstance.render();
             };
 
-            onMounted(async () => {
+            const initCasinoBetsChart = () => {
+                const el = document.querySelector('#casinoBetsChart'); if (!el || !segmentData.value) return;
+                const stats = segmentData.value.casino_stats1 || segmentData.value.casino_stats || []; if (!stats.length) return;
+                const options = {
+                    series: stats.map(s => s.bets || s.total_rounds || 0), labels: stats.map(s => s.game),
+                    chart: { height: 250, type: 'donut', fontFamily: 'Inter, sans-serif', foreColor: '#475569' }, colors: ['#4e7adf', '#38c66c', '#fbbf24', '#ef4444', '#a78bfa', '#fb923c'],
+                    plotOptions: { pie: { donut: { size: '65%', labels: { show: true, name: { show: true, fontSize: '13px', fontWeight: 600, color: '#475569', offsetY: -6 }, value: { show: true, fontSize: '18px', fontWeight: 700, color: '#0f172a', offsetY: 4, formatter: v => fmtShort(parseInt(v || 0)) }, total: { show: true, label: 'Total Bets', fontSize: '11px', color: '#9ca3af', formatter: (w) => w.globals.seriesTotals.reduce((a, b) => a + b, 0) } } } } },
+                    dataLabels: { enabled: false }, legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '12px', fontWeight: 500, formatter: (val, opts) => { const pRaw = opts.w.globals.seriesPercent[opts.seriesIndex] || 0; return `${val}: ${Number(Array.isArray(pRaw) ? pRaw[0] : pRaw).toFixed(1)}%`; } },
+                    tooltip: { theme: 'dark', y: { formatter: v => `${v} Bets` } }
+                };
+                if (casinoBetsChartInstance) casinoBetsChartInstance.destroy();
+                casinoBetsChartInstance = new ApexCharts(el, options); casinoBetsChartInstance.render();
+            };
+
+            Vue.onMounted(async () => {
+                const params = new URLSearchParams(window.location.search);
+                const segmentId = params.get('id');
                 if (segmentId) {
                     let found = (window.segments || []).find(s => s.id === segmentId || s.name === segmentId);
-
                     if (!found) {
                         const local = JSON.parse(localStorage.getItem('dummy_segments') || '[]');
                         found = local.find(s => s.id === segmentId || s.name === segmentId);
                     }
-
                     if (found) {
-                        const players = await window.getPlayersForSegment(found);
-                        found.players = players;
-
-                        // ── Fallback: build monthly_trend for custom/dynamic segments ──
+                        if (typeof window.getPlayersForSegment === 'function') found.players = await window.getPlayersForSegment(found);
+                        else found.players = (window.players || []).filter(p => p.segment_id === found.id);
                         if (!found.monthly_trend || found.monthly_trend.length === 0) {
-                            const totalDep = players.reduce((a, b) => a + (b.total_deposits || b.lifetime_deposits || 0), 0);
-                            const totalBet = players.reduce((a, b) => a + (b.total_bets || b.lifetime_bets || 0), 0);
-                            const totalWith = players.reduce((a, b) => a + (b.total_withdrawals || b.lifetime_withdrawals || 0), 0);
-
-                            found.total_deposits = totalDep;
-                            found.total_bets = totalBet;
-                            found.total_withdrawals = totalWith;
-                            found.total_players = players.length;
-                            found.active_players = players.filter(p => p.status === 'active').length;
-                            found.dormant_players = players.filter(p => p.status === 'dormant').length;
-
-                            const months = ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'];
-                            found.monthly_trend = months.map((m, i) => ({
-                                month: m,
-                                deposits: Math.round(totalDep * (0.10 + i * 0.02)),
-                                stake: Math.round(totalBet * (0.10 + i * 0.02)),
-                                bets: Math.round(players.length * (3 + i)),
-                                withdrawals: Math.round(totalWith * (0.10 + i * 0.015)),
-                                players: Math.round(found.active_players * (0.80 + i * 0.04)),
-                            }));
+                            const p = found.players || []; const td = p.reduce((a, b) => a + (b.lifetime_deposits || 0), 0); const tb = p.reduce((a, b) => a + (b.lifetime_bets || 0), 0);
+                            const tw = p.reduce((a, b) => a + (b.lifetime_withdrawals || 0), 0);
+                            found.total_deposits = found.total_deposits || td; found.total_bets = found.total_bets || tb; found.total_withdrawals = found.total_withdrawals || tw;
+                            found.active_players = found.active_players || p.filter(x => x.status === 'active').length;
+                            found.monthly_trend = ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'].map((m, i) => ({ month: m, deposits: Math.round(td * (0.10 + i * 0.02)), stake: Math.round(tb * (0.10 + i * 0.02)), withdrawals: Math.round(tw * (0.10 + i * 0.015)), players: Math.round(found.active_players * (0.80 + i * 0.04)) }));
                         }
+                        segmentData.value = found; window.__segmentData__ = found;
 
-                        // ── Fallback: build casino_stats if missing ──
-                        if (!found.casino_stats || found.casino_stats.length === 0) {
-                            const tb = found.total_bets || 1000;
-                            found.casino_stats = [
-                                { game: 'Aviator', bets: Math.round(tb * 0.40) },
-                                { game: 'Sweet Bonanza', bets: Math.round(tb * 0.30) },
-                                { game: 'Crazy Time', bets: Math.round(tb * 0.20) },
-                                { game: 'Others', bets: Math.round(tb * 0.10) },
-                            ];
-                        }
-
-                        segmentData.value = found;
-
-                        // Debugging: Log the state before chart initialization
-                        console.log("Segment Data loaded:", segmentData.value);
-                        console.log("Chart elements check:", {
-                            segmentTrendChart: document.querySelector('#segmentTrendChart'),
-                            salesAnalyticsChart: document.querySelector('#salesAnalyticsChart'),
-                            monthlyCashFlowChart: document.querySelector('#monthlyCashFlowChart'),
-                            playerStatusChart: document.querySelector('#playerStatusChart'),
-                            casinoGamesChart: document.querySelector('#casinoGamesChart'),
+                        // Use nextTick to ensure Vue has rendered the v-if block before attaching charts
+                        Vue.nextTick(() => {
+                            setTimeout(() => {
+                                initChart();
+                                initSalesAnalyticsChart();
+                                initMonthlyCashFlowChart();
+                                initStatusChart();
+                                initCasinoGamesChart();
+                                initCasinoBetsChart();
+                            }, 150);
                         });
-                        // Stagger inits so DOM is fully painted before ApexCharts measures containers
-                        setTimeout(() => {
-                            initChart();
-                            initSalesAnalyticsChart();
-                            initMonthlyCashFlowChart();
-                            initStatusChart();
-                            initCasinoGamesChart();
-                        }, 120);
                     }
                 }
                 isLoading.value = false;
-            }); // end onMounted
+            });
 
             return {
-                segmentData, isLoading,
-                search, statusFilter, sort, filteredPlayers,
-                fmtShort,
-                activeFields, chartFields,
-                growthRate, projectedValue, nggr,
-                handleSort: (key) => {
-                    if (sort.key === key) sort.dir = sort.dir === 'desc' ? 'asc' : 'desc';
-                    else { sort.key = key; sort.dir = 'desc'; }
+                segmentData, isLoading, search, statusFilter, sort, filteredPlayers, showPlayers, fmtShort, activeFields, chartFields, growthRate, projectedValue, nggr,
+                topCasinoGames: Vue.computed(() => segmentData.value ? (window.casinoByGame || []).slice(0, 10) : []),
+                topTournaments: Vue.computed(() => segmentData.value ? (window.sportsbookByTournament || []).slice(0, 10) : []),
+                handleSort: (k) => { if (sort.key === k) sort.dir = sort.dir === 'desc' ? 'asc' : 'desc'; else { sort.key = k; sort.dir = 'desc'; } },
+                formatNumber: (n) => (n || 0).toLocaleString(),
+                totalDeposits: Vue.computed(() => filteredPlayers.value.reduce((s, p) => s + (p.lifetime_deposits || 0), 0)),
+                totalBets: Vue.computed(() => filteredPlayers.value.reduce((s, p) => s + (p.lifetime_bets || 0), 0)),
+                activePlayers: Vue.computed(() => filteredPlayers.value.filter(p => p.status === 'active').length),
+                downloadCSV: () => {
+                    const h = ['Player Name', 'Email', 'Country', 'Status', 'Lifetime Deposits', 'Lifetime Bets'];
+                    const d = filteredPlayers.value.map(p => [p.name, p.email, p.country, p.status, p.lifetime_deposits, p.lifetime_bets]);
+                    const csv = [h, ...d].map(r => r.join(',')).join('\n');
+                    const b = new Blob([csv], { type: 'text/csv' }); const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download = 'players.csv'; l.click();
                 },
+                getFieldLabel: window.getFieldLabel, getOperatorLabel: window.getOperatorLabel, deleteSegment: () => Swal.fire('Warning', 'Restricted in dummy mode', 'warning')
             };
         }
-    });
-
-    if (document.getElementById('segmentViewApp')) {
-        segmentViewApp.mount('#segmentViewApp');
-        console.log("segmentViewApp mounted.");
+    }).mount('#segmentViewApp');
+    console.log("segmentViewApp mounted.");
     }
-
 
     // ─── Dashboard Analytics App ──────────────────────────────────────────────
     if (document.getElementById('dashboardApp')) {
-        const dashboardApp = createApp({
+        const dashboardApp = Vue.createApp({
             setup() {
-                const stats = ref({ totalBets: 0, totalStake: 0, totalPayout: 0, activeBettors: 0 });
+                const stats = Vue.ref({ totalBets: 0, totalStake: 0, totalPayout: 0, activeBettors: 0 });
 
                 const formatAmount = (num) => {
                     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -982,124 +519,43 @@ document.addEventListener("DOMContentLoaded", function () {
                     const today = new Date().toISOString().split('T')[0];
                     const timeRange = { from: today, to: today, granularity: "day" };
                     try {
-                        const [bets, stake, payout, players] = await Promise.all([
-                            executeAnalyticsQuery({ measure: "count", measure_field: "bet_id", time_range: timeRange }),
-                            executeAnalyticsQuery({ measure: "sum", measure_field: "amount", filters: [{ field: "type", operator: "equals", value: "bet" }], time_range: timeRange }),
-                            executeAnalyticsQuery({ measure: "sum", measure_field: "amount", filters: [{ field: "type", operator: "equals", value: "payout" }], time_range: timeRange }),
-                            executeAnalyticsQuery({ measure: "count_distinct", measure_field: "customer_id", time_range: timeRange })
-                        ]);
-                        stats.value = { totalBets: bets.value || 0, totalStake: stake.value || 0, totalPayout: payout.value || 0, activeBettors: players.value || 0 };
+                    // executeAnalyticsQuery stubbed to prevent crash
+                    const query = window.executeAnalyticsQuery || (() => Promise.resolve({value: 0}));
+                    const [bets, stake, payout, players] = await Promise.all([
+                        query({ measure: "count", measure_field: "bet_id", time_range: timeRange }),
+                        query({ measure: "sum", measure_field: "amount", filters: [{ field: "type", operator: "equals", value: "bet" }], time_range: timeRange }),
+                        query({ measure: "sum", measure_field: "amount", filters: [{ field: "type", operator: "equals", value: "payout" }], time_range: timeRange }),
+                        query({ measure: "count_distinct", measure_field: "customer_id", time_range: timeRange })
+                    ]);
+                    stats.value = { totalBets: bets.value || 0, totalStake: stake.value || 0, totalPayout: payout.value || 0, activeBettors: players.value || 0 };
                     } catch (error) {
                         console.error("Failed to fetch dashboard analytics:", error);
                     }
                 };
 
-                onMounted(fetchDashboardData);
+                Vue.onMounted(fetchDashboardData);
                 return { stats, formatAmount };
             }
         });
         dashboardApp.mount('#dashboardApp');
-        console.log("dashboardApp mounted.");
+        console.log("dashboardApp mounted successfully.");
     }
 
-
-    // ─── Login App ────────────────────────────────────────────────────────────
-    if (document.getElementById('loginApp')) {
-        const loginApp = createApp({
-            setup() {
-                const username = ref('');
-                const password = ref('');
-                const alert_message = ref('');
-                const alert_error = ref(false);
-                const alert_success = ref(false);
-                const baseUrl = 'https://identity.gamesapi.dev';
-
-                const showNotification = (message, type = 'error') => {
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
-                    }
-                    alert_message.value = message;
-                    if (type === 'error') alert_error.value = true; else alert_success.value = true;
-                    setTimeout(() => { alert_error.value = false; alert_success.value = false; }, 4000);
-                };
-
-                async function curl(url, data) {
-                    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'accept': 'application/json' }, body: JSON.stringify(data) });
-                    console.log("HTTP status:", response.status, response.statusText);
-                    const rawText = await response.text();
-                    if (!rawText || rawText.trim() === '') return { status: response.status, message: `Empty response (HTTP ${response.status})` };
-                    try { return JSON.parse(rawText); } catch (e) { return { status: response.status, message: `Non-JSON response: ${rawText.substring(0, 120)}` }; }
-                }
-
-                const login = async () => {
-                    alert_error.value = false; alert_success.value = false;
-                    if (!username.value || !password.value) { showNotification('Phone Number and Password are required'); return; }
-                    const payload = { email: "string", msisdn: Number(String(username.value || '').replace(/\D/g, '')), password: password.value, username: "string" };
-                    try {
-                        const res = await curl(`${baseUrl}/user/login?lang=en`, payload);
-                        if (res && (parseInt(res.status) === 1 || parseInt(res.status) === 202)) {
-                            sessionStorage.setItem('api_key', res.auth || '');
-                            sessionStorage.setItem('isLoggedIn', 'true');
-                            window.location.href = 'index.html';
-                        } else {
-                            showNotification((res && res.message) ? res.message : 'Login failed: Invalid credentials');
-                        }
-                    } catch (e) { showNotification('Connection error to identity service'); }
-                };
-
-                return { username, password, alert_message, alert_error, alert_success, login };
-            }
-        });
-        loginApp.mount('#loginApp');
-        console.log("loginApp mounted successfully.");
-    }
-
-
-    // ─── Register App ─────────────────────────────────────────────────────────
-    if (document.getElementById('registerApp')) {
-        const registerApp = createApp({
-            setup() {
-                const isLoading = ref(false);
-                const form = reactive({ username: '', password: '' });
-                const baseUrl = 'https://identity.gamesapi.dev';
-
-                const showNotification = (message, type = 'error') => {
-                    if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
-                };
-
-                const register = async () => {
-                    isLoading.value = true;
-                    const payload = { address: "string", browser: navigator.userAgent, btag: "string", channel: "web", channel_id: 0, click_id: "string", code: "string", country_code: "KE", date_of_birth: "1990-01-01", device_id: 0, device_info: "web-browser", email: "string", engine: "string", fbclid: "string", first_name: "string", gclid: "string", id_number: "string", ip_address: "127.0.0.1", lang: "en", last_name: "string", msisdn: Number(String(form.username).replace(/\D/g, '')), nationality: "Kenyan", password: form.password, referrer: document.referrer || "direct", username: form.username, utm_campaign: "string", utm_content: "string", utm_medium: "string", utm_source: "string", utm_term: "string", version_info: "1.0.0" };
-                    try {
-                        const response = await fetch(`${baseUrl}/signup?lang=en`, { method: 'POST', headers: { 'accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        const res = await response.json();
-                        if (response.ok && (parseInt(res.status) === 1 || parseInt(res.status) === 201)) {
-                            showNotification('Account created successfully! Redirecting to login...', 'success');
-                            setTimeout(() => { window.location.href = 'auth-login.html'; }, 2500);
-                        } else { showNotification(res.message || 'Registration failed. Please check your details.'); }
-                    } catch (error) { showNotification('Connection error to identity service'); }
-                    finally { isLoading.value = false; }
-                };
-
-                return { form, isLoading, register };
-            }
-        });
-        registerApp.mount('#registerApp');
-        console.log("registerApp mounted successfully.");
-    }
-
-
-    // ─── Recover Password App ─────────────────────────────────────────────────
+    // ─── Password Recovery App ───────────────────────────────────────────────
     if (document.getElementById('recoverPwApp')) {
-        const recoverPwApp = createApp({
+        const recoverPwApp = Vue.createApp({
             setup() {
-                const isLoading = ref(false);
-                const phoneNumber = ref(''); const otp = ref(''); const newPassword = ref(''); const confirmNewPassword = ref('');
-                const step = ref(1);
-                const baseUrl = 'https://identity.gamesapi.dev';
+                const phoneNumber = Vue.ref('');
+                const otp = Vue.ref('');
+                const newPassword = Vue.ref('');
+                const confirmNewPassword = Vue.ref('');
+                const isLoading = Vue.ref(false);
+                const step = Vue.ref(1);
+                const baseUrl = 'https://identity.gamesapi.dev/v1'; // Assuming base URL
 
-                const showNotification = (message, type = 'error') => {
-                    if (typeof Swal !== 'undefined') Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 4000, timerProgressBar: true, icon: type, title: message });
+                const showNotification = (msg, type = 'danger') => {
+                    if (window.showToast) window.showToast(type === 'success' ? 'Success' : 'Error', msg, type);
+                    else alert(msg);
                 };
 
                 const handleRecover = async () => {
@@ -1111,7 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const res = await response.json();
                         if (response.ok) { showNotification('Recovery OTP sent to your email!', 'success'); step.value = 2; }
                         else { showNotification(res.message || 'Recovery failed. Please try again.'); }
-                    } catch (error) { showNotification('Connection error to identity service'); }
+                    } catch (error) { console.error(error); showNotification('Connection error to identity service'); }
                     finally { isLoading.value = false; }
                 };
 
@@ -1126,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const res = await response.json();
                         if (response.ok) { showNotification('Password reset successfully! Redirecting...', 'success'); setTimeout(() => { window.location.href = 'auth-login.html'; }, 3000); }
                         else { showNotification(res.message || 'Password reset failed. Check your OTP and try again.'); }
-                    } catch (error) { showNotification('Connection error to identity service'); }
+                    } catch (error) { console.error(error); showNotification('Connection error to identity service'); }
                     finally { isLoading.value = false; }
                 };
 
@@ -1144,5 +600,297 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.removeItem('isLoggedIn');
         window.location.href = 'auth-login.html';
     };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Send Mass SMS Modal - Initialization & Event Handlers
+    // ─────────────────────────────────────────────────────────────────────────
+    (function initSmsModal() {
+        const smsTemplates = {
+            1: {
+                title: "Welcome Bonus SMS",
+                message: "Hello {CUSTOMER_NAME}, Welcome! You've received {CURRENCY}{AMOUNT} bonus. Start trading now! Valid till {DATE}.",
+                description: "Perfect for welcoming new users with introductory bonus or credit"
+            },
+            2: {
+                title: "Promotion SMS",
+                message: "Hi {CUSTOMER_NAME}, Special offer for you! Trade now and get {CURRENCY}{AMOUNT} cashback. Limited time only - expires {DATE}.",
+                description: "Great for promotional campaigns and cashback offers"
+            }
+        };
+
+        // SMS Message Character Counter
+        $('#smsMessage').on('input', function () {
+            const charCount = $(this).val().length;
+            const msgCount = Math.ceil(charCount / 160) || 0;
+            $('#charCount').text(charCount);
+            $('#msgCount').text(msgCount);
+            updateSmsPreview();
+        });
+
+        // SMS Template Selection
+        $('input[name="smsTemplate"]').on('change', function () {
+            const templateValue = $(this).val();
+            const templateInfo = $('#smsTemplateInfo');
+
+            if (templateValue === 'custom') {
+                templateInfo.slideUp(200);
+                $('#smsMessage').focus();
+            } else {
+                const template = smsTemplates[templateValue];
+                if (template) {
+                    $('#smsTemplateDescription').html(
+                        `<strong>${template.title}</strong><br/>${template.description}`
+                    );
+                    $('#smsMessage').val(template.message).trigger('input');
+                    templateInfo.slideDown(200);
+                }
+            }
+        });
+
+        // Variable Insertion for SMS
+        $(document).on('click', '.sms-variable-btn', function () {
+            const variable = $(this).data('variable');
+            const textarea = $('#smsMessage');
+            const currentPos = textarea[0].selectionStart;
+            const text = textarea.val();
+            const newText = text.slice(0, currentPos) + variable + text.slice(currentPos);
+            textarea.val(newText).trigger('input');
+            textarea.focus();
+        });
+
+        // SMS Preview Update
+        function updateSmsPreview() {
+            const message = $('#smsMessage').val() || 'Your message will appear here...';
+            if (message.trim()) {
+                $('#smsPreview').html(message.replace(/\n/g, '<br/>'));
+            } else {
+                $('#smsPreview').html('<em class="text-secondary">Your message will appear here...</em>');
+            }
+        }
+    $('#sendSmsBtn').on('click', function () {
+    const message     = $('#smsMessage').val().trim();
+    const recipientEl = document.getElementById('smsRecipients');
+    const segName     = recipientEl?.dataset?.segmentName || recipientEl?.value || '';
+    const playerCount = parseInt(recipientEl?.dataset?.playerCount || 0);
+
+    if (!message) {
+        showToast('Error', 'Please enter a message', 'error');
+        return;
+    }
+
+    const btn = $(this);
+    const originalText = btn.html();
+    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Sending...');
+
+    setTimeout(() => {
+        btn.prop('disabled', false).html(originalText);
+        $('#sendSmsModal').modal('hide');
+        $('#smsMessage').val('').trigger('input');
+        $('input[name="smsTemplate"]').prop('checked', false);
+        showToast('Success', `SMS sent to ${playerCount} players in "${segName}"`, 'success');
+    }, 2000);
+});
+
+        // Reset modal when closed
+        $('#sendSmsModal').on('hidden.bs.modal', function () {
+            $('#smsMessage').val('').trigger('input');
+            $('input[name="smsTemplate"]').prop('checked', false);
+            $('#smsTemplateInfo').slideUp(200);
+            $('#smsRecipients').val('');
+        });
+    })();
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Award Gifts Modal - Initialization & Event Handlers
+    // ─────────────────────────────────────────────────────────────────────────
+     // ─────────────────────────────────────────────────────────────────────────
+    // Award Gifts Modal - Initialization & Event Handlers
+    // ─────────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+    // Award Gifts Modal - Initialization & Event Handlers
+    // ─────────────────────────────────────────────────────────────────────────
+    (function initGiftsModal() {
+        const bonusOptions = {
+            'trade-credit': { label: 'Trade Credit', description: 'Instant trading credit' },
+            'cashback-10': { label: '10% Cashback', description: 'Back 10% on trades' },
+            'cashback-15': { label: '15% Cashback', description: 'Back 15% on trades' },
+            'premium-features': { label: 'Premium Features (7 days)', description: 'Access all premium features' },
+            'vip-status': { label: 'VIP Status (30 days)', description: 'VIP member privileges' },
+            'fee-waiver': { label: 'Transaction Fee Waiver (5 transactions)', description: 'Free 5 transactions' },
+            'double-points': { label: 'Double Points (30 days)', description: 'Earn double reward points' }
+        };
+
+        $('input[name="giftType"]').on('change', function () {
+            const giftType = $(this).val();
+            if (giftType === 'cash') {
+                $('#cashPanel').slideDown(200);
+                $('#bonusPanel').slideUp(200);
+            } else {
+                $('#cashPanel').slideUp(200);
+                $('#bonusPanel').slideDown(200);
+            }
+            updateGiftSummary();
+        });
+
+        $('#cashType').on('change', function () { updateGiftSummary(); });
+        $('#cashAmount').on('input', function () { updateGiftSummary(); });
+        $('#bonusType').on('change', function () { updateGiftSummary(); });
+        $('#giftRecipients').on('change', function () { updateGiftSummary(); });
+
+        function updateGiftSummary() {
+            const giftType = $('input[name="giftType"]:checked').val();
+            let summaryType = 'Not selected';
+            let summaryDetails = '-';
+            const giftEl = document.getElementById('giftRecipients');
+            const summaryRecipients = giftEl?.dataset?.segmentName
+                ? `${giftEl.dataset.segmentName} (${giftEl.dataset.playerCount || 0} players)`
+                : (giftEl?.value || 'Not selected');
+
+            if (giftType === 'cash') {
+                const cashType = $('#cashType').val();
+                const amount = $('#cashAmount').val() || '0.00';
+                summaryType = 'Cash';
+                summaryDetails = `${cashType ? cashType.replace('-', ' ') : 'No type selected'} - $${parseFloat(amount).toFixed(2)}`;
+            } else if (giftType === 'bonus') {
+                const bonusType = $('#bonusType').val();
+                const bonusLabel = bonusType ? bonusOptions[bonusType]?.label || 'Unknown bonus' : 'No bonus selected';
+                summaryType = 'Bonus';
+                summaryDetails = bonusLabel;
+            }
+
+            $('#summaryType').text(summaryType);
+            $('#summaryDetails').text(summaryDetails);
+            $('#summaryRecipients').text(summaryRecipients);
+        }
+
+        $('#awardGiftBtn').on('click', function () {
+            const giftType    = $('input[name="giftType"]:checked').val();
+            const recipientEl = document.getElementById('giftRecipients');
+            const segName     = recipientEl?.dataset?.segmentName || recipientEl?.value || '';
+            const playerCount = parseInt(recipientEl?.dataset?.playerCount || 0);
+
+            if (!segName) {
+                showToast('Error', 'No segment recipients found', 'error');
+                return;
+            }
+
+            if (giftType === 'cash') {
+                const cashType = $('#cashType').val();
+                const amount   = parseFloat($('#cashAmount').val());
+                if (!cashType) {
+                    showToast('Error', 'Please select cash type (Withdrawable or Non-Withdrawable)', 'error');
+                    return;
+                }
+                if (isNaN(amount) || amount <= 0) {
+                    showToast('Error', 'Please enter a valid amount', 'error');
+                    return;
+                }
+            } else if (giftType === 'bonus') {
+                const bonusType = $('#bonusType').val();
+                if (!bonusType) {
+                    showToast('Error', 'Please select a bonus', 'error');
+                    return;
+                }
+            }
+
+            const btn = $(this);
+            const originalText = btn.html();
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+
+            setTimeout(() => {
+                btn.prop('disabled', false).html(originalText);
+                $('#awardGiftsModal').modal('hide');
+                $('#cashType').val('');
+                $('#cashAmount').val('');
+                $('#cashDescription').val('');
+                $('#bonusType').val('');
+                $('#bonusDescription').val('');
+                $('input[name="giftType"][value="cash"]').prop('checked', true).trigger('change');
+                showToast('Success', `Gift awarded to ${playerCount} players in "${segName}"`, 'success');
+            }, 2000);
+        });
+
+        $('#awardGiftsModal').on('hidden.bs.modal', function () {
+            $('#cashType').val('');
+            $('#cashAmount').val('');
+            $('#cashDescription').val('');
+            $('#bonusType').val('');
+            $('#bonusDescription').val('');
+            $('#giftRecipients').val('');
+            $('input[name="giftType"][value="cash"]').prop('checked', true);
+            $('#cashPanel').show();
+            $('#bonusPanel').hide();
+            updateGiftSummary();
+        });
+    })();
+       
+    // ─────────────────────────────────────────────────────────────────────────
+    // Toast Notification Helper
+    // ─────────────────────────────────────────────────────────────────────────
+    window.showToast = function (title, message, type = 'info') {
+        const toast = $('#actionToast');
+        let headerClass = 'text-info';
+        let icon = 'ri-information-line';
+
+        if (type === 'success') {
+            headerClass = 'text-success';
+            icon = 'ri-checkbox-circle-line';
+        } else if (type === 'error') {
+            headerClass = 'text-danger';
+            icon = 'ri-error-warning-line';
+        } else if (type === 'warning') {
+            headerClass = 'text-warning';
+            icon = 'ri-alert-line';
+        }
+
+        toast.find('.toast-header').html(
+            `<i class="${icon} me-2 ${headerClass}"></i><strong class="me-auto">${title}</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>`
+        );
+        toast.find('.toast-body').text(message);
+
+        const bsToast = new bootstrap.Toast(toast[0]);
+        bsToast.show();
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Expose Modal Functions Globally
+    // ─────────────────────────────────────────────────────────────────────────
+   window.openSmsModal = function () {
+    const seg   = window.__segmentData__;
+    const name  = seg?.name  || 'Current Segment';
+    const count = seg?.total_players || seg?.players?.length || 0;
+
+    const el = document.getElementById('smsRecipients');
+    if (el) {
+        el.value = name;
+        el.dataset.segmentName  = name;
+        el.dataset.playerCount  = count;
+    }
+    const badge = document.getElementById('smsRecipientCount');
+    if (badge) badge.textContent = `${count} players`;
+
+    new bootstrap.Modal(document.getElementById('sendSmsModal')).show();
+};
+
+window.openGiftsModal = function () {
+    const seg   = window.__segmentData__;
+    const name  = seg?.name  || 'Current Segment';
+    const count = seg?.total_players || seg?.players?.length || 0;
+
+    const el = document.getElementById('giftRecipients');
+    if (el) {
+        el.value = name;
+        el.dataset.segmentName  = name;
+        el.dataset.playerCount  = count;
+    }
+    const badge = document.getElementById('giftRecipientCount');
+    if (badge) badge.textContent = `${count} players`;
+
+    // Pre-fill summary recipients line
+    const summaryEl = document.getElementById('summaryRecipients');
+    if (summaryEl) summaryEl.textContent = `${name} (${count} players)`;
+
+    new bootstrap.Modal(document.getElementById('awardGiftsModal')).show();
+};
 
 }); // end DOMContentLoaded

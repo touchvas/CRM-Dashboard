@@ -302,6 +302,26 @@ h6,
     overflow: hidden;
 }
 
+.favorites-row-scroll {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 1.5rem;
+    padding-bottom: 0.5rem;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+}
+
+.favorites-row-scroll::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.favorites-row-scroll > * {
+    flex: 0 0 400px !important; /* Fixed width for card consistency in row */
+}
+
 .segment-card:hover {
     box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
     border-color: var(--bs-primary);

@@ -16,7 +16,7 @@
 .card {
     border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
-    background: #fff !important;
+   /*  background: #fff ; */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }

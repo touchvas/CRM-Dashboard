@@ -28,124 +28,87 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-transparent border-bottom">
-                    <h5 class="card-title mb-0">All Segments</h5>
+                    <h5 class="card-title mb-0">Favorites</h5>
                 </div>
-                <div class="card-body p-0">
-                    <!-- Empty State -->
-                    <div v-if="segments.length === 0" class="text-center p-5 text-muted">
-                        <i class="mdi mdi-folder-outline font-size-48 d-block mb-3"></i>
-                        <h5>No saved segments yet</h5>
-                        <p class="mb-3">Create your first segment to start organizing your contacts</p>
-                        <a href="pages-segmentation.html" class="btn btn-primary">
-                            <i class="mdi mdi-plus-circle me-1"></i>Create Segment
-                        </a>
+                 <div class="card-body">
+                    <div v-if="favoriteSegments.length === 0" class="text-center p-4 text-muted">
+                        <p class="mb-0">No favorites selected. Toggle the star on any segment in the table below.</p>
                     </div>
-
-                    <!-- Segments List -->
-                    <div v-else class="row g-3 p-3">
-                        <div v-for="seg in segments" :key="seg.id || seg.name" class="col-md-6">
-                            <div @click="viewSegment(seg)"
-                                class="card segment-card h-80 border-dashed mb-0" 
-                                :class="{'border-primary bg-primary-subtle bg-opacity-10': selectedSegment?.name === seg.name}"
-                                style="cursor: pointer; transition: all 0.2s ease;">
-                                <div class="card-body p-4">
-                                    <div class="d-flex w-100 justify-content-between align-items-start mb-3">
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-1 me-3">
-                                                    <i class="mdi mdi-account-group me-1"></i> Segment
-                                                </span>
-                                                <h5 class="mb-0 text-dark fw-bold">{{ seg.name }}</h5>
-                                            </div>
-                                            <div class="segment-summary-text mb-3 ps-1 text-muted small text-truncate" style="max-width: 250px;">
-                                                {{ getSegmentSummary(seg) }}
-                                            </div>
-                                            <div class="d-flex align-items-center text-muted small ps-1">
-                                                <span class="me-3"><i class="mdi mdi-calendar-clock me-1"></i>Created Today</span>
-                                                <span class="criteria-badge" v-if="seg.criteria?.rules">
-                                                    <i class="mdi mdi-filter-variant me-1"></i>{{ seg.criteria.rules.length }} Rules
-                                                </span>
-                                                <span class="criteria-badge" v-else>
-                                                    <i class="mdi mdi-account me-1"></i>{{ seg.total_players || 0 }} Players
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="text-end">
-                                            <i class="mdi" :class="selectedSegment?.name === seg.name ? 'mdi-chevron-down text-primary' : 'mdi-chevron-right text-muted'" style="font-size: 20px;"></i>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end pt-2 border-top">
-                                        <button @click="goToDetails(seg)" class="btn btn-sm btn-outline-primary">
-                                            <i class="mdi mdi-arrow-right me-1"></i>View More
-                                        </button>
-                                    </div>
+                    <div v-else class="favorites-row-scroll">
+                        <div v-for="seg in favoriteSegments" :key="seg.id" 
+                            class="card segment-card mb-0" @click="goToDetails(seg)" 
+                            :style="{ '--hover-color': seg.color }" style="cursor: pointer;">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div :style="{ width: '4px', height: '20px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }"></div>
+                                    <h5 class="mb-0 text-dark fw-bold">{{ seg.name }}</h5>
+                                </div>
+                                <p class="text-muted small mb-3 text-truncate">{{ seg.description }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-light text-primary">{{ seg.total_players }} Players</span>
+                                    <span class="text-primary fw-bold">KES {{ fmtShort(seg.total_deposits) }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Data Preview Section -->
-    <div v-if="selectedSegment" class="row mt-4">
+    <div  class="row mt-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-transparent border-bottom">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">{{ selectedSegment.name }} - Contact Data</h5>
-                        <button @click="selectedSegment = null" class="btn btn-sm btn-outline-secondary">
-                            <i class="mdi mdi-close me-1"></i>Close Preview
-                        </button>
-                    </div>
+                    <h5 class="card-title mb-0">All Segments</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0">Matching Contacts</h6>
-                        <div class="hstack gap-2">
-                            <div v-if="isPreviewLoading" class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                            <span class="badge bg-primary">{{ filteredContacts.length }} players match</span>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                        <table class="table table-bordered table-hover mb-0">
-                            <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0 table-hover">
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Country</th>
-                                    <th>Status</th>
-                                    <th>Total Deposits</th>
-                                    <th>Registered</th>
+                                    <th>ID</th>
+                                    <th>Segment Name</th>
+                                    <th class="text-center"> Players</th>
+                                    <th class="text-end"> Deposits</th>
+                                    <th class="text-end">Bets</th>
+                                    <th class="text-end">Withdrawals</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-if="previewContacts.length === 0">
-                                    <td colspan="6" class="text-center text-muted py-4">
-                                        <i class="mdi mdi-alert-circle-outline font-size-20 d-block mb-2"></i>
-                                        No contacts match this criteria
-                                    </td>
-                                </tr>
-                                <tr v-else v-for="contact in previewContacts" :key="contact.id">
-                                    <td>{{ contact.name }}</td>
-                                    <td>{{ contact.email }}</td>
-                                    <td>{{ contact.country }}</td>
+                                <tr v-for="seg in segments" :key="seg.id">
+                                    <td><span class="text-muted small fw-medium">{{ seg.id }}</span></td>
                                     <td>
-                                        <span class="badge" :class="contact.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                                            {{ contact.status.toUpperCase() }}
-                                        </span>
+                                        <div class="d-flex align-items-center">
+                                            <div :style="{ width: '4px', height: '24px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }"></div>
+                                            <strong>{{ seg.name }}</strong>
+                                        </div>
                                     </td>
-                                    <td>KES {{ (contact.total_deposits || contact.lifetime_deposits || 0).toLocaleString() }}</td>
-                                    <td>{{ contact.registered_at }}</td>
+                                    <td class="text-center">{{ seg.total_players }}</td>
+                                    <td class="text-end">KES {{ fmtShort(seg.total_deposits) }}</td>
+                                    <td class="text-end">KES {{ fmtShort(seg.total_bets) }}</td>
+                                    <td class="text-end">KES {{ fmtShort(seg.total_withdrawals) }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="mdi mdi-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
+                                                <li><a class="dropdown-item" href="javascript:void(0);" @click="goToDetails(seg)">
+                                                    <i class="mdi mdi-eye-outline me-2 text-primary"></i>View More
+                                                </a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0);" @click="toggleFavorite(seg)">
+                                                    <i :class="seg.is_favorite ? 'fas fa-star me-2 text-warning' : 'far fa-star me-2'"></i>
+                                                    {{ seg.is_favorite ? 'Remove Favorite' : 'Add Favorite' }}
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <div class="text-center mt-3" v-if="filteredContacts.length > 5">
-                        <button class="btn btn-soft-primary" @click="goToDetails(selectedSegment)">
-                            View more <i class="mdi mdi-arrow-right ms-1"></i>
-                        </button>
                     </div>
                 </div>
             </div>

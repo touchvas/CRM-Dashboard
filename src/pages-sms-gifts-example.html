@@ -1,0 +1,216 @@
+@@include("partials/main.html")
+
+<head>
+    @@include("partials/head-css.html")
+</head>
+
+@@include("partials/body.html")
+
+<div id="layout-wrapper">
+    @@include("partials/menu.html")
+
+    <!-- Start right Content here -->
+    <div class="main-content">
+        <div class="page-content">
+            <div class="container-fluid">
+                <!-- Page Title -->
+                @@include("partials/page-title.html", {
+                    "pageTitle": "Campaigns",
+                    "breadcrumb": [
+                        {"label": "Dashboard", "href": "index.html"},
+                        {"label": "Campaigns"}
+                    ]
+                })
+
+                <!-- SMS & Gifts Feature Examples -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Campaign Tools</h5>
+                                <small class="text-muted">Send SMS & Award Prizes</small>
+                            </div>
+                            <div class="card-body">
+                                <!-- Feature Description -->
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <i class="ri-lightbulb-flash-line me-2"></i>
+                                    <strong>Pro Tip:</strong> Use the tools below to send mass SMS campaigns or award gifts to your users. Both features support template selection and custom messaging.
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="row g-3 mb-4">
+                                    <!-- Send SMS Card -->
+                                    <div class="col-md-6">
+                                        <div class="card bg-light border-dashed">
+                                            <div class="card-body text-center">
+                                                <div class="mb-3">
+                                                    <i class="ri-mail-send-line text-primary" style="font-size: 3rem;"></i>
+                                                </div>
+                                                <h5 class="card-title mb-2">Send Mass SMS</h5>
+                                                <p class="text-muted small mb-3">
+                                                    Send personalized SMS to your users with pre-built templates or custom messages. 
+                                                    Include variables like name, amount, currency, and dates.
+                                                </p>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-primary" 
+                                                    onclick="openSmsModal()"
+                                                >
+                                                    <i class="ri-mail-send-line me-2"></i>Open SMS Modal
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Award Gifts Card -->
+                                    <div class="col-md-6">
+                                        <div class="card bg-light border-dashed">
+                                            <div class="card-body text-center">
+                                                <div class="mb-3">
+                                                    <i class="ri-gift-2-line text-success" style="font-size: 3rem;"></i>
+                                                </div>
+                                                <h5 class="card-title mb-2">Award Gifts</h5>
+                                                <p class="text-muted small mb-3">
+                                                    Reward your users with cash (withdrawable or non-withdrawable) or special bonuses 
+                                                    like cashback, premium features, or VIP status.
+                                                </p>
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-success" 
+                                                    onclick="openGiftsModal()"
+                                                >
+                                                    <i class="ri-gift-2-line me-2"></i>Open Gifts Modal
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Features List -->
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h6 class="text-uppercase text-muted mb-3">
+                                            <i class="ri-mail-send-line me-2"></i>SMS Features
+                                        </h6>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>2 Pre-built Templates</strong> - Welcome bonus and promotional offers
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Variable Insertion</strong> - Insert {CUSTOMER_NAME}, {AMOUNT}, {CURRENCY}, {DATE}
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Character Counter</strong> - See message and SMS count in real-time
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Live Preview</strong> - Preview formatted message before sending
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Recipient Selection</strong> - Target specific user groups
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="text-uppercase text-muted mb-3">
+                                            <i class="ri-gift-2-line me-2"></i>Gifts Features
+                                        </h6>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>2 Gift Types</strong> - Cash (with withdrawal options) or Bonuses
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Cash Options</strong> - Withdrawable or non-withdrawable
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>7 Bonus Types</strong> - Cashback, Premium features, VIP status, and more
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Summary Preview</strong> - See exactly what will be awarded
+                                            </li>
+                                            <li class="mb-2">
+                                                <i class="ri-check-line text-success me-2"></i>
+                                                <strong>Flexible Amount</strong> - Set any amount for cash rewards
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+<!-- 
+                                 Usage Examples Code Section 
+                                <div class="mt-5 pt-5 border-top">
+                                    <h6 class="text-uppercase text-muted mb-3">
+                                        <i class="ri-code-line me-2"></i>Usage Examples
+                                    </h6>
+
+                                     HTML Example 
+                                    <div class="card mb-3 bg-dark text-light">
+                                        <div class="card-header bg-darker">
+                                            <span class="badge bg-info">HTML</span>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <pre class="mb-0" style="font-size: 0.85rem;"><code>&lt;!-- Add buttons to your page --&gt;
+&lt;button class="btn btn-primary" onclick="openSmsModal()"&gt;
+    Send Mass SMS
+&lt;/button&gt;
+
+&lt;button class="btn btn-success" onclick="openGiftsModal()"&gt;
+    Award Gifts
+&lt;/button&gt;</code></pre>
+                                        </div>
+                                    </div>
+ -->
+                                    <!-- JavaScript Example -->
+                                    <div class="card bg-dark text-light">
+                                        <div class="card-header bg-darker">
+                                            <span class="badge bg-info">JavaScript</span>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <pre class="mb-0" style="font-size: 0.85rem;"><code>// Open SMS Modal
+window.openSmsModal();
+
+// Open Gifts Modal
+window.openGiftsModal();
+
+// Show notification
+window.showToast('Success', 'Operation completed!', 'success');
+window.showToast('Error', 'Something went wrong!', 'error');</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documentation Link -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-light border">
+                            <i class="ri-information-line me-2"></i>
+                            For detailed documentation, API integration, and customization options, 
+                            see <strong>MODALS_DOCUMENTATION.md</strong> in the project root folder.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Container -->
+        </div>
+        <!-- End Page Content -->
+
+        @@include("partials/footer.html")
+    </div>
+    <!-- End Main Content -->
+</div>
+<!-- End Layout Wrapper -->
+
+@@include("partials/vendor-scripts.html")
