@@ -1,4 +1,23 @@
-<!-- Segment Players View -->
+@@include("partials/main.html")
+
+<head>
+    @@include("partials/title-meta.html", {"title": "Segment Players"})
+    @@include("partials/head-css.html")
+
+    <style>
+        /* Authentication Guard Styles */
+        body { display: none !important; }
+        .is-authenticated body { display: block !important; }
+        .cursor-pointer { cursor: pointer; }
+        .cursor-pointer:hover { background-color: rgba(0,0,0,0.05); }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
+</head>
+
+@@include("partials/body.html")
 
 <div id="layout-wrapper">
     @@include("partials/menu.html")
@@ -154,14 +173,3 @@
 
 @@include("partials/vendor-scripts.html")
 </body>
-
-<style>
-    .cursor-pointer {
-        cursor: pointer;
-    }
-    
-    .cursor-pointer:hover {
-        background-color: rgba(0,0,0,0.05);
-    }
-</style>
-

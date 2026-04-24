@@ -200,18 +200,30 @@
 
     // ── Player resolver ───────────────────────────────────────────────────
     window.getPlayersForSegment = async (segment) => {
-        if (segment.players?.length) return segment.players;
+        console.log('getPlayersForSegment called for segment:', segment.id, segment.name);
+        if (segment.players?.length) {
+            console.log('Using existing segment.players:', segment.players.length);
+            return segment.players;
+        }
         if (window.players) {
+            console.log('window.players available. Total players:', window.players.length);
+            console.log('Filtering players by segment_id=' + segment.id + ' or segment=' + segment.name);
+            console.log('Sample players segment_id:', window.players.slice(0, 3).map(p => ({ id: p.id, name: p.name, segment_id: p.segment_id })));
             const found = window.players.filter(p =>
                 String(p.segment_id) === String(segment.id) ||
                 String(p.segment)    === String(segment.name)
             );
+            console.log('Players matched after filter:', found.length);
             if (found.length) return found;
+        } else {
+            console.log('window.players is not available');
         }
         if (segment.criteria) {
+            console.log('Attempting to filter by segment criteria');
             const result = await window.filterPlayersByCriteria(segment.criteria);
             return result.data || [];
         }
+        console.log('No players found for segment - returning empty array');
         return [];
     };
 

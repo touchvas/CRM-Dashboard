@@ -453,15 +453,24 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
             Vue.onMounted(async () => {
                 const params = new URLSearchParams(window.location.search);
                 const segmentId = params.get('id');
+                console.log('Segment View: Loading segment with ID/name:', segmentId);
+                console.log('Available segments:', window.segments?.map(s => ({ id: s.id, name: s.name })));
                 if (segmentId) {
                     let found = (window.segments || []).find(s => s.id === segmentId || s.name === segmentId);
                     if (!found) {
                         const local = JSON.parse(localStorage.getItem('dummy_segments') || '[]');
                         found = local.find(s => s.id === segmentId || s.name === segmentId);
                     }
+                    console.log('Segment found:', found?.name || found?.id);
                     if (found) {
-                        if (typeof window.getPlayersForSegment === 'function') found.players = await window.getPlayersForSegment(found);
-                        else found.players = (window.players || []).filter(p => p.segment_id === found.id);
+                        console.log('Loading players for segment:', found.id, 'Total in segment:', found.total_players);
+                        if (typeof window.getPlayersForSegment === 'function') {
+                            found.players = await window.getPlayersForSegment(found);
+                            console.log('Players loaded from getPlayersForSegment:', found.players?.length || 0);
+                        } else {
+                            found.players = (window.players || []).filter(p => p.segment_id === found.id);
+                            console.log('Players loaded from fallback filter:', found.players?.length || 0);
+                        }
                         if (!found.monthly_trend || found.monthly_trend.length === 0) {
                             const p = found.players || []; const td = p.reduce((a, b) => a + (b.lifetime_deposits || 0), 0); const tb = p.reduce((a, b) => a + (b.lifetime_bets || 0), 0);
                             const tw = p.reduce((a, b) => a + (b.lifetime_withdrawals || 0), 0);
@@ -470,6 +479,7 @@ if (segmentViewContainer && typeof Vue !== 'undefined') {
                             found.monthly_trend = ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26'].map((m, i) => ({ month: m, deposits: Math.round(td * (0.10 + i * 0.02)), stake: Math.round(tb * (0.10 + i * 0.02)), withdrawals: Math.round(tw * (0.10 + i * 0.015)), players: Math.round(found.active_players * (0.80 + i * 0.04)) }));
                         }
                         segmentData.value = found; window.__segmentData__ = found;
+                        console.log('Segment data set. Players count:', found.players?.length || 0);
 
                         // Use nextTick to ensure Vue has rendered the v-if block before attaching charts
                         Vue.nextTick(() => {
