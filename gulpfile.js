@@ -205,6 +205,7 @@ gulp.task('html', function () {
     }))
     .pipe(replace(/href="(.{0,10})node_modules/g, 'href="$1assets/libs'))
     .pipe(replace(/src="(.{0,10})node_modules/g, 'src="$1assets/libs'))
+    .pipe(replace(/(\.js|\.css)(\?v=[^"]*)?"/g, '$1?v=' + (process.env.BUILD_VERSION || Date.now()) + '"'))
     .pipe(useref())
     .pipe(gulpif('*.js', uglify()))
     .pipe(gulpif('*.css', cssnano({ svgo: false })))

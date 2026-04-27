@@ -30,17 +30,18 @@
                 <div class="card-header bg-transparent border-bottom">
                     <h5 class="card-title mb-0">Favorites</h5>
                 </div>
-                 <div class="card-body">
+                <div class="card-body">
                     <div v-if="favoriteSegments.length === 0" class="text-center p-4 text-muted">
                         <p class="mb-0">No favorites selected. Toggle the star on any segment in the table below.</p>
                     </div>
                     <div v-else class="favorites-row-scroll">
-                        <div v-for="seg in favoriteSegments" :key="seg.id" 
-                            class="card segment-card mb-0" @click="goToDetails(seg)" 
-                            :style="{ '--hover-color': seg.color }" style="cursor: pointer;">
+                        <div v-for="seg in favoriteSegments" :key="seg.id" class="card segment-card mb-0"
+                            @click="goToDetails(seg)" :style="{ '--hover-color': seg.color }" style="cursor: pointer;">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-2">
-                                    <div :style="{ width: '4px', height: '20px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }"></div>
+                                    <div
+                                        :style="{ width: '4px', height: '20px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }">
+                                    </div>
                                     <h5 class="mb-0 text-dark fw-bold">{{ seg.name }}</h5>
                                 </div>
                                 <p class="text-muted small mb-3 text-truncate">{{ seg.description }}</p>
@@ -57,7 +58,7 @@
     </div>
 
     <!-- Data Preview Section -->
-    <div  class="row mt-4">
+    <div class="row mt-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-transparent border-bottom">
@@ -82,7 +83,9 @@
                                     <td><span class="text-muted small fw-medium">{{ seg.id }}</span></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div :style="{ width: '4px', height: '24px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }"></div>
+                                            <div
+                                                :style="{ width: '4px', height: '24px', backgroundColor: seg.color, marginRight: '10px', borderRadius: '2px' }">
+                                            </div>
                                             <strong>{{ seg.name }}</strong>
                                         </div>
                                     </td>
@@ -92,17 +95,22 @@
                                     <td class="text-end">KES {{ fmtShort(seg.total_withdrawals) }}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
-                                            <button class="btn  btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color:var(--bs-primary) ;">
+                                            <button class="btn  btn-sm dropdown-toggle" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false"
+                                                style="background-color:var(--bs-primary) ;">
                                                 <i class="mdi mdi-dots-vertical">actions</i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0">
-                                                <li><a class="dropdown-item" href="javascript:void(0);" @click="goToDetails(seg)">
-                                                    <i class="mdi mdi-eye-outline me-2 text-primary"></i>View More
-                                                </a></li>
-                                                <li><a class="dropdown-item" href="javascript:void(0);" @click="toggleFavorite(seg)">
-                                                    <i :class="seg.is_favorite ? 'fas fa-star me-2 text-warning' : 'far fa-star me-2'"></i>
-                                                    {{ seg.is_favorite ? 'Remove Favorite' : 'Add Favorite' }}
-                                                </a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0);"
+                                                        @click="goToDetails(seg)">
+                                                        <i class="mdi mdi-eye-outline me-2 text-primary"></i>View More
+                                                    </a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0);"
+                                                        @click="toggleFavorite(seg)">
+                                                        <i
+                                                            :class="seg.is_favorite ? 'fas fa-star me-2 text-warning' : 'far fa-star me-2'"></i>
+                                                        {{ seg.is_favorite ? 'Remove Favorite' : 'Add Favorite' }}
+                                                    </a></li>
                                             </ul>
                                         </div>
                                     </td>

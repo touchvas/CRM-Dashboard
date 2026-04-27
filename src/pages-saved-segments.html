@@ -3,21 +3,11 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Saved Segments | Clivax - Admin Dashboard Template</title>
+    @@include("partials/title-meta.html", {"title": "Saved Segments"})
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
-
-    <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-    <!-- Custom Typography CSS -->
-    <link href="assets/css/custom-typography.css" rel="stylesheet" type="text/css" />
+    @@include("partials/head-css.html")
 
     <style>
         /* Prevents content flashing before redirect */
@@ -64,12 +54,8 @@
 
     <!--#include file="partials/right-sidebar.html" -->
 
+    <!-- vendor-scripts.html includes all necessary JS, including dummydata, segdummy, and app.js -->
     @@include("partials/vendor-scripts.html")
-
-    <!-- Load dummy data and segmentation logic before the main app -->
-    <script src="assets/js/dummydata.js"></script>
-    <script src="assets/js/segdummy.js"></script>
-    <script src="assets/js/app.js"></script>
 
 </body>
 

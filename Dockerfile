@@ -25,13 +25,19 @@ RUN echo "registry=https://registry.touchvas.work/repository/npm-group/" >> ~/.n
     echo "//registry.touchvas.work/repository/npm-hosted/:_password=${NPM_PASSWORD}" >> ~/.npmrc && \
     echo "//registry.touchvas.work/repository/npm-hosted/:email=${NPM_EMAIL}" >> ~/.npmrc && \
     echo "//registry.touchvas.work/repository/npm-hosted/:always-auth=true" >> ~/.npmrc && \
-    npm install && \
+    npm install --network-timeout=100000 --fetch-retries=5 --fetch-retry-mintimeout=20000 && \
     rm ~/.npmrc
+
+
+
+# Build static assets
+ARG BUILD_VERSION
+ENV BUILD_VERSION=$BUILD_VERSION
 
 # Copy project source
 COPY . .
 
-# Build static assets
+#build static assets
 RUN npm run build
 
 
