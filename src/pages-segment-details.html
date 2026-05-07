@@ -357,8 +357,22 @@
       }
     }
 
-    /* ── xxl: stretch perf-card to fill main column so both columns bottom-align ── */
+    /* ── xxl: stretch both columns to match height ── */
     @media (min-width: 1400px) {
+      .main-view-row {
+        display: flex;
+        align-items: stretch;
+      }
+
+      /* Stretch major column children */
+      .col-xxl-8 {
+        display: flex;
+        flex-direction: column;
+      }
+      .col-xxl-8 > .row {
+        flex: 1;
+      }
+
       .main-analytics-col {
         display: flex;
         flex-direction: column;
@@ -369,7 +383,6 @@
         display: flex;
         flex-direction: column;
         margin-bottom: 0;
-        /* row g-3 gap handles spacing */
       }
 
       .main-analytics-col .perf-card .perf-body {
@@ -385,9 +398,41 @@
 
       .main-analytics-col .perf-card .perf-chart-wrap #segmentTrendChart {
         flex: 1;
-        min-height: 280px;
-        max-height: 280px;
-        /* Reduced to tighten the main performance card */
+        min-height: 320px;
+        max-height: 320px;
+      }
+
+      /* Stretch minor column cards */
+      .minor-analytics-wrapper {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .minor-analytics-wrapper > .row {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .minor-analytics-wrapper > .row > .col-12 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .minor-analytics-wrapper .card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0 !important;
+      }
+
+      .minor-analytics-wrapper .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
     }
   </style>

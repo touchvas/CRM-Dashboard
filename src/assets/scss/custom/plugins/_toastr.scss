@@ -8,38 +8,101 @@
    Notification
 ============= */
 #toast-container {
+    &.toast-top-center {
+        top: 20px;
+        left: 50%;
+        margin-left: -150px; /* Half of default width */
+        width: 300px;
+    }
+
     > div {
-        box-shadow: $box-shadow;
-        opacity: 1;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        opacity: 0.98 !important;
+        border-radius: 10px !important;
+        padding: 18px 18px 18px 55px !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        
         &:hover {
-            box-shadow: $box-shadow;
-            opacity: 0.9;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2) !important;
+            opacity: 1 !important;
+        }
+
+        .toast-title {
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            color: #fff !important;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.9rem !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            line-height: 1.4;
+        }
+
+        .toast-close-button {
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            opacity: 0.7;
+            
+            &:hover {
+                opacity: 1;
+            }
         }
     }
-
-    &.toast-top-full-width, &.toast-bottom-full-width{
-        > div{
-          min-width: 96%;
-          margin: 4px auto;
-        }
-      }
-
 }
 
-
-@each $color, $value in $theme-colors {
-    .toast-#{$color} {
-        border: 2px solid $value !important;
-        background-color: rgba(($value), 0.8) !important;
+.toast-success, .toast-info {
+    background-color: #38c66c !important; /* Explicit Primary Green */
+    background-image: none !important;
+    
+    &::before {
+        content: "\eb7f"; /* ri-checkbox-circle-line */
+        font-family: 'remixicon' !important;
+        position: absolute;
+        left: 18px;
+        top: 20px;
+        font-size: 26px;
+        color: #fff;
     }
 }
-
-
-// for error
 
 .toast-error {
-    background-color: rgba($danger,0.8);
-    border: 2px solid $danger;
+    background-color: #fe5b5b !important; /* Explicit Danger Red */
+    background-image: none !important;
+    
+    &::before {
+        content: "\ec57"; /* ri-error-warning-line */
+        font-family: 'remixicon' !important;
+        position: absolute;
+        left: 18px;
+        top: 20px;
+        font-size: 26px;
+        color: #fff;
+    }
+}
+
+.toast-warning {
+    background-color: #ffd166 !important; /* Explicit Warning Yellow */
+    color: #333 !important;
+    background-image: none !important;
+    
+    &::before {
+        content: "\ea21"; /* ri-alert-line */
+        font-family: 'remixicon' !important;
+        position: absolute;
+        left: 18px;
+        top: 20px;
+        font-size: 26px;
+        color: #333;
+    }
+    
+    .toast-title, .toast-message, .toast-close-button {
+        color: #333 !important;
+    }
 }
 
 .toastr-options{

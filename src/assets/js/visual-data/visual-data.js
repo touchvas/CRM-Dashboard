@@ -61,28 +61,28 @@
 
         // Top 10 Tables
         top_games: [
-            { game: "Lightning Roulette", total_rounds: 12400, total_staked: 8500000, ggr: 425000, rtp_pct: 95.0 },
-            { game: "Sweet Bonanza",      total_rounds: 18600, total_staked: 6200000, ggr: 186000, rtp_pct: 97.0 },
-            { game: "Crazy Time",         total_rounds: 9500,  total_staked: 5800000, ggr: 290000, rtp_pct: 95.0 },
-            { game: "Aviator",            total_rounds: 45000, total_staked: 4200000, ggr: -126000, rtp_pct: 103.0 },
-            { game: "Live Blackjack",     total_rounds: 4200,  total_staked: 3900000, ggr: 195000, rtp_pct: 95.0 },
-            { game: "Gates of Olympus",   total_rounds: 11200, total_staked: 3500000, ggr: 105000, rtp_pct: 97.0 },
-            { game: "Mega Ball",          total_rounds: 7800,  total_staked: 2800000, ggr: 140000, rtp_pct: 95.0 },
-            { game: "Sugar Rush",         total_rounds: 9200,  total_staked: 2400000, ggr: 72000,  rtp_pct: 97.0 },
-            { game: "Dream Catcher",      total_rounds: 5600,  total_staked: 1900000, ggr: 95000,  rtp_pct: 95.0 },
-            { game: "Wolf Gold",          total_rounds: 6400,  total_staked: 1500000, ggr: 45000,  rtp_pct: 97.0 }
+            { game_name: "Lightning Roulette", unique_players: 450, bet_count: 12400, total_stake: 8500000, total_ggr: 425000, rtp_pct: 95.0 },
+            { game_name: "Sweet Bonanza",      unique_players: 380, bet_count: 18600, total_stake: 6200000, total_ggr: 186000, rtp_pct: 97.0 },
+            { game_name: "Crazy Time",         unique_players: 310, bet_count: 9500,  total_stake: 5800000, total_ggr: 290000, rtp_pct: 95.0 },
+            { game_name: "Aviator",            unique_players: 890, bet_count: 45000, total_stake: 4200000, total_ggr: -126000, rtp_pct: 103.0 },
+            { game_name: "Live Blackjack",     unique_players: 120, bet_count: 4200,  total_stake: 3900000, total_ggr: 195000, rtp_pct: 95.0 },
+            { game_name: "Gates of Olympus",   unique_players: 240, bet_count: 11200, total_stake: 3500000, total_ggr: 105000, rtp_pct: 97.0 },
+            { game_name: "Mega Ball",          unique_players: 150, bet_count: 7800,  total_stake: 2800000, total_ggr: 140000, rtp_pct: 95.0 },
+            { game_name: "Sugar Rush",         unique_players: 210, bet_count: 9200,  total_stake: 2400000, total_ggr: 72000,  rtp_pct: 97.0 },
+            { game_name: "Dream Catcher",      unique_players: 95,  bet_count: 5600,  total_stake: 1900000, total_ggr: 95000,  rtp_pct: 95.0 },
+            { game_name: "Wolf Gold",          unique_players: 180, bet_count: 6400,  total_stake: 1500000, total_ggr: 45000,  rtp_pct: 97.0 }
         ],
         top_tournaments: [
-            { tournament: "EPL",         sport: "Football", total_bets: 3450, total_staked: 18400000, ggr: 2208000 },
-            { tournament: "Champions Lg", sport: "Football", total_bets: 2890, total_staked: 15200000, ggr: 1824000 },
-            { tournament: "NBA",         sport: "Basketball", total_bets: 4120, total_staked: 9600000,  ggr: 1152000 },
-            { tournament: "La Liga",     sport: "Football", total_bets: 1980, total_staked: 8400000,  ggr: 1008000 },
-            { tournament: "Serie A",     sport: "Football", total_bets: 1650, total_staked: 7200000,  ggr: 864000 },
-            { tournament: "NFL",         sport: "Am. Football", total_bets: 1240, total_staked: 6800000, ggr: 816000 },
-            { tournament: "Wimbledon",   sport: "Tennis",   total_bets: 3200, total_staked: 5400000,  ggr: 648000 },
-            { tournament: "Ligue 1",     sport: "Football", total_bets: 1100, total_staked: 4800000,  ggr: 576000 },
-            { tournament: "Bundesliga",  sport: "Football", total_bets: 950,  total_staked: 4200000,  ggr: 504000 },
-            { tournament: "F1",          sport: "Motorsport", total_bets: 820,  total_staked: 3500000,  ggr: 420000 }
+            { dimension_name: "EPL",         unique_players: 1250, total_bets: 3450, total_stake: 18400000, total_ggr: 2208000 },
+            { dimension_name: "Champions Lg", unique_players: 980,  total_bets: 2890, total_stake: 15200000, total_ggr: 1824000 },
+            { dimension_name: "NBA",         unique_players: 640,  total_bets: 4120, total_stake: 9600000,  total_ggr: 1152000 },
+            { dimension_name: "La Liga",     unique_players: 520,  total_bets: 1980, total_stake: 8400000,  total_ggr: 1008000 },
+            { dimension_name: "Serie A",     unique_players: 480,  total_bets: 1650, total_stake: 7200000,  total_ggr: 864000 },
+            { dimension_name: "NFL",         unique_players: 310,  total_bets: 1240, total_stake: 6800000, total_ggr: 816000 },
+            { dimension_name: "Wimbledon",   unique_players: 420,  total_bets: 3200, total_stake: 5400000,  total_ggr: 648000 },
+            { dimension_name: "Ligue 1",     symbol: "🇫🇷", unique_players: 290,  total_bets: 1100, total_stake: 4800000,  total_ggr: 576000 },
+            { dimension_name: "Bundesliga",  unique_players: 350,  total_bets: 950,  total_stake: 4200000,  total_ggr: 504000 },
+            { dimension_name: "F1",          unique_players: 210,  total_bets: 820,  total_stake: 3500000,  total_ggr: 420000 }
         ],
 
         kpis: {

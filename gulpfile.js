@@ -64,7 +64,7 @@ const paths = {
     js: {
       dir: './src/assets/js',
       pages: './src/assets/js/pages',
-      files: './src/assets/js/pages/**/*.js',
+      all: './src/assets/js/**/*.js',
       main: './src/assets/js/*.js',
     },
     partials: {
@@ -95,8 +95,7 @@ gulp.task('browsersyncReload', function (callback) {
 
 gulp.task('watch', function () {
   gulp.watch(paths.src.scss.files, gulp.series('scss', 'browsersyncReload'));
-  gulp.watch([paths.src.js.dir], gulp.series('js', 'browsersyncReload'));
-  gulp.watch([paths.src.js.pages], gulp.series('jsPages', 'browsersyncReload'));
+  gulp.watch([paths.src.js.all], gulp.series('jsPages', 'browsersyncReload'));
   gulp.watch([paths.src.html.files, paths.src.partials.files], gulp.series('fileinclude', 'browsersyncReload'));
 });
 
@@ -109,9 +108,9 @@ gulp.task('js', function () {
 
 gulp.task('jsPages', function () {
   return gulp
-    .src(paths.src.js.files)
+    .src(paths.src.js.all)
     .pipe(uglify())
-    .pipe(gulp.dest(paths.dist.js.files));
+    .pipe(gulp.dest(paths.dist.js.dir));
 });
 
 gulp.task('scss', function () {

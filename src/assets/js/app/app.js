@@ -4,6 +4,41 @@
  * Segmentation-specific logic is now in segmentation.js.
  */
 
+/**
+ * App.js - Global App Logic
+ */
+
+// ─── Toast Notification Helper (Global) ─────────────────────────────────────────────
+// Defined at the very top to ensure availability for other scripts
+window.showToast = function (title, message, type = 'info') {
+    if (typeof toastr === 'undefined') {
+        console.warn("Toastr is not loaded. Falling back to console log.");
+        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        return;
+    }
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+
+    const method = type === 'error' || type === 'danger' ? 'error' : (type === 'success' || type === 'primary' ? 'success' : (type === 'warning' ? 'warning' : 'info'));
+    toastr[method](message, title);
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log("app.js: Initializing core platform apps...");
 
@@ -14,6 +49,39 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.warn("MetisMenu or #side-menu not found.");
     }
+
+    // Sidebar Toggle Logic (Desktop & Mobile) - Using delegation for maximum reliability
+    document.addEventListener('click', function (e) {
+        // Toggle Sidebar
+        const btn = e.target.closest('#sidebar-btn');
+        if (btn) {
+            e.preventDefault();
+            const isMobile = window.innerWidth < 992;
+            console.log("Sidebar toggle clicked (delegated). Mobile:", isMobile);
+            
+            if (!isMobile) {
+                document.body.classList.toggle('sidebar-collapsed');
+            } else {
+                document.body.classList.toggle('sidebar-enable');
+            }
+            return;
+        }
+
+        // Close Sidebar
+        const closeBtn = e.target.closest('#close-sidebar');
+        if (closeBtn) {
+            e.preventDefault();
+            document.body.classList.remove('sidebar-enable');
+            console.log("Sidebar closed (delegated)");
+            return;
+        }
+
+        // Click outside on main content to close
+        if (e.target.closest('.main-content') && document.body.classList.contains('sidebar-enable')) {
+            document.body.classList.remove('sidebar-enable');
+            console.log("Sidebar closed via click outside (delegated)");
+        }
+    });
 
 
     // ─── Login App ───────────────────────────────────────────────────────────
@@ -27,8 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const handleLogin = async () => {
                     console.log("[login] handleLogin triggered for user:", username.value);
                     if (!username.value || !password.value) {
-                        if (window.showToast) window.showToast('Error', 'Email and Password are required', 'error');
-                        else alert('Email and Password are required');
+                        showToast('Error', 'Email and Password are required', 'error');
                         return;
                     }
 
@@ -55,8 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (!response.ok || data?.error_code) {
                             const msg = data?.error_message || data?.message || 'Login failed. Check your credentials.';
-                            if (window.showToast) window.showToast('Error', msg, 'error');
-                            else alert(msg);
+                            showToast('Error', msg, 'error');
                             return;
                         }
 
@@ -64,8 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (!apiKey) {
                             console.error('[login] No API key found in response:', data);
-                            if (window.showToast) window.showToast('Error', 'Session token missing. Contact support.', 'error');
-                            else alert('Session token missing. Contact support.');
+                            showToast('Error', 'Session token missing. Contact support.', 'error');
                             return;
                         }
 
@@ -77,8 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     } catch (err) {
                         console.error('[login] error:', err);
-                        if (window.showToast) window.showToast('Error', 'Connection error. Please try again.', 'error');
-                        else alert('Connection error. Please try again.');
+                        showToast('Error', 'Connection error. Please try again.', 'error');
                     } finally {
                         isLoading.value = false;
                     }
@@ -141,8 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const baseUrl = 'https://identity.gamesapi.dev/v1';
 
                 const showNotification = (msg, type = 'danger') => {
-                    if (window.showToast) window.showToast(type === 'success' ? 'Success' : 'Error', msg, type);
-                    else alert(msg);
+                    showToast(type === 'success' ? 'Success' : 'Error', msg, type);
                 };
 
                 const handleRecover = async () => {
@@ -187,33 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'auth-login.html';
     };
 
-    // ─── Toast Notification Helper ─────────────────────────────────────────────
-    window.showToast = function (title, message, type = 'info') {
-        const toast = $('#actionToast');
-        if (!toast.length) return;
-        let headerClass = 'text-info';
-        let icon = 'ri-information-line';
-
-        if (type === 'success') {
-            headerClass = 'text-success';
-            icon = 'ri-checkbox-circle-line';
-        } else if (type === 'error') {
-            headerClass = 'text-danger';
-            icon = 'ri-error-warning-line';
-        } else if (type === 'warning') {
-            headerClass = 'text-warning';
-            icon = 'ri-alert-line';
-        }
-
-        toast.find('.toast-header').html(
-            `<i class="${icon} me-2 ${headerClass}"></i><strong class="me-auto">${title}</strong><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>`
-        );
-        toast.find('.toast-body').text(message);
-
-        const bsToast = new bootstrap.Toast(toast[0]);
-        bsToast.show();
-    };
-
     // ─── Expose Modal Functions Globally ────────────────────────────────────────
     window.openSmsModal = async function () { // Made async to fetch templates
         console.log("[SMS Modal] Opening modal and fetching templates...");
@@ -238,9 +274,9 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const templatesData = await window.fetchNotificationTemplates(1, 100); // Fetch up to 100 templates
             console.log("[SMS Modal] Templates fetched:", templatesData);
-            
+
             const templates = templatesData?.results || templatesData?.data || (Array.isArray(templatesData) ? templatesData : []);
-            
+
             templates.forEach(template => {
                 const smsContent = Array.isArray(template.content) ? template.content.find(c => c.channel === 'sms') : null;
                 if (smsContent && smsContent.content) {

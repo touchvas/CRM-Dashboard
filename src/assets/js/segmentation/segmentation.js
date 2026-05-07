@@ -243,9 +243,9 @@ const initSegmentBuilder = () => {
 
                 const saving = ref(false);
                 const saveCurrentSegment = async () => {
-                    if (!segmentName.value.trim()) { alert('Please enter a segment name.'); return; }
+                    if (!segmentName.value.trim()) { showToast('Warning', 'Please enter a segment name.', 'warning'); return; }
                     const { rules, groups } = flattenCriteria(criteria);
-                    if (rules.length === 0) { alert('Please add at least one complete rule.'); return; }
+                    if (rules.length === 0) { showToast('Warning', 'Please add at least one complete rule.', 'warning'); return; }
 
                     const params = new URLSearchParams(window.location.search);
                     const editId = params.get('edit');
@@ -264,12 +264,11 @@ const initSegmentBuilder = () => {
                         } else {
                             await window.publishRule(payload);
                         }
-                        if (window.showToast) window.showToast('Success', 'Segment saved!', 'success');
-                        else alert('Segment saved!');
+                        showToast('Success', 'Segment saved!', 'success');
                         window.location.href = 'pages-saved-segments.html';
                     } catch (err) {
                         console.error('Save error:', err);
-                        alert(`Failed to save segment: ${err.message}`);
+                        showToast('Error', 'Failed to save segment: ' + err.message, 'error');
                     } finally {
                         saving.value = false;
                     }
@@ -279,7 +278,7 @@ const initSegmentBuilder = () => {
                     const params = new URLSearchParams(window.location.search);
                     const editId = params.get('edit');
                     console.log("[SegmentBuilder] setup() mounted. Edit ID:", editId);
-                    
+
                     if (editId) {
                         try {
                             const res = await window.fetchSegmentById(editId);
@@ -370,7 +369,7 @@ if (document.getElementById('savedSegmentsApp')) {
                 }
             };
             const goToDetails = (seg) => { window.location.href = `pages-segment-details.html?id=${encodeURIComponent(seg.id)}`; };
-            
+
             const editSegment = (seg) => {
                 window.location.href = `pages-segmentation.html?edit=${encodeURIComponent(seg.id || seg._id)}`;
             };
@@ -378,7 +377,7 @@ if (document.getElementById('savedSegmentsApp')) {
             const deleteSegment = async (seg) => {
                 const id = seg.id || seg._id;
                 if (!id) return;
-                
+
                 if (!confirm(`Are you sure you want to delete segment "${seg.name}"?`)) return;
 
                 try {
@@ -387,22 +386,21 @@ if (document.getElementById('savedSegmentsApp')) {
                     await fetchSegments();
                 } catch (err) {
                     console.error("[SavedSegments] Delete error:", err);
-                    if (window.showToast) window.showToast('Error', 'Failed to delete segment', 'error');
-                    else alert(`Failed to delete segment: ${err.message}`);
+                    showToast('Error', 'Failed to delete segment: ' + err.message, 'error');
                 }
             };
 
             onMounted(fetchSegments);
 
-            return { 
-                segments, 
-                favoriteSegments, 
-                isLoading, 
-                toggleFavorite, 
-                goToDetails, 
-                editSegment, 
-                deleteSegment, 
-                fmtShort 
+            return {
+                segments,
+                favoriteSegments,
+                isLoading,
+                toggleFavorite,
+                goToDetails,
+                editSegment,
+                deleteSegment,
+                fmtShort
             };
         }
     }).mount('#savedSegmentsApp');
@@ -504,7 +502,7 @@ if (document.getElementById('segmentViewApp')) {
                     grid: { borderColor: '#f1f1f1', strokeDashArray: 3 },
                     legend: { show: true, position: 'top', horizontalAlign: 'right' }
                 });
-                
+
                 const cashflowData = trendData.value && trendData.value.length > 0 ? trendData.value.slice(-6) : [];
                 renderChart("#monthlyCashFlowChart", {
                     series: [
@@ -630,7 +628,7 @@ if (document.getElementById('segmentViewApp')) {
             // Expose marketing actions to window so they can be initialized from any page if needed
             window.initMarketingActions = () => {
                 console.log("[Marketing] Initializing Marketing Actions (SMS/Gifts listeners)");
-                
+
                 // Clear existing listeners to avoid duplicates
                 $('#smsTemplateSelect, #createTemplateBtn, #updateTemplateBtn, #deleteTemplateBtn, #smsMessage, .sms-variable-btn, input[name="giftType"], #awardGiftBtn, #cashType, #cashAmount, #bonusType').off();
 
@@ -911,7 +909,7 @@ if (document.getElementById('segmentViewApp')) {
                     const id = params.get('id');
                     if (id) window.location.href = `pages-segment-view.html?id=${encodeURIComponent(id)}`;
                 },
-                getOperatorLabel: window.getOperatorLabel, 
+                getOperatorLabel: window.getOperatorLabel,
                 editSegment: () => {
                     const id = segmentData.value?.id;
                     if (id) window.location.href = `pages-segmentation.html?edit=${encodeURIComponent(id)}`;
@@ -920,15 +918,14 @@ if (document.getElementById('segmentViewApp')) {
                     const id = segmentData.value?.id;
                     if (!id) return;
                     if (!confirm(`Permanently delete "${segmentData.value.name}"?`)) return;
-                    
+
                     try {
                         await window.deleteSegment(id);
                         if (window.showToast) window.showToast('Success', 'Segment deleted', 'success');
                         window.location.href = 'pages-saved-segments.html';
                     } catch (err) {
                         console.error("[SegmentView] Delete error:", err);
-                        if (window.showToast) window.showToast('Error', 'Delete failed', 'error');
-                        else alert("Delete failed: " + err.message);
+                        showToast('Error', 'Delete failed: ' + err.message, 'error');
                     }
                 }
             };
