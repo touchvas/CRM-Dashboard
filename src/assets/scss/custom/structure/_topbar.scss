@@ -6,7 +6,11 @@
     right: 0;
     left: 0;
     z-index: 1002;
-    background-color: var(--#{$prefix}white);
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
 }
 
 .navbar-header {
@@ -14,11 +18,13 @@
     align-items: center;
     margin: 0 auto;
     height: $header-height;
-    padding: 0;
+    padding: 0 1.5rem;
+    max-width: 100%;
 
     .dropdown {
         .show.header-item {
-            background-color: darken($header-bg, 2%);
+            background-color: rgba($primary, 0.05);
+            color: $primary;
         }
     }
 }
@@ -156,22 +162,68 @@
     }
 }
 
+.app-search {
+    padding: calc(#{$header-height - 42px} / 2) 0;
+
+    .form-control {
+        background-color: #f1f3f7 !important;
+        height: 42px;
+        padding-left: 48px;
+        padding-right: 20px;
+        box-shadow: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 50px !important;
+        font-size: 14px;
+        color: #1e293b;
+        transition: all 0.25s ease;
+
+        &:focus {
+            background-color: #fff !important;
+            border-color: $primary !important;
+            box-shadow: 0 4px 15px rgba($primary, 0.12) !important;
+        }
+
+        &::placeholder {
+            color: #64748b !important;
+            font-weight: 500 !important;
+            font-style: normal !important; // No italics
+        }
+    }
+
+    span {
+        position: absolute;
+        z-index: 10;
+        line-height: 42px;
+        left: 18px;
+        top: 0;
+        color: #475569;
+        font-size: 18px;
+    }
+}
+
 .top-icon {
-    width: 46px;
-    height: 46px;
-    background-color: var(--#{$prefix}body-bg);
+    width: 44px;
+    height: 44px;
+    background-color: transparent;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    color: #475569;
 
     i {
-        font-size: 22px;
-        color: $header-item-color;
+        font-size: 22px; // Increased visibility
+        color: inherit;
     }
 
     &:hover,
     &:active {
-        background-color: $primary;
+        background-color: rgba($primary, 0.08);
+        color: $primary;
 
         i {
-            color: $white;
+            color: inherit;
         }
     }
 }

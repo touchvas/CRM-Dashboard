@@ -773,7 +773,7 @@
                       <tr v-for="t in topTournaments" :key="t.dimension_id || t.dimension_name">
                         <td class="fw-medium text-dark">{{ t.dimension_name }}</td>
                         <td class="text-center">{{ t.unique_players || 0 }}</td>
-                        <td class="text-center">{{ t.bet_count || 0 }}</td>
+                        <td class="text-center">{{ t.total_bets || t.bet_count || 0 }}</td>
                         <td class="text-end">{{ t.total_stake ? 'KES ' + fmtShort(t.total_stake) : '—' }}</td>
                         <td class="text-end" :class="t.total_ggr < 0 ? 'text-success' : 'text-danger'">
                           {{ t.total_ggr ? 'KES ' + fmtShort(t.total_ggr) : '—' }}

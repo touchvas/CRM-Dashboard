@@ -8,11 +8,13 @@
    Notification
 ============= */
 #toast-container {
+    z-index: 10001 !important; // Above everything (sidebar is 9999)
+    
     &.toast-top-center {
-        top: 20px;
+        top: 24px;
         left: 50%;
-        margin-left: -150px; /* Half of default width */
-        width: 300px;
+        margin-left: -190px; /* Half of new width */
+        width: 380px;
     }
 
     > div {

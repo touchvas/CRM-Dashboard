@@ -833,16 +833,14 @@ if (document.getElementById('segmentViewApp')) {
                             console.log("[SegmentView] Fetching unified analytics...");
                             await Promise.all(endpoints.map(async (ep) => {
                                 try {
-                                    const json = await apiRequest(ep.url);
-                                    if (json) {
-                                        const result = json.data || json.results || json;
-                                        if (ep.key === 'trend') trendData.value = result;
-                                        if (ep.key === 'stats') statsData.value = result;
-                                        if (ep.key === 'comparison') casinoComparison.value = result;
-                                        if (ep.key === 'topGames') topGames.value = result;
-                                        if (ep.key === 'topTournaments') topTournaments.value = result;
-                                    }
-                                } catch (err) { console.warn(`[SegmentView] API ${ep.key} failed:`, err); }
+                                    const res = await apiRequest(ep.url);
+                                    const result = res?.data || res?.results || (Array.isArray(res) ? res : []);
+                                    if (ep.key === 'trend') trendData.value = result;
+                                    if (ep.key === 'stats') statsData.value = result;
+                                    if (ep.key === 'comparison') casinoComparison.value = result;
+                                    if (ep.key === 'topGames') topGames.value = result;
+                                    if (ep.key === 'topTournaments') topTournaments.value = result;
+                                } catch (err) { console.warn(`[SegmentView] Error fetching ${ep.key}:`, err); }
                             }));
                         } catch (e) {
                             console.warn("[SegmentView] Unified Analytics fetch failed.", e);
@@ -891,8 +889,8 @@ if (document.getElementById('segmentViewApp')) {
 
             return {
                 segmentData, isLoading, search, statusFilter, sort, filteredPlayers, showPlayers, fmtShort, activeFields, chartFields, growthRate, projectedValue, nggr, trendData, statsData,
-                topCasinoGames: computed(() => topGames.value.length > 0 ? topGames.value : (window.visualDummyData?.top_games || [])),
-                topTournaments: computed(() => topTournaments.value.length > 0 ? topTournaments.value : (window.visualDummyData?.top_tournaments || [])),
+                topCasinoGames: computed(() => (topGames.value && topGames.value.length > 0) ? topGames.value : (window.visualDummyData?.top_games || [])),
+                topTournaments: computed(() => (topTournaments.value && topTournaments.value.length > 0) ? topTournaments.value : (window.visualDummyData?.top_tournaments || [])),
                 handleSort: (k) => { if (sort.key === k) sort.dir = sort.dir === 'desc' ? 'asc' : 'desc'; else { sort.key = k; sort.dir = 'desc'; } },
                 formatNumber: (n) => (n || 0).toLocaleString(),
                 totalDeposits: computed(() => segmentData.value?.total_deposits || 0),
