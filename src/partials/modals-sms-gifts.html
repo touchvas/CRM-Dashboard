@@ -3,7 +3,7 @@
 <!-- ─────────────────────────────────────────────────────────────────────────── -->
 <div class="modal fade" id="sendSmsModal" tabindex="-1" role="dialog" aria-labelledby="sendSmsModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered " role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header border-bottom">
@@ -16,11 +16,30 @@
             <!-- Modal Body -->
             <div class="modal-body p-3">
 
+                <!-- Template Selection -->
+                <div class="mb-3">
+                    <label for="smsTemplateSelect" class="form-label fw-500">Select Template</label>
+                    <select class="form-select form-select-sm" id="smsTemplateSelect">
+                        <option value="">-- Custom Message --</option>
+                        <!-- Templates will be loaded here by JS -->
+                    </select>
+                </div>
+
+                <!-- Template Management Actions -->
+                <div class="mb-3">
+                    <label for="smsTemplateName" class="form-label fw-500">Template Name</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="smsTemplateName" placeholder="Enter name to save or edit...">
+                        <button class="btn btn-success" type="button" id="createTemplateBtn">Create</button>
+                        <button class="btn btn-outline-warning" type="button" id="updateTemplateBtn" style="display: none;">Update</button>
+                        <button class="btn btn-outline-danger" type="button" id="deleteTemplateBtn" style="display: none;">Delete</button>
+                    </div>
+                </div>
 
                 <!-- SMS Message Editor -->
                 <div class="mb-3">
                     <label for="smsMessage" class="form-label fw-500">Message</label>
-                    <textarea class="form-control form-control-sm" id="smsMessage" rows="4"
+                    <textarea class="form-control form-control-sm" id="smsMessage" rows="6"
                         placeholder="Type your SMS message here... (Max 160 characters per message)" maxlength="480">
                     </textarea>
                     <div class="d-flex justify-content-between align-items-center mt-2">
@@ -32,8 +51,6 @@
                         </small>
                     </div>
                 </div>
-
-                <!-- Variables Reference -->
 
             </div>
 

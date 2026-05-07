@@ -89,6 +89,23 @@
             growthRate: 14.2,
             projectedValue: 12500000,
             nggr: 1840000
+        },
+
+        // New Data for Side Charts
+        device_breakdown: {
+            series: [72, 22, 6],
+            labels: ['Mobile', 'Desktop', 'Tablet'],
+            colors: ['#5b73e8', '#34c38f', '#f1b44c']
+        },
+        regional_distribution: {
+            series: [45, 25, 15, 10, 5],
+            labels: ['Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Other'],
+            colors: ['#5b73e8', '#34c38f', '#f1b44c', '#f46a6a', '#dfe2e6']
+        },
+        acquisition_channels: {
+            series: [40, 30, 15, 10, 5],
+            labels: ['Direct', 'Social Media', 'Affiliates', 'Search', 'Other'],
+            colors: ['#5b73e8', '#34c38f', '#f1b44c', '#f46a6a', '#dfe2e6']
         }
     };
     console.log('visual-data.js: Restored rich dataset.');

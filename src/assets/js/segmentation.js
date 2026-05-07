@@ -7,7 +7,7 @@
    1.  API SERVICE & UTILS
    ═══════════════════════════════════════════════════════════════ */
 
-const SEGMENTATION_BASE_URL = 'https://segmentation.mystake.co.ke/v1';
+const SEGMENTATION_BASE_URL = 'https://crm.gamesapi.dev/v1';
 const getApiKey = () => sessionStorage.getItem('api_key') || '';
 
 const apiRequest = async (url, method = 'GET', body = null) => {
@@ -101,7 +101,7 @@ if (document.getElementById('segmentBuilderApp')) {
             const segmentDescription = ref('');
             const refreshType = ref('REAL_TIME');
 
-            let _uid = 0;
+            let _uid = Date.now(); // Use Date.now() for more unique IDs
             const uid = () => `r${++_uid}`;
             const makeRule = () => ({ _id: uid(), _type: 'rule', field: '', operator: '', value: '' });
             const makeGroup = () => ({ _id: uid(), _type: 'group', operator: 'AND', rules: [makeRule()] });
@@ -546,22 +546,22 @@ if (document.getElementById('segmentViewApp')) {
                         // Fetch players for the segment (handles both hardcoded and dynamic criteria)
                         if (window.getPlayersForSegment) {
                             // Try real members API first
-                            try {
-                                const response = await fetch(`https://segmentation.mystake.co.ke/v1/segments/${id}/members?page=1&per_page=100`, {
-                                    headers: { 'accept': 'application/json' }
-                                });
-                                if (response.ok) {
-                                    const resData = await response.json();
-                                    data.players = resData.data || resData.results || resData;
-                                    console.log(`[SegmentView] Loaded ${data.players?.length || 0} real members from API.`);
-                                }
-                            } catch (e) { console.warn("[SegmentView] Real members API failed, falling back to dummy.", e); }
+                            const isDummy = String(id).startsWith('seg') || String(id).startsWith('api_');
+                            if (!isDummy) {
+                                try {
+                                    const resData = await apiRequest(`${SEGMENTATION_BASE_URL}/segments/${id}/members?page=1&per_page=100`);
+                                    if (resData) {
+                                        data.players = resData.data || resData.results || resData;
+                                        console.log(`[SegmentView] Loaded ${data.players?.length || 0} real members from API.`);
+                                    }
+                                } catch (e) { console.warn("[SegmentView] Real members API failed, falling back to dummy.", e); }
+                            }
 
                             if (!data.players) {
                                 data.players = await window.getPlayersForSegment(data);
                                 console.log(`[SegmentView] Loaded ${data.players?.length || 0} players for segment (Dummy/Local): ${data.name}`);
                             }
-                            
+
                             // Real counts for the Player strip
                             if (!data.total_players) data.total_players = data.players.length;
                             data.active_players = data.players.filter(p => p.status === 'active').length;
@@ -597,7 +597,34 @@ if (document.getElementById('segmentViewApp')) {
                     const id = params.get('id');
                     if (id) window.location.href = `pages-segment-view.html?id=${encodeURIComponent(id)}`;
                 },
-                getFieldLabel: window.getFieldLabel, getOperatorLabel: window.getOperatorLabel, deleteSegment: () => showToast('Warning', 'Restricted in dummy mode', 'warning')
+                editSegment: () => {
+                    const id = segmentData.value?.id;
+                    if (id) window.location.href = `pages-segmentation.html?edit=${encodeURIComponent(id)}`;
+                },
+                getFieldLabel: window.getFieldLabel, 
+                getOperatorLabel: window.getOperatorLabel, 
+                deleteSegment: async () => {
+                    const id = segmentData.value?.id;
+                    if (!id) return;
+                    
+                    const isDummy = String(id).startsWith('seg') || String(id).startsWith('api_');
+                    if (isDummy) {
+                        if (window.showToast) window.showToast('Warning', 'Restricted in dummy mode', 'warning');
+                        else alert('Restricted in dummy mode');
+                        return;
+                    }
+
+                    if (!confirm(`Permanently delete segment "${segmentData.value.name}"?`)) return;
+                    
+                    try {
+                        await window.deleteSegment(id);
+                        if (window.showToast) window.showToast('Success', 'Segment deleted', 'success');
+                        window.location.href = 'pages-saved-segments.html';
+                    } catch (err) {
+                        console.error("[SegmentView] Delete error:", err);
+                        if (window.showToast) window.showToast('Error', 'Delete failed', 'error');
+                    }
+                }
             };
         }
     }).mount('#segmentViewApp');

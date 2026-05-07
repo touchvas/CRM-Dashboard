@@ -129,19 +129,19 @@
                 <!-- Footer with Summary -->
                 <div class="card-footer bg-light border-top">
                     <div class="row text-center">
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="filteredPlayers.length">
                             <small class="text-muted d-block">Total Players</small>
                             <strong>{{ filteredPlayers.length }}</strong>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="totalDeposits">
                             <small class="text-muted d-block">Total Deposits</small>
                             <strong>KES {{ formatNumber(totalDeposits) }}</strong>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="totalBets">
                             <small class="text-muted d-block">Total Bets</small>
                             <strong>KES {{ formatNumber(totalBets) }}</strong>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="activePlayers">
                             <small class="text-muted d-block">Active Players</small>
                             <strong>{{ activePlayers }}</strong>
                         </div>

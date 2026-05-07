@@ -46,8 +46,8 @@
                                 </div>
                                 <p class="text-muted small mb-3 text-truncate">{{ seg.description }}</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-light text-primary">{{ seg.total_players }} Players</span>
-                                    <span class="text-primary fw-bold">KES {{ fmtShort(seg.total_deposits) }}</span>
+                                    <span class="badge bg-light text-primary" v-if="seg.total_players">{{ seg.total_players }} Players</span>
+                                    <span class="text-primary fw-bold" v-if="seg.total_deposits">KES {{ fmtShort(seg.total_deposits) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -89,10 +89,10 @@
                                             <strong>{{ seg.name }}</strong>
                                         </div>
                                     </td>
-                                    <td class="text-center">{{ seg.total_players }}</td>
-                                    <td class="text-end">KES {{ fmtShort(seg.total_deposits) }}</td>
-                                    <td class="text-end">KES {{ fmtShort(seg.total_bets) }}</td>
-                                    <td class="text-end">KES {{ fmtShort(seg.total_withdrawals) }}</td>
+                                    <td class="text-center">{{ seg.total_players || '—' }}</td>
+                                    <td class="text-end">{{ seg.total_deposits ? 'KES ' + fmtShort(seg.total_deposits) : '—' }}</td>
+                                    <td class="text-end">{{ seg.total_bets ? 'KES ' + fmtShort(seg.total_bets) : '—' }}</td>
+                                    <td class="text-end">{{ seg.total_withdrawals ? 'KES ' + fmtShort(seg.total_withdrawals) : '—' }}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <button class="btn  btn-sm dropdown-toggle" type="button"
@@ -110,6 +110,14 @@
                                                         <i
                                                             :class="seg.is_favorite ? 'fas fa-star me-2 text-warning' : 'far fa-star me-2'"></i>
                                                         {{ seg.is_favorite ? 'Remove Favorite' : 'Add Favorite' }}
+                                                    </a></li>
+                                                <li><a class="dropdown-item" href="javascript:void(0);"
+                                                        @click="editSegment(seg)">
+                                                        <i class="ri-edit-line me-2 text-warning"></i>Edit Segment
+                                                    </a></li>
+                                                <li><a class="dropdown-item text-danger" href="javascript:void(0);"
+                                                        @click.prevent="deleteSegment(seg)">
+                                                        <i class="ri-delete-bin-line me-2"></i>Delete Segment
                                                     </a></li>
                                             </ul>
                                         </div>

@@ -2,7 +2,7 @@
 
 <head>
     @@include("partials/title-meta.html", {"title": "Rules Manager - Admin Login"})
-    @@include("partials/head-css.html") 
+    @@include("partials/head-css.html")
     <script>
         if (sessionStorage.getItem('isLoggedIn')) { window.location.href = 'index.html'; }
     </script>
@@ -12,84 +12,94 @@
             display: flex;
             flex-direction: column;
         }
+
         .auth-icon-container {
             background-color: #eaf9f0 !important;
             border-color: rgba(56, 198, 108, 0.1) !important;
             width: 55px;
             justify-content: center;
         }
-        .auth-icon-container i { font-size: 22px !important; color: #38c66c !important; }
-        .border-dashed { border-style: dashed !important; }
+
+        .auth-icon-container i {
+            font-size: 22px !important;
+            color: #38c66c !important;
+        }
+
+        .border-dashed {
+            border-style: dashed !important;
+        }
     </style>
-</head> 
+</head>
 
 <body class="bg-light">
-<div class="container-fluid" id="loginApp">
-    <div class="row align-items-center justify-content-center vh-100">
-        <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-            <div class="card border-0 shadow-sm auth-card">
-                <div class="card-body p-4 d-flex flex-column">
-                    <div class="text-center mb-4 mt-2">
-                        <a href="index.html" class="logo d-block mb-4">
-                            <img src="assets/images/logo-dark.png" alt="Clivax Logo" height="24" class="mx-auto">
-                        </a>
-                        <h4 class="text-primary fw-bold">Welcome Back !</h4>
-                        <p class="text-muted">Sign in to continue to Clivax.</p>
-                    </div>
+    <div class="container-fluid" id="loginApp">
+        <div class="row align-items-center justify-content-center vh-100">
+            <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                <div class="card border-0 shadow-sm auth-card">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="text-center mb-4 mt-2">
+                            <a href="index.html" class="logo d-block mb-4">
+                                <img src="assets/images/logo-dark.png" alt="Clivax Logo" height="24" class="mx-auto">
+                            </a>
+                            <h4 class="text-primary fw-bold">Welcome Back !</h4>
+                            <p class="text-muted">Sign in to continue to Clivax.</p>
+                        </div>
 
-                    <!-- Login form -->
-                    <div class="flex-grow-1 d-flex flex-column justify-content-center px-lg-4">
-                        <form @submit.prevent="handleLogin">
-                            <div class="input-group mb-3 w-100">
-                                <span class="input-group-text border-dashed border-end-0 auth-icon-container">
-                                    <i class="mdi mdi-account-outline"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    v-model="username"
-                                    class="form-control form-control-sm border-dashed border-start-0 ps-0"
-                                    placeholder="+254 700 000 000"
-                                >
-                            </div>
+                        <!-- Login form -->
+                        <div class="flex-grow-1 d-flex flex-column justify-content-center px-lg-4">
+                            <form @submit.prevent="handleLogin">
+                                <div class="input-group mb-3 w-100">
+                                    <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                        <i class="mdi mdi-account-outline"></i>
+                                    </span>
+                                    <input type="text" v-model="username"
+                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        placeholder="+254 700 000 000">
+                                </div>
 
-                            <div class="input-group mb-1 w-100">
-                                <span class="input-group-text border-dashed border-end-0 auth-icon-container">
-                                    <i class="mdi mdi-lock-outline"></i>
-                                </span>
-                                <input
-                                    type="password"
-                                    v-model="password"
-                                    class="form-control form-control-sm border-dashed border-start-0 ps-0"
-                                    placeholder="Enter your password"
-                                >
-                            </div>
+                                <div class="input-group mb-1 w-100">
+                                    <span class="input-group-text border-dashed border-end-0 auth-icon-container">
+                                        <i class="mdi mdi-lock-outline"></i>
+                                    </span>
+                                    <input type="password" v-model="password"
+                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        placeholder="Enter your password">
+                                </div>
 
-                            <div class="text-end mb-3">
-                                <a href="auth-recoverpw.html" class="text-primary small d-block w-100 text-end">Forgot password?</a>
-                            </div>
+                                <div class="text-end mb-3">
+                                    <a href="auth-recoverpw.html"
+                                        class="text-primary small d-block w-100 text-end">Forgot password?</a>
+                                </div>
 
-                            <button type="submit" class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light" :disabled="isLoading">
-                                <span  class="spinner-border spinner-border-sm me-1"></span>
-                                login
-                            </button>
+                                <button type="submit" :disabled="isLoading"
+                                    class="btn btn-primary w-75 mx-auto d-block btn-sm waves-effect waves-light">
+                                    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    {{ isLoading ? 'Signing in...' : 'Login' }}
+                                </button>
 
-                            <div class="mt-4 text-center">
-                                <p class="mb-0 text-muted small">Don't have an account ? <a href="auth-register.html" class="fw-semibold text-primary"> Register </a> </p>
-                            </div>
-                        </form>
-                    </div>
+                                <div class="mt-4 text-center">
+                                    <p class="mb-0 text-muted small">Don't have an account ? <a
+                                            href="auth-register.html" class="fw-semibold text-primary"> Register </a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
 
-                    <div class="mt-auto text-center pt-3">
-                        <p class="mb-0 text-muted small">© <script>document.write(new Date().getFullYear())</script> Clivax. Crafted with <i class="mdi mdi-heart text-danger"></i></p>
+                        <div class="mt-auto text-center pt-3">
+                            <p class="mb-0 text-muted small">©
+                                <script>document.write(new Date().getFullYear())</script> Clivax. Crafted with <i
+                                    class="mdi mdi-heart text-danger"></i>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Includes all shared libraries, Vue, and app.js in the correct order -->
-@@include("partials/vendor-scripts.html")
+    <!-- Includes all shared libraries, Vue, and app.js in the correct order -->
+    @@include("partials/vendor-scripts.html")
 
 </body>
+
 </html>

@@ -4,429 +4,487 @@
      ══════════════════════════════════════════════════════════════════ -->
 
 <style>
-/* ── Query Builder Styles ─────────────────────────────────────── */
-.qb-wrap {
-  font-family: 'Inter', sans-serif;
-}
+  /* ── Query Builder Styles ─────────────────────────────────────── */
+  .qb-wrap {
+    font-family: 'Inter', sans-serif;
+  }
 
-/* Match-type pill toggle */
-.qb-match-toggle {
-  display: inline-flex;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f9fafb;
-}
-.qb-match-toggle input[type="radio"] { display: none; }
-.qb-match-toggle label {
-  padding: 5px 18px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .4px;
-  color: #6b7280;
-  cursor: pointer;
-  user-select: none;
-  transition: all .15s;
-  margin: 0;
-  line-height: 1.8;
-}
-.qb-match-toggle input:checked + label {
-  background: #4e7adf;
-  color: #fff;
-}
-[data-bs-theme="dark"] .qb-match-toggle {
-  background: #1e2330;
-  border-color: #374151;
-}
-[data-bs-theme="dark"] .qb-match-toggle input:checked + label {
-  background: #4e7adf;
-}
-[data-bs-theme="dark"] .qb-match-toggle label { color: #9ca3af; }
+  /* Match-type pill toggle */
+  .qb-match-toggle {
+    display: inline-flex;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f9fafb;
+  }
 
-/* Group container */
-.qb-group {
-  border: 1.5px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 14px 16px;
-  background: #fff;
-  position: relative;
-  margin-bottom: 10px;
-}
-.qb-group.qb-group--nested {
-  border-color: #c7d2fe;
-  background: #f8f9ff;
-  margin-left: 24px;
-  border-left: 3px solid #4e7adf;
-}
-[data-bs-theme="dark"] .qb-group {
-  background: #1e2330;
-  border-color: #374151;
-}
-[data-bs-theme="dark"] .qb-group.qb-group--nested {
-  background: #1a1f2e;
-  border-color: #4e7adf;
-}
+  .qb-match-toggle input[type="radio"] {
+    display: none;
+  }
 
-/* Group header */
-.qb-group-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-.qb-group-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .8px;
-  color: #9ca3af;
-}
+  .qb-match-toggle label {
+    padding: 5px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .4px;
+    color: #6b7280;
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s;
+    margin: 0;
+    line-height: 1.8;
+  }
 
-/* Rule row */
-.qb-rule {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-.qb-rule-connector {
-  font-size: 11px;
-  font-weight: 700;
-  color: #4e7adf;
-  min-width: 32px;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  padding: 4px 0;
-}
-.qb-rule select,
-.qb-rule input {
-  height: 36px;
-  font-size: 13px;
-  border: 1px solid #d1d5db;
-  border-radius: 7px;
-  padding: 0 10px;
-  background: #fff;
-  color: #111827;
-  transition: border-color .15s;
-}
-.qb-rule select:focus,
-.qb-rule input:focus {
-  outline: none;
-  border-color: #4e7adf;
-  box-shadow: 0 0 0 3px rgba(78,122,223,.12);
-}
-.qb-rule .qb-field  { width: 170px; }
-.qb-rule .qb-op     { width: 150px; }
-.qb-rule .qb-val    { flex: 1; min-width: 120px; }
-[data-bs-theme="dark"] .qb-rule select,
-[data-bs-theme="dark"] .qb-rule input {
-  background: #262d3f;
-  border-color: #374151;
-  color: #f3f4f6;
-}
+  .qb-match-toggle input:checked+label {
+    background: #4e7adf;
+    color: #fff;
+  }
 
-/* Remove / add buttons */
-.qb-btn-remove {
-  width: 28px; height: 28px;
-  border: none; border-radius: 6px;
-  background: #fee2e2; color: #dc2626;
-  cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .15s;
-  flex-shrink: 0;
-}
-.qb-btn-remove:hover { background: #fca5a5; }
-[data-bs-theme="dark"] .qb-btn-remove { background: #3b1f1f; color: #f87171; }
+  [data-bs-theme="dark"] .qb-match-toggle {
+    background: #1e2330;
+    border-color: #374151;
+  }
 
-.qb-add-bar {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-.qb-btn-add-rule,
-.qb-btn-add-group {
-  padding: 5px 14px;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1.5px dashed;
-  background: transparent;
-  transition: all .15s;
-}
-.qb-btn-add-rule {
-  border-color: #4e7adf;
-  color: #4e7adf;
-}
-.qb-btn-add-rule:hover { background: #eff6ff; }
-.qb-btn-add-group {
-  border-color: #7c3aed;
-  color: #7c3aed;
-}
-.qb-btn-add-group:hover { background: #f5f3ff; }
-[data-bs-theme="dark"] .qb-btn-add-rule:hover  { background: #1e2d4d; }
-[data-bs-theme="dark"] .qb-btn-add-group:hover { background: #2a1f4d; }
+  [data-bs-theme="dark"] .qb-match-toggle input:checked+label {
+    background: #4e7adf;
+  }
 
-/* Delete group button */
-.qb-btn-del-group {
-  margin-left: auto;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #fca5a5;
-  background: #fee2e2;
-  color: #dc2626;
-  transition: background .15s;
-}
-.qb-btn-del-group:hover { background: #fca5a5; }
+  [data-bs-theme="dark"] .qb-match-toggle label {
+    color: #9ca3af;
+  }
 
-/* Field category badge */
-.qb-field-badge {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .4px;
-  margin-right: 4px;
-}
-.badge-financial { background: #d1fae5; color: #065f46; }
-.badge-player    { background: #dbeafe; color: #1e40af; }
-.badge-behaviour { background: #ede9fe; color: #5b21b6; }
-.badge-casino    { background: #fef3c7; color: #92400e; }
-.badge-sports    { background: #fee2e2; color: #991b1b; }
+  /* Group container */
+  .qb-group {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fff;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .qb-group.qb-group--nested {
+    border-color: #c7d2fe;
+    background: #f8f9ff;
+    margin-left: 24px;
+    border-left: 3px solid #4e7adf;
+  }
+
+  [data-bs-theme="dark"] .qb-group {
+    background: #1e2330;
+    border-color: #374151;
+  }
+
+  [data-bs-theme="dark"] .qb-group.qb-group--nested {
+    background: #1a1f2e;
+    border-color: #4e7adf;
+  }
+
+  /* Group header */
+  .qb-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .qb-group-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #9ca3af;
+  }
+
+  /* Rule row */
+  .qb-rule {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .qb-rule-connector {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4e7adf;
+    min-width: 32px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 4px 0;
+  }
+
+  .qb-rule select,
+  .qb-rule input {
+    height: 36px;
+    font-size: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    padding: 0 10px;
+    background: #fff;
+    color: #111827;
+    transition: border-color .15s;
+  }
+
+  .qb-rule select:focus,
+  .qb-rule input:focus {
+    outline: none;
+    border-color: #4e7adf;
+    box-shadow: 0 0 0 3px rgba(78, 122, 223, .12);
+  }
+
+  .qb-rule .qb-field {
+    width: 170px;
+  }
+
+  .qb-rule .qb-op {
+    width: 150px;
+  }
+
+  .qb-rule .qb-val {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  [data-bs-theme="dark"] .qb-rule select,
+  [data-bs-theme="dark"] .qb-rule input {
+    background: #262d3f;
+    border-color: #374151;
+    color: #f3f4f6;
+  }
+
+  /* Remove / add buttons */
+  .qb-btn-remove {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: #fee2e2;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+
+  .qb-btn-remove:hover {
+    background: #fca5a5;
+  }
+
+  [data-bs-theme="dark"] .qb-btn-remove {
+    background: #3b1f1f;
+    color: #f87171;
+  }
+
+  .qb-add-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .qb-btn-add-rule,
+  .qb-btn-add-group {
+    padding: 5px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px dashed;
+    background: transparent;
+    transition: all .15s;
+  }
+
+  .qb-btn-add-rule {
+    border-color: #4e7adf;
+    color: #4e7adf;
+  }
+
+  .qb-btn-add-rule:hover {
+    background: #eff6ff;
+  }
+
+  .qb-btn-add-group {
+    border-color: #7c3aed;
+    color: #7c3aed;
+  }
+
+  .qb-btn-add-group:hover {
+    background: #f5f3ff;
+  }
+
+  [data-bs-theme="dark"] .qb-btn-add-rule:hover {
+    background: #1e2d4d;
+  }
+
+  [data-bs-theme="dark"] .qb-btn-add-group:hover {
+    background: #2a1f4d;
+  }
+
+  /* Delete group button */
+  .qb-btn-del-group {
+    margin-left: auto;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #fca5a5;
+    background: #fee2e2;
+    color: #dc2626;
+    transition: background .15s;
+  }
+
+  .qb-btn-del-group:hover {
+    background: #fca5a5;
+  }
+
+  /* Field category badge */
+  .qb-field-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-right: 4px;
+  }
+
+  .badge-financial {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .badge-player {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .badge-behaviour {
+    background: #ede9fe;
+    color: #5b21b6;
+  }
+
+  .badge-casino {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .badge-sports {
+    background: #fee2e2;
+    color: #991b1b;
+  }
 </style>
 
 <!-- ── Page Title ─────────────────────────────────────────────── -->
 <div id="segmentBuilderApp">
-<div class="row">
-  <div class="col-12">
-    <div class="page-title-box d-flex align-items-center justify-content-between pt-4">
-      <h4 class="mb-0">Create Segment</h4>
-      <div class="page-title-right">
-        <a class="btn btn-outline-primary" href="pages-saved-segments.html">To Saved Segments</a>
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box d-flex align-items-center justify-content-between pt-4">
+        <h4 class="mb-0">Create Segment</h4>
+        <div class="page-title-right">
+          <a class="btn btn-outline-primary" href="pages-saved-segments.html">To Saved Segments</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ── Builder Card ───────────────────────────────────────────── -->
-<div class="row">
-  <div class="col-12">
-    <div class="card qb-wrap">
-      <div class="card-header bg-transparent border-bottom d-flex align-items-center gap-3 py-3">
-        <i class="mdi mdi-filter-variant text-primary fs-5"></i>
-        <h5 class="mb-0">Query Builder</h5>
-        <span class="text-muted small ms-1">Define which players belong to this segment</span>
-      </div>
-
-      <div class="card-body">
-
-        <!-- ── Segment meta ──────────────────────────────────── -->
-        <div class="row g-3 mb-4">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold small text-uppercase text-muted">Segment Name</label>
-            <input type="text" class="form-control border-dashed"
-                   v-model="segmentName"
-                   placeholder="e.g. High-Value Kenya Players">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-semibold small text-uppercase text-muted">Description</label>
-            <input type="text" class="form-control border-dashed"
-                   v-model="segmentDescription"
-                   placeholder="Short description (optional)">
-          </div>
-          <div class="col-md-2">
-            <label class="form-label fw-semibold small text-uppercase text-muted">Refresh</label>
-            <select class="form-select border-dashed" v-model="refreshType">
-              <option value="REAL_TIME">Real-time</option>
-              <option value="BATCH">Batch</option>
-            </select>
-          </div>
+  <!-- ── Builder Card ───────────────────────────────────────────── -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card qb-wrap">
+        <div class="card-header bg-transparent border-bottom d-flex align-items-center gap-3 py-3">
+          <i class="mdi mdi-filter-variant text-primary fs-5"></i>
+          <h5 class="mb-0">Query Builder</h5>
+          <span class="text-muted small ms-1">Define which players belong to this segment</span>
         </div>
 
-        <!-- ── Root group ────────────────────────────────────── -->
-        <div class="qb-group" id="qb-root">
+        <div class="card-body">
 
-          <!-- Root header with match-type toggle -->
-          <div class="qb-group-header">
-            <span class="qb-group-label">Match</span>
-            <div class="qb-match-toggle">
-              <input type="radio" :id="'mt-all-root'" :name="'mt-root'"
-                     value="AND" v-model="criteria.operator">
-              <label :for="'mt-all-root'">All</label>
-              <input type="radio" :id="'mt-any-root'" :name="'mt-root'"
-                     value="OR" v-model="criteria.operator">
-              <label :for="'mt-any-root'">Any</label>
+          <!-- ── Segment meta ──────────────────────────────────── -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small text-uppercase text-muted">Segment Name</label>
+              <input type="text" class="form-control border-dashed" v-model="segmentName"
+                placeholder="e.g. High-Value Kenya Players">
             </div>
-            <span class="text-muted small">of the following rules</span>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small text-uppercase text-muted">Description</label>
+              <input type="text" class="form-control border-dashed" v-model="segmentDescription"
+                placeholder="Short description (optional)">
+            </div>
+            <div class="col-md-2">
+              <label class="form-label fw-semibold small text-uppercase text-muted">Refresh</label>
+              <select class="form-select border-dashed" v-model="refreshType">
+                <option value="REAL_TIME">Real-time</option>
+                <option value="BATCH">Batch</option>
+              </select>
+            </div>
           </div>
 
-          <!-- Root rules -->
-          <template v-for="(item, idx) in criteria.rules" :key="item._id">
+          <!-- ── Root group ────────────────────────────────────── -->
+          <div class="qb-group" id="qb-root">
 
-            <!-- ── Nested group ────────────────────────────── -->
-            <div v-if="item._type === 'group'" class="qb-group qb-group--nested">
-              <div class="qb-group-header">
-                <span class="qb-group-label">Group — Match</span>
-                <div class="qb-match-toggle">
-                  <input type="radio" :id="'mt-all-'+item._id" :name="'mt-'+item._id"
-                         value="AND" v-model="item.operator">
-                  <label :for="'mt-all-'+item._id">All</label>
-                  <input type="radio" :id="'mt-any-'+item._id" :name="'mt-'+item._id"
-                         value="OR" v-model="item.operator">
-                  <label :for="'mt-any-'+item._id">Any</label>
-                </div>
-                <span class="text-muted small">of the following</span>
-                <button class="qb-btn-del-group ms-auto"
-                        @click="removeItem(criteria.rules, idx)">
-                  <i class="mdi mdi-close me-1"></i>Remove Group
-                </button>
+            <!-- Root header with match-type toggle -->
+            <div class="qb-group-header">
+              <span class="qb-group-label">Match</span>
+              <div class="qb-match-toggle">
+                <input type="radio" id="mt-all-root" name="mt-root" value="AND" v-model="criteria.operator">
+                <label for="mt-all-root" @click="setOperator('AND')">All</label>
+                <input type="radio" id="mt-any-root" name="mt-root" value="OR" v-model="criteria.operator">
+                <label for="mt-any-root" @click="setOperator('OR')">Any</label>
               </div>
+              <span class="text-muted small">of the following rules</span>
+            </div>
 
-              <!-- Nested rules -->
-              <template v-for="(nItem, nIdx) in item.rules" :key="nItem._id">
-                <div class="qb-rule" v-if="nItem._type !== 'group'">
-                  <span class="qb-rule-connector" v-if="nIdx > 0">
-                    {{ item.operator === 'OR' ? 'OR' : 'AND' }}
-                  </span>
-                  <span class="qb-rule-connector" v-else style="opacity:0">AND</span>
+            <!-- Root rules -->
+            <template v-for="(item, idx) in criteria.rules" :key="item._id">
 
-                  <!-- Field -->
-                  <select class="qb-field" v-model="nItem.field"
-                          @change="nItem.operator=''; nItem.value=''">
-                    <option value="" disabled>Select field…</option>
-                    <optgroup v-for="cat in fieldCategories" :key="cat.label" :label="cat.label">
-                      <option v-for="f in cat.fields" :key="f.field" :value="f.field">
-                        {{ f.label }}
-                      </option>
-                    </optgroup>
-                  </select>
-
-                  <!-- Operator -->
-                  <select class="qb-op" v-model="nItem.operator" :disabled="!nItem.field">
-                    <option value="" disabled>Condition…</option>
-                    <option v-for="op in getOperators(nItem.field)" :key="op.value" :value="op.value">
-                      {{ op.label }}
-                    </option>
-                  </select>
-
-                  <!-- Value -->
-                  <select v-if="nItem.field && getFieldConfig(nItem.field)?.values"
-                          class="qb-val" v-model="nItem.value" :disabled="!nItem.operator">
-                    <option value="" disabled>Select…</option>
-                    <option v-for="v in getFieldConfig(nItem.field).values" :key="v" :value="v">{{ v }}</option>
-                  </select>
-                  <input v-else-if="nItem.field && getFieldConfig(nItem.field)?.type === 'date'"
-                         type="date" class="qb-val form-control" v-model="nItem.value"
-                         :disabled="!nItem.operator">
-                  <input v-else-if="nItem.field && getFieldConfig(nItem.field)?.type === 'number'"
-                         type="number" class="qb-val" v-model.number="nItem.value"
-                         placeholder="Enter value…" :disabled="!nItem.operator">
-                  <input v-else
-                         type="text" class="qb-val" v-model="nItem.value"
-                         placeholder="Enter value…" :disabled="!nItem.operator || !nItem.field">
-
-                  <button class="qb-btn-remove" @click="removeItem(item.rules, nIdx)" title="Remove rule">
-                    <i class="mdi mdi-close"></i>
+              <!-- ── Nested group ────────────────────────────── -->
+              <div v-if="item._type === 'group'" class="qb-group qb-group--nested">
+                <div class="qb-group-header">
+                  <span class="qb-group-label">Group — Match</span>
+                  <div class="qb-match-toggle">
+                    <input type="radio" :id="'mt-all-'+item._id" :name="'mt-'+item._id" value="AND"
+                      v-model="item.operator">
+                    <label :for="'mt-all-'+item._id">All</label>
+                    <input type="radio" :id="'mt-any-'+item._id" :name="'mt-'+item._id" value="OR"
+                      v-model="item.operator">
+                    <label :for="'mt-any-'+item._id">Any</label>
+                  </div>
+                  <span class="text-muted small">of the following</span>
+                  <button class="qb-btn-del-group ms-auto" @click="removeItem(criteria.rules, idx)">
+                    <i class="mdi mdi-close me-1"></i>Remove Group
                   </button>
                 </div>
-              </template>
 
-              <!-- Add rule inside nested group -->
-              <div class="qb-add-bar mt-2">
-                <button class="qb-btn-add-rule" @click="addRule(item.rules)">
-                  <i class="mdi mdi-plus me-1"></i>Add Rule
+                <!-- Nested rules -->
+                <template v-for="(nItem, nIdx) in item.rules" :key="nItem._id">
+                  <div class="qb-rule" v-if="nItem._type !== 'group'">
+                    <span class="qb-rule-connector" v-if="nIdx > 0">
+                      {{ item.operator === 'OR' ? 'OR' : 'AND' }}
+                    </span>
+                    <span class="qb-rule-connector" v-else style="opacity:0">AND</span>
+
+                    <!-- Field -->
+                    <select class="qb-field" v-model="nItem.field" @change="nItem.operator=''; nItem.value=''">
+                      <option value="" disabled>Select field…</option>
+                      <optgroup v-for="cat in fieldCategories" :key="cat.label" :label="cat.label">
+                        <option v-for="f in cat.fields" :key="f.field" :value="f.field">
+                          {{ f.label }}
+                        </option>
+                      </optgroup>
+                    </select>
+
+                    <!-- Operator -->
+                    <select class="qb-op" v-model="nItem.operator" :disabled="!nItem.field">
+                      <option value="" disabled>Condition…</option>
+                      <option v-for="op in getOperators(nItem.field)" :key="op.value" :value="op.value">
+                        {{ op.label }}
+                      </option>
+                    </select>
+
+                    <!-- Value -->
+                    <select v-if="nItem.field && getFieldConfig(nItem.field)?.values" class="qb-val"
+                      v-model="nItem.value" :disabled="!nItem.operator">
+                      <option value="" disabled>Select…</option>
+                      <option v-for="v in getFieldConfig(nItem.field).values" :key="v" :value="v">{{ v }}</option>
+                    </select>
+                    <input v-else-if="nItem.field && getFieldConfig(nItem.field)?.type === 'date'" type="date"
+                      class="qb-val form-control" v-model="nItem.value" :disabled="!nItem.operator">
+                    <input v-else-if="nItem.field && getFieldConfig(nItem.field)?.type === 'number'" type="number"
+                      class="qb-val" v-model.number="nItem.value" placeholder="Enter value…"
+                      :disabled="!nItem.operator">
+                    <input v-else type="text" class="qb-val" v-model="nItem.value" placeholder="Enter value…"
+                      :disabled="!nItem.operator || !nItem.field">
+
+                    <button class="qb-btn-remove" @click="removeItem(item.rules, nIdx)" title="Remove rule">
+                      <i class="mdi mdi-close"></i>
+                    </button>
+                  </div>
+                </template>
+
+                <!-- Add rule inside nested group -->
+                <div class="qb-add-bar mt-2">
+                  <button class="qb-btn-add-rule" @click="addRule(item.rules)">
+                    <i class="mdi mdi-plus me-1"></i>Add Rule
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── Flat rule ───────────────────────────────── -->
+              <div class="qb-rule" v-else>
+                <span class="qb-rule-connector" v-if="idx > 0">
+                  {{ criteria.operator === 'OR' ? 'OR' : 'AND' }}
+                </span>
+                <span class="qb-rule-connector" v-else style="opacity:0">AND</span>
+
+                <select class="qb-field" v-model="item.field" @change="item.operator=''; item.value=''">
+                  <option value="" disabled>Select field…</option>
+                  <optgroup v-for="cat in fieldCategories" :key="cat.label" :label="cat.label">
+                    <option v-for="f in cat.fields" :key="f.field" :value="f.field">
+                      {{ f.label }}
+                    </option>
+                  </optgroup>
+                </select>
+
+                <select class="qb-op" v-model="item.operator" :disabled="!item.field">
+                  <option value="" disabled>Condition…</option>
+                  <option v-for="op in getOperators(item.field)" :key="op.value" :value="op.value">
+                    {{ op.label }}
+                  </option>
+                </select>
+
+                <select v-if="item.field && getFieldConfig(item.field)?.values" class="qb-val" v-model="item.value"
+                  :disabled="!item.operator">
+                  <option value="" disabled>Select…</option>
+                  <option v-for="v in getFieldConfig(item.field).values" :key="v" :value="v">{{ v }}</option>
+                </select>
+                <input v-else-if="item.field && getFieldConfig(item.field)?.type === 'date'" type="date"
+                  class="qb-val form-control" v-model="item.value" :disabled="!item.operator">
+                <input v-else-if="item.field && getFieldConfig(item.field)?.type === 'number'" type="number"
+                  class="qb-val" v-model.number="item.value" placeholder="Enter value…" :disabled="!item.operator">
+                <input v-else type="text" class="qb-val" v-model="item.value" placeholder="Enter value…"
+                  :disabled="!item.operator || !item.field">
+
+                <button class="qb-btn-remove" @click="removeItem(criteria.rules, idx)"
+                  :disabled="criteria.rules.length <= 1" title="Remove rule">
+                  <i class="mdi mdi-close"></i>
                 </button>
               </div>
-            </div>
 
-            <!-- ── Flat rule ───────────────────────────────── -->
-            <div class="qb-rule" v-else>
-              <span class="qb-rule-connector" v-if="idx > 0">
-                {{ criteria.operator === 'OR' ? 'OR' : 'AND' }}
-              </span>
-              <span class="qb-rule-connector" v-else style="opacity:0">AND</span>
+            </template>
 
-              <select class="qb-field" v-model="item.field"
-                      @change="item.operator=''; item.value=''">
-                <option value="" disabled>Select field…</option>
-                <optgroup v-for="cat in fieldCategories" :key="cat.label" :label="cat.label">
-                  <option v-for="f in cat.fields" :key="f.field" :value="f.field">
-                    {{ f.label }}
-                  </option>
-                </optgroup>
-              </select>
-
-              <select class="qb-op" v-model="item.operator" :disabled="!item.field">
-                <option value="" disabled>Condition…</option>
-                <option v-for="op in getOperators(item.field)" :key="op.value" :value="op.value">
-                  {{ op.label }}
-                </option>
-              </select>
-
-              <select v-if="item.field && getFieldConfig(item.field)?.values"
-                      class="qb-val" v-model="item.value" :disabled="!item.operator">
-                <option value="" disabled>Select…</option>
-                <option v-for="v in getFieldConfig(item.field).values" :key="v" :value="v">{{ v }}</option>
-              </select>
-              <input v-else-if="item.field && getFieldConfig(item.field)?.type === 'date'"
-                     type="date" class="qb-val form-control" v-model="item.value"
-                     :disabled="!item.operator">
-              <input v-else-if="item.field && getFieldConfig(item.field)?.type === 'number'"
-                     type="number" class="qb-val" v-model.number="item.value"
-                     placeholder="Enter value…" :disabled="!item.operator">
-              <input v-else
-                     type="text" class="qb-val" v-model="item.value"
-                     placeholder="Enter value…" :disabled="!item.operator || !item.field">
-
-              <button class="qb-btn-remove" @click="removeItem(criteria.rules, idx)"
-                      :disabled="criteria.rules.length <= 1" title="Remove rule">
-                <i class="mdi mdi-close"></i>
+            <!-- Root add bar -->
+            <div class="qb-add-bar mt-3">
+              <button class="qb-btn-add-rule" @click="addRule(criteria.rules)">
+                <i class="mdi mdi-plus me-1"></i>Add Rule
+              </button>
+              <button class="qb-btn-add-group" @click="addGroup(criteria.rules)">
+                <i class="mdi mdi-plus me-1"></i>Add Group
               </button>
             </div>
+          </div><!-- /qb-root -->
 
-          </template>
-
-          <!-- Root add bar -->
-          <div class="qb-add-bar mt-3">
-            <button class="qb-btn-add-rule" @click="addRule(criteria.rules)">
-              <i class="mdi mdi-plus me-1"></i>Add Rule
-            </button>
-            <button class="qb-btn-add-group" @click="addGroup(criteria.rules)">
-              <i class="mdi mdi-plus me-1"></i>Add Group
+          <!-- ── Actions ───────────────────────────────────────── -->
+          <div class="hstack gap-2 mt-3">
+            <a href="pages-saved-segments.html" class="btn btn-light px-4">Cancel</a>
+            <button class="btn btn-primary px-4" @click="saveCurrentSegment()" :disabled="saving">
+              <i class="mdi mdi-content-save-outline me-1"></i>
+              <span v-if="saving">Saving...</span>
+              <span v-else>Save Segment</span>
             </button>
           </div>
-        </div><!-- /qb-root -->
 
-        <!-- ── Preview count badge ───────────────────────────── -->
-        <div class="d-flex align-items-center gap-3 mt-3 mb-2">
-          <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
-            <i class="mdi mdi-account-group me-1"></i>
-            Matches <strong>{{ matchCount }}</strong> player{{ matchCount !== 1 ? 's' : '' }}
-          </span>
-          <button class="btn btn-sm btn-outline-secondary" @click="runPreview">
-            <i class="mdi mdi-refresh me-1"></i>Refresh preview
-          </button>
-        </div>
-
-        <!-- ── Actions ───────────────────────────────────────── -->
-        <div class="hstack gap-2 mt-3">
-          <a href="pages-saved-segments.html" class="btn btn-light px-4">Cancel</a>
-          <button class="btn btn-primary px-4" @click="saveCurrentSegment()">
-            <i class="mdi mdi-content-save-outline me-1"></i>Save Segment
-          </button>
-        </div>
-
-      </div><!-- /card-body -->
-    </div><!-- /card -->
+        </div><!-- /card-body -->
+      </div><!-- /card -->
+    </div>
   </div>
-</div>
 </div><!-- /#segmentBuilderApp -->

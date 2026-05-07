@@ -7,6 +7,15 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("app.js: Initializing core platform apps...");
 
+    // Initialize MetisMenu for sidebar
+    if (typeof $ !== 'undefined' && $('#side-menu').length) {
+        $('#side-menu').metisMenu();
+        console.log("MetisMenu initialized on #side-menu");
+    } else {
+        console.warn("MetisMenu or #side-menu not found.");
+    }
+
+
     // ─── Login App ───────────────────────────────────────────────────────────
     if (document.getElementById('loginApp')) {
         const loginApp = Vue.createApp({
@@ -16,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isLoading = Vue.ref(false);
 
                 const handleLogin = async () => {
+                    console.log("[login] handleLogin triggered for user:", username.value);
                     if (!username.value || !password.value) {
                         if (window.showToast) window.showToast('Error', 'Email and Password are required', 'error');
                         else alert('Email and Password are required');
@@ -26,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     try {
                         const msisdnVal = username.value.replace(/\D/g, '');
-                        const response = await fetch('https://identity.mystake.co.ke/user/login?lang=en', {
+                        const response = await fetch('https://identity.gamesapi.dev/user/login?lang=en', {
                             method: 'POST',
                             headers: {
                                 'accept': 'application/json',
@@ -205,22 +215,48 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ─── Expose Modal Functions Globally ────────────────────────────────────────
-    window.openSmsModal = function () {
-        const seg = window.__segmentData__;
-        const name = seg?.name || 'Current Segment';
-        const count = seg?.total_players || seg?.players?.length || 0;
-
-        const el = document.getElementById('smsRecipients');
-        if (el) {
-            el.value = name;
-            el.dataset.segmentName = name;
-            el.dataset.playerCount = count;
-        }
-        const badge = document.getElementById('smsRecipientCount');
-        if (badge) badge.textContent = `${count} players`;
-
+    window.openSmsModal = async function () { // Made async to fetch templates
+        console.log("[SMS Modal] Opening modal and fetching templates...");
         const modalEl = document.getElementById('sendSmsModal');
         if (modalEl) new bootstrap.Modal(modalEl).show();
+
+        const smsTemplateSelect = document.getElementById('smsTemplateSelect');
+        if (!smsTemplateSelect) {
+            console.error("[SMS Modal] #smsTemplateSelect not found in DOM.");
+            return;
+        }
+
+        // Clear previous templates and reset message
+        smsTemplateSelect.innerHTML = '<option value="">-- Custom Message --</option>';
+
+        if (typeof window.fetchNotificationTemplates !== 'function') {
+            console.error("[SMS Modal] window.fetchNotificationTemplates is not defined. Ensure segmentation.js is loaded.");
+            return;
+        }
+
+        // Fetch templates and populate dropdown
+        try {
+            const templatesData = await window.fetchNotificationTemplates(1, 100); // Fetch up to 100 templates
+            console.log("[SMS Modal] Templates fetched:", templatesData);
+            
+            const templates = templatesData?.results || templatesData?.data || (Array.isArray(templatesData) ? templatesData : []);
+            
+            templates.forEach(template => {
+                const smsContent = Array.isArray(template.content) ? template.content.find(c => c.channel === 'sms') : null;
+                if (smsContent && smsContent.content) {
+                    const option = document.createElement('option');
+                    option.value = smsContent.content;
+                    option.textContent = template.name;
+                    option.setAttribute('data-id', template.id);
+                    smsTemplateSelect.appendChild(option);
+                }
+            });
+            // Trigger change to sync UI buttons and clear inputs via segmentation.js listener
+            $(smsTemplateSelect).trigger('change');
+        } catch (error) {
+            console.error("Failed to fetch notification templates:", error);
+            if (window.showToast) window.showToast('Error', 'Failed to load SMS templates.', 'error');
+        }
     };
 
     window.openGiftsModal = function () {

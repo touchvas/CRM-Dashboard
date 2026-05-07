@@ -383,5 +383,30 @@
         return [];
     };
 
-    console.log('segdummy.js Consolidated: Loaded logic and dummy data.');
+    window.dummyNotificationTemplates = [
+        {
+            id: "tmp_1",
+            name: "Welcome Bonus SMS",
+            content: [{ channel: "sms", title: "Welcome Bonus", content: "Hello {CUSTOMER_NAME}, welcome to ImaraBet! Claim your KES {AMOUNT} welcome bonus now.", image: "" }],
+            created_at: "2026-01-01T10:00:00Z"
+        },
+        {
+            id: "tmp_2",
+            name: "Weekend Promo",
+            content: [{ channel: "sms", title: "Weekend Promo", content: "Don't miss out! Get a 50% deposit bonus this weekend only. Use code WEEKEND50.", image: "" }],
+            created_at: "2026-01-05T12:00:00Z"
+        },
+        {
+            id: "tmp_3",
+            name: "Churn Recovery",
+            content: [{ channel: "sms", title: "We Miss You", content: "Hey {CUSTOMER_NAME}, it's been a while. Come back and get a KES 500 free bet on us!", image: "" }],
+            created_at: "2026-01-10T09:00:00Z"
+        }
+    ];
+
+    window.fetchNotificationTemplatesDummy = async () => {
+        return { data: window.dummyNotificationTemplates };
+    };
+
+    console.log('segdummy.js Consolidated: Loaded logic, dummy data, and notification templates.');
 })();
