@@ -1,0 +1,44 @@
+.favorites-row-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1.5rem;
+    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: rgba(var(--bs-dark-rgb), 0.03);
+        border-radius: 10px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: rgba(var(--bs-primary-rgb), 0.15);
+        border-radius: 10px;
+        
+        &:hover {
+            background: rgba(var(--bs-primary-rgb), 0.3);
+        }
+    }
+
+    .segment-card {
+        flex: 0 0 320px;
+        min-width: 320px;
+        margin-bottom: 0 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(var(--bs-dark-rgb), 0.08);
+        border-radius: 12px;
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08) !important;
+            border-color: var(--hover-color);
+        }
+    }
+}
