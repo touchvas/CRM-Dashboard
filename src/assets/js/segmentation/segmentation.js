@@ -493,7 +493,7 @@ if (document.getElementById('segmentViewApp')) {
 
                 renderChart("#segmentTrendChart", {
                     series: trendSeries,
-                    chart: { type: 'line', height: 320, toolbar: { show: false }, zoom: { enabled: false } },
+                    chart: { type: 'line', height: 400, toolbar: { show: false }, zoom: { enabled: false } },
                     colors: activeFields.value.map(key => chartFields.value.find(f => f.key === key)?.color),
                     dataLabels: { enabled: false },
                     stroke: { curve: 'smooth', width: 3 },

@@ -1,172 +1,160 @@
 <!-- Start topbar -->
-<header id="page-topbar">
-    <div class="navbar-header">
+<header id="page-topbar" class="glass-effect">
+    <div class="navbar-header d-flex align-items-center justify-content-between w-100">
 
-        <!-- Logo -->
-
-        <!-- Start Navbar-Brand -->
-        <div class="navbar-logo-box">
-            <a href="index.html" class="logo logo-dark">
+        <!-- Logo Area -->
+        <div class="navbar-logo-box d-flex align-items-center">
+            <a href="index.html" class="logo logo-dark me-4">
                 <span class="logo-sm">
-                    <img src="/assets/images/logo-sm.png" alt="logo-sm-dark" height="20">
+                    <img src="/assets/images/logo-sm.png" alt="logo-sm-dark" height="24">
                 </span>
                 <span class="logo-lg">
-                    <img src="/assets/images/logo-dark.png" alt="logo-dark" height="18">
-                </span>
-            </a>
-
-            <a href="index.html" class="logo logo-light">
-                <span class="logo-sm">
-                    <img src="/assets/images/logo-sm.png" alt="logo-sm-light" height="20">
-                </span>
-                <span class="logo-lg">
-                    <img src="/assets/images/logo-light.png" alt="logo-light" height="18">
+                    <img src="/assets/images/logo-dark.png" alt="logo-dark" height="22">
                 </span>
             </a>
 
             <button type="button" class="btn btn-sm top-icon sidebar-btn" id="sidebar-btn">
-                <i class="mdi mdi-menu align-middle fs-19 d-none d-lg-inline-block"></i>
-                <i class="mdi mdi-menu align-middle fs-24 d-lg-none"></i>
+                <i class="mdi mdi-menu-variant align-middle fs-22"></i>
             </button>
         </div>
-        <!-- End navbar brand -->
 
-        <!-- Start menu -->
-        <div class="d-flex justify-content-between menu-sm px-3 ms-auto w-100">
-            <div class="d-flex align-items-center gap-2 flex-grow-1">
-                <!-- Search bar moved here for better width -->
-                <form class="app-search d-none d-lg-block w-100" style="max-width: 450px;">
-                    <div class="position-relative">
-                        <input type="text" class="form-control rounded-pill border-0 bg-light shadow-none" placeholder="Search for segments, campaigns, or players..." style="padding-left: 45px; height: 42px;">
-                        <span class="fas fa-search fs-18" style="top: 2px; left: 16px;"></span>
-                    </div>
-                </form>
-            </div>
+        <!-- Center Area (Empty for spacing) -->
+        <div class="flex-grow-1 d-none d-lg-flex"></div>
 
-            <div class="d-flex align-items-center gap-3">
-                <!-- Notification -->
-                <div class="dropdown d-inline-block">
-                    <button type="button" class="btn btn-sm top-icon position-relative shadow-none border-0" id="page-header-notifications-dropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-bell fs-22" style="color: #475569 !important;"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm" style="margin-top: 10px; margin-left: -10px; padding: 4px 6px; font-size: 10px;">
-                            3
-                        </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg border-0 animated-dropdown"
-                        aria-labelledby="page-header-notifications-dropdown" style="border-radius: 12px; overflow: hidden; width: 320px;">
-                        <div class="p-3 bg-primary bg-gradient">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <h6 class="text-white m-0 fw-bold">Notifications</h6>
-                                </div>
-                                <div class="col-auto">
-                                    <span class="badge bg-white bg-opacity-20 text-white">3 New</span>
-                                </div>
+        <!-- Right Side: Search, Notifications, Profile -->
+        <div class="d-flex align-items-center gap-3 pe-2">
+
+            <!-- Search Bar -->
+            <form class="app-search d-none d-xl-block" style="width: 320px;">
+                <div class="position-relative">
+                    <input type="text" class="form-control bg-light-subtle border-0 shadow-sm" placeholder="Search..."
+                        style="padding-left: 40px; height: 38px; border-radius: 10px; font-size: 13px;">
+                    <span class="fas fa-search position-absolute text-muted"
+                        style="top: 11px; left: 15px; font-size: 14px;"></span>
+                </div>
+            </form>
+
+            <!-- Notifications -->
+            <div class="dropdown d-inline-block">
+                <button type="button"
+                    class="btn btn-icon btn-topbar rounded-circle border border-2 border-primary border-opacity-10"
+                    id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ri-notification-3-line fs-20 text-primary"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="margin-top: 10px; margin-left: -10px; padding: 3px 4px; font-size: 8px; border: 1px solid #fff;">
+                        3
+                    </span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg border-0 animated-dropdown"
+                    aria-labelledby="page-header-notifications-dropdown"
+                    style="border-radius: 16px; overflow: hidden; width: 340px;">
+                    <div class="p-3 bg-primary bg-gradient">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="text-white m-0 fw-bold">Notifications</h6>
+                            </div>
+                            <div class="col-auto">
+                                <span class="badge bg-white bg-opacity-20 text-white">3 New</span>
                             </div>
                         </div>
-                        <div data-simplebar style="max-height: 280px;">
-                            <a href="#!" class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-xs me-3 flex-shrink-0">
-                                        <span class="avatar-title bg-info-subtle text-info rounded-circle fs-16">
-                                            <i class="ri-user-follow-line"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 small fw-bold text-dark">New segment member added</h6>
-                                        <p class="mb-0 fs-12 text-muted">A new player joined "High Rollers" segment</p>
-                                    </div>
+                    </div>
+                    <div data-simplebar style="max-height: 300px;">
+                        <a href="#!"
+                            class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-xs me-3 flex-shrink-0">
+                                    <span class="avatar-title bg-info-subtle text-info rounded-circle fs-16">
+                                        <i class="ri-user-follow-line"></i>
+                                    </span>
                                 </div>
-                            </a>
-                            <a href="#!" class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-xs me-3 flex-shrink-0">
-                                        <span class="avatar-title bg-success-subtle text-success rounded-circle fs-16">
-                                            <i class="ri-mail-send-line"></i>
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 small fw-bold text-dark">Campaign "Welcome" completed</h6>
-                                        <p class="mb-0 fs-12 text-muted">Successfully delivered to 4,200 users</p>
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-bold text-dark text-truncate">New segment member added</h6>
+                                    <p class="mb-0 fs-12 text-muted">A new player joined "High Rollers"</p>
                                 </div>
-                            </a>
-                        </div>
-                        <div class="p-2 border-top text-center bg-light">
-                            <a class="btn btn-sm btn-link fw-bold text-primary text-decoration-none" href="javascript:void(0)">
-                                View All Activity <i class="ri-arrow-right-line ms-1"></i>
-                            </a>
-                        </div>
+                                <span class="fs-11 text-muted ms-2">2m</span>
+                            </div>
+                        </a>
+                        <a href="#!"
+                            class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-xs me-3 flex-shrink-0">
+                                    <span class="avatar-title bg-success-subtle text-success rounded-circle fs-16">
+                                        <i class="ri-mail-send-line"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-bold text-dark text-truncate">Campaign completed</h6>
+                                    <p class="mb-0 fs-12 text-muted">Successfully delivered to 4.2k users</p>
+                                </div>
+                                <span class="fs-11 text-muted ms-2">1h</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="p-2 border-top text-center bg-light-subtle">
+                        <a class="btn btn-sm btn-link fw-bold text-primary text-decoration-none"
+                            href="javascript:void(0)">
+                            View All Activity <i class="ri-arrow-right-line ms-1"></i>
+                        </a>
                     </div>
                 </div>
+            </div>
 
-                <!-- Start Profile -->
-                <div class="dropdown d-inline-block">
-                    <button type="button" class="btn btn-sm top-icon p-0 border-2 border-primary border-opacity-20 rounded-circle shadow-sm" id="page-header-user-dropdown"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 48px; height: 48px; overflow: hidden;">
-                        <img class="avatar-sm p-0" src="assets/images/users/avatar-6.png" alt="Header Avatar" style="width: 100%; height: 100%; object-fit: cover;">
-                    </button>
-                    <div
-                        class="dropdown-menu dropdown-menu-wide dropdown-menu-end dropdown-menu-animated shadow-lg overflow-hidden py-0 border-0 mt-2" style="width: 300px; border-radius: 16px;">
-                        <div class="card border-0 mb-0">
-                            <div class="card-header bg-primary bg-gradient rounded-0 py-4">
-                                <div class="rich-list-item w-100 p-0">
-                                    <div class="rich-list-prepend">
-                                        <div class="avatar avatar-label-light avatar-circle shadow-sm">
-                                            <div class="avatar-display"><i class="fa fa-user-shield text-primary"></i></div>
-                                        </div>
-                                    </div>
-                                    <div class="rich-list-content ms-3">
-                                        <h6 class="rich-list-title text-white mb-0 fw-bold">Charlie Stone</h6>
-                                        <span class="text-white-50 small">Senior Administrator</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body p-2">
-                                <div class="grid-nav grid-nav-flush grid-nav-action grid-nav-no-rounded">
-                                    <div class="grid-nav-row border-bottom border-light">
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-primary-subtle text-primary rounded-3 p-2 mb-2"><i class="ri-settings-3-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">Org Settings</span>
-                                        </a>
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-info-subtle text-info rounded-3 p-2 mb-2"><i class="ri-key-2-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">API Access</span>
-                                        </a>
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-success-subtle text-success rounded-3 p-2 mb-2"><i class="ri-wallet-3-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">Billing</span>
-                                        </a>
-                                    </div>
-                                    <div class="grid-nav-row">
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-warning-subtle text-warning rounded-3 p-2 mb-2"><i class="ri-group-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">Team</span>
-                                        </a>
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-danger-subtle text-danger rounded-3 p-2 mb-2"><i class="ri-history-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">Audit Logs</span>
-                                        </a>
-                                        <a href="#!" class="grid-nav-item py-4 hover-bg-light rounded-3 transition-all">
-                                            <div class="grid-nav-icon bg-secondary-subtle text-secondary rounded-3 p-2 mb-2"><i class="ri-question-line fs-24"></i></div>
-                                            <span class="grid-nav-content fw-bold text-dark" style="font-size: 11px;">Support</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer card-footer-bordered rounded-0 p-3 bg-light">
-                                <a href="javascript:void(0);" onclick="logout()" class="btn btn-danger w-100 py-2 fw-bold shadow-sm rounded-pill">
-                                    <i class="ri-logout-box-r-line me-2"></i>Sign out
-                                </a>
+            <!-- Profile Dropdown -->
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn btn-topbar p-1 ms-1" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="d-flex align-items-center">
+                        <img class="rounded-circle header-profile-user border border-2 border-primary border-opacity-10"
+                            src="assets/images/users/avatar-6.png" alt="Header Avatar"
+                            style="width: 38px; height: 38px; object-fit: cover;">
+                        <i class="mdi mdi-chevron-down d-none d-xl-inline-block ms-1 text-muted"></i>
+                    </div>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated shadow-lg border-0 py-0 overflow-hidden mt-2"
+                    style="width: 280px; border-radius: 20px;">
+                    <div class="p-3 bg-primary bg-gradient border-bottom">
+                        <div class="d-flex align-items-center">
+                            <img class="rounded-circle border border-2 border-white border-opacity-50"
+                                src="assets/images/users/avatar-6.png" height="48" width="48">
+                            <div class="ms-3">
+                                <h6 class="text-white m-0 fw-bold">Charlie Stone</h6>
+                                <span class="text-white-50 fs-12">charlie@clivax.com</span>
                             </div>
                         </div>
                     </div>
+                    <div class="p-2">
+                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
+                            <div class="avatar-xs me-3">
+                                <span class="avatar-title bg-primary-subtle text-primary rounded-circle"><i
+                                        class="ri-user-line"></i></span>
+                            </div>
+                            <span>My Profile</span>
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
+                            <div class="avatar-xs me-3">
+                                <span class="avatar-title bg-info-subtle text-info rounded-circle"><i
+                                        class="ri-settings-3-line"></i></span>
+                            </div>
+                            <span>Settings</span>
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
+                            <div class="avatar-xs me-3">
+                                <span class="avatar-title bg-success-subtle text-success rounded-circle"><i
+                                        class="ri-wallet-3-line"></i></span>
+                            </div>
+                            <span>Billing</span>
+                        </a>
+                    </div>
+                    <div class="p-3 bg-light-subtle border-top">
+                        <a href="javascript:void(0);" onclick="logout()"
+                            class="btn btn-soft-danger w-100 fw-bold rounded-pill">
+                            <i class="ri-logout-box-r-line me-2"></i>Sign out
+                        </a>
+                    </div>
                 </div>
-                <!-- End Profile -->
             </div>
+
         </div>
-        <!-- End menu -->
     </div>
 </header>
 <!-- End topbar -->

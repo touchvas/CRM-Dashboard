@@ -1,0 +1,240 @@
+// Premium Design System for Clivax - Sharp Edition
+// High-end, Sharp Corners, and Tight Spacing
+
+:root {
+    --premium-font-main: 'Inter', sans-serif;
+    --premium-font-heading: 'Outfit', sans-serif;
+    --premium-glass-bg: rgba(255, 255, 255, 0.98);
+    --premium-glass-border: rgba(0, 0, 0, 0.1);
+    --premium-blur: 0px;
+    --premium-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --premium-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    --premium-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] {
+    --premium-glass-bg: rgba(15, 23, 42, 0.98);
+    --premium-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+// ── Global Sharpness ──────────────────────────────────────
+* {
+    border-radius: 0 !important;
+}
+
+body {
+    font-family: var(--premium-font-main) !important;
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+}
+
+h1, h2, h3, h4, h5, h6, .fw-bold {
+    font-family: var(--premium-font-heading) !important;
+    letter-spacing: -0.01em;
+}
+
+// ── Topbar ────────────────────────────────────────────────
+#page-topbar {
+    background: var(--premium-glass-bg) !important;
+    border-bottom: 1px solid var(--premium-glass-border) !important;
+    box-shadow: var(--premium-shadow-sm) !important;
+    height: 70px;
+    z-index: 1001;
+}
+
+.header-search-wrap {
+    max-width: 450px;
+    width: 100%;
+    .form-control {
+        background: #f8fafc !important;
+        border: 1px solid var(--premium-glass-border) !important;
+        padding-left: 40px;
+        height: 38px;
+    }
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+    }
+}
+
+// ── Cards ─────────────────────────────────────────────────
+.card {
+    border: 1px solid var(--premium-glass-border) !important;
+    background: #fff !important;
+    box-shadow: var(--premium-shadow-sm) !important;
+    margin-bottom: 0 !important; // Tighten grid spacing
+}
+
+[data-bs-theme="dark"] .card {
+    background: #1e293b !important;
+}
+
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--premium-glass-border) !important;
+    padding: 1rem 1.25rem !important;
+}
+
+// ── KPI Cards ─────────────────────────────────────────────
+.kpi-card-premium {
+    background: #fff;
+    border: 1px solid var(--premium-glass-border);
+    padding: 1.25rem;
+    height: 100%;
+    
+    &:hover {
+        border-color: var(--bs-primary);
+    }
+}
+
+.kpi-icon-wrap {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+// ── Sidebar ───────────────────────────────────────────────
+.sidebar-left {
+    border-right: 1px solid var(--premium-glass-border) !important;
+    background: #fff !important;
+}
+
+#sidebar-menu {
+    ul li {
+        a {
+            margin: 0 !important;
+            padding: 12px 20px !important;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+            font-size: 14px !important;
+            
+            &:hover {
+                background: #f8fafc;
+            }
+        }
+    }
+    .mm-active > a {
+        background: var(--bs-primary) !important;
+        color: #fff !important;
+        i { color: #fff !important; }
+    }
+}
+
+// ── Pulse ─────────────────────────────────────────────────
+@keyframes pulse-sharp {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.animate-pulse {
+    animation: pulse-sharp 1.5s infinite;
+}
+
+// ── Utilities ──────────────────────────────────────────────
+.btn-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.btn {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+.badge {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    padding: 4px 8px;
+}
+
+.container-fluid {
+    padding: 1.5rem !important;
+}
+
+.kpi-mini {
+    background: #fff !important;
+    border: 1px solid var(--premium-glass-border) !important;
+    padding: 1rem;
+}
+
+// ── Visual Containers (Individual Cards) ──────────────────
+.visual-container {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    background: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem;
+    height: 100%;
+}
+
+.visual-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    
+    h5 {
+        margin: 0;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.05em;
+        color: #1e293b;
+    }
+}
+
+// ── Minimalist KPI Styles ─────────────────────────────────
+.kpi-minimalist {
+    padding: 1rem 0;
+    border-left: 4px solid var(--bs-primary);
+    padding-left: 1.25rem;
+    background: transparent;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateX(5px);
+    }
+    
+    .kpi-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+    
+    .kpi-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        
+        small {
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+    }
+    
+    &.kpi-success { border-left-color: var(--bs-success); }
+    &.kpi-info { border-left-color: var(--bs-info); }
+    &.kpi-danger { border-left-color: var(--bs-danger); }
+    &.kpi-warning { border-left-color: var(--bs-warning); }
+}
