@@ -1,5 +1,5 @@
 <!-- Segment Players View -->
-<div id="segmentViewApp" v-if="segmentData" class="container-fluid">
+<div id="segmentViewApp" v-if="segmentData" class="container-fluid" v-cloak>
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
@@ -124,7 +124,7 @@
 </div>
 
 <!-- Loading/Error State -->
-<div v-else class="container-fluid">
+<div v-else class="container-fluid" v-cloak>
     <div class="text-center py-5">
         <div v-if="isLoading" class="spinner-border text-primary" role="status"></div>
         <div v-else>
