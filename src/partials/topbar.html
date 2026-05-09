@@ -182,21 +182,25 @@
         }
 
         .vertical-menu {
-            top: 85px !important; /* Align exactly with topbar bottom for 'joint' look */
+            top: 85px !important;
             width: 260px !important;
             height: calc(100vh - 85px) !important;
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08); /* Refined shadow */
             z-index: 1085; /* Above overlay, below topbar */
             border-top: 1px solid var(--bs-border-color);
+            background: #ffffff !important; /* Force solid background to hide ghost layers */
             transform: translateX(-100%); /* Start off-screen */
             transition: transform 0.3s ease-in-out;
             display: block !important;
+            left: 0 !important; /* Reset template-specific positioning */
+            margin: 0 !important;
             pointer-events: auto !important; /* Ensure sidebar items are clickable */
         }
 
         /* Show sidebar when enabled */
         body.sidebar-enable .vertical-menu {
             transform: translateX(0);
+            visibility: visible !important;
         }
 
         /* Keep layout visible on mobile */
@@ -208,6 +212,7 @@
             display: block !important;
             opacity: 1 !important;
             visibility: visible !important;
+            margin-left: 0 !important; /* Prevent content from shifting right */
             pointer-events: none; /* Block interaction with background content only */
         }
 
