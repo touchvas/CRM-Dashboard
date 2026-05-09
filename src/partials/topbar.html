@@ -13,8 +13,8 @@
                 </span>
             </a>
 
-            <button type="button" class="btn btn-sm top-icon sidebar-btn" id="sidebar-btn">
-                <i class="mdi mdi-menu-variant align-middle fs-22"></i>
+            <button type="button" class="btn btn-sm top-icon sidebar-btn ms-2" id="sidebar-btn">
+                <i class="mdi mdi-menu align-middle fs-24"></i>
             </button>
         </div>
 
@@ -158,3 +158,73 @@
     </div>
 </header>
 <!-- End topbar -->
+<style>
+    /* Joint Look: Ensure sidebar aligns perfectly with topbar */
+    @media (min-width: 992px) {
+        #page-topbar {
+            z-index: 1010;
+        }
+        .vertical-menu {
+            top: 85px !important; /* Matches $header-height */
+            border-top: 1px solid var(--bs-border-color);
+            z-index: 1005;
+        }
+    }
+
+    /* Mobile Sidebar Overlay */
+    @media (max-width: 991.98px) {
+        #page-topbar {
+            z-index: 1090 !important; /* Ensure it stays above everything */
+            position: fixed !important;
+            display: block !important; /* Prevent it from being hidden by template logic */
+            width: 100% !important;
+            background: #ffffff !important; /* Solid background to keep it distinct */
+        }
+
+        .vertical-menu {
+            top: 85px !important; /* Align exactly with topbar bottom for 'joint' look */
+            width: 260px !important;
+            height: calc(100vh - 85px) !important;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+            z-index: 1085; /* Above overlay, below topbar */
+            border-top: 1px solid var(--bs-border-color);
+            transform: translateX(-100%); /* Start off-screen */
+            transition: transform 0.3s ease-in-out;
+            display: block !important;
+            pointer-events: auto !important; /* Ensure sidebar items are clickable */
+        }
+
+        /* Show sidebar when enabled */
+        body.sidebar-enable .vertical-menu {
+            transform: translateX(0);
+        }
+
+        /* Keep layout visible on mobile */
+        body.sidebar-enable #layout-wrapper {
+            display: block !important;
+        }
+
+        body.sidebar-enable .main-content {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: none; /* Block interaction with background content only */
+        }
+
+        .mobile-sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            top: 85px; /* Start shadow effect below the topbar */
+            background: rgba(0, 0, 0, 0.5); /* Transparent dark layer */
+            z-index: 1070;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        /* Toggle visibility based on global sidebar-enable class */
+        body.sidebar-enable .mobile-sidebar-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+</style>

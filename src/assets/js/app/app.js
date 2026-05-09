@@ -50,14 +50,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn("MetisMenu or #side-menu not found.");
     }
 
-    // Sidebar Toggle Logic (Desktop & Mobile) - Using delegation for maximum reliability
+    // Sidebar Toggle Logic (Desktop & Mobile)
     document.addEventListener('click', function (e) {
-        // Toggle Sidebar
-        const btn = e.target.closest('#sidebar-btn');
-        if (btn) {
+        // Toggle Sidebar (Single unified button)
+        const toggleBtn = e.target.closest('#sidebar-btn');
+        if (toggleBtn) {
             e.preventDefault();
             const isMobile = window.innerWidth < 992;
-            console.log("Sidebar toggle clicked (delegated). Mobile:", isMobile);
             
             if (!isMobile) {
                 document.body.classList.toggle('sidebar-collapsed');
@@ -67,19 +66,17 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Close Sidebar
-        const closeBtn = e.target.closest('#close-sidebar');
-        if (closeBtn) {
+        // Close Sidebar (Internal close button or clicking the Overlay)
+        const closeTrigger = e.target.closest('#close-sidebar') || e.target.closest('#mobileSidebarOverlay');
+        if (closeTrigger) {
             e.preventDefault();
             document.body.classList.remove('sidebar-enable');
-            console.log("Sidebar closed (delegated)");
             return;
         }
 
-        // Click outside on main content to close
+        // Fallback: Click outside on main content to close
         if (e.target.closest('.main-content') && document.body.classList.contains('sidebar-enable')) {
             document.body.classList.remove('sidebar-enable');
-            console.log("Sidebar closed via click outside (delegated)");
         }
     });
 
