@@ -31,7 +31,7 @@
 
 .navbar-logo-box {
     position: relative;
-    padding: 0 1.5rem;
+    padding: 0 rem;
     width: $navbar-logo-box-width;
     background: var(--#{$prefix}white);
 
@@ -273,9 +273,9 @@
         }
     }
 
-    .navbar-logo-box {
-        background: $white-dark;
-    }
+    /* .navbar-logo-box {
+        /*  background: $white-dark; 
+    } */
 
     .logo-light {
         display: block;

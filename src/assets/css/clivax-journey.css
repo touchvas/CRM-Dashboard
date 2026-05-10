@@ -17,17 +17,17 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-    --cj-primary: #4e7adf;
-    --cj-primary-dark: #3b5cbd;
-    --cj-primary-light: #2c334d;
+    --cj-primary: #38c66c;
+    --cj-primary-dark: #2aad58;
+    --cj-primary-light: #eafaf1;
     --cj-accent-yellow: #f5a623;
     --cj-accent-blue: #4a90d9;
-    --cj-bg-page: #131418;
-    --cj-bg-card: #1c1d21;
-    --cj-border: #2e3038;
-    --cj-text: #ffffff;
-    --cj-text-secondary: #a0a4b0;
-    --cj-text-muted: #656975;
+    --cj-bg-page: #f0f2f5;
+    --cj-bg-card: #ffffff;
+    --cj-border: #e8e9eb;
+    --cj-text: #1a1a1a;
+    --cj-text-secondary: #6b7280;
+    --cj-text-muted: #9ca3af;
 }
 
 [v-cloak] {
@@ -58,14 +58,16 @@
    or is being overridden. Adjust values (250px, 70px) if your global sidebar 
    has different widths.
 */
-.main-content {
-    margin-left: 250px !important;
-    /* Default width of the global left sidebar */
-}
+@media (min-width: 992px) {
+    .main-content {
+        margin-left: 250px !important;
+        /* Default width of the global left sidebar */
+    }
 
-body.sidebar-collapsed .main-content {
-    margin-left: 70px !important;
-    /* Width when the global sidebar is collapsed */
+    body.sidebar-collapsed .main-content {
+        margin-left: 70px !important;
+        /* Width when the global sidebar is collapsed */
+    }
 }
 
 
@@ -178,7 +180,7 @@ body.sidebar-collapsed .main-content {
 /* ── Canvas ──────────────────────────────────────────────────── */
 .cj-canvas {
     flex: 1;
-    min-width: elative;
+    position: relative;
     height: 100%;
     order: 1 !important;
     background: var(--cj-bg-page);
@@ -443,7 +445,7 @@ body.sidebar-collapsed .main-content {
 .vue-flow__node-custom {
     background: var(--cj-bg-card);
     border: 1px solid var(--cj-border);
-    border-radius: 12px;
+    border-radius: 24px;
     width: 320px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
@@ -462,8 +464,8 @@ body.sidebar-collapsed .main-content {
     border-radius: 4px 0 0 4px;
     position: absolute;
     left: 0;
-    top: 12%;
-    bottom: 12%;
+    top: 15%;
+    bottom: 15%;
 }
 
 .node-accent-stripe.trigger {
@@ -546,7 +548,7 @@ body.sidebar-collapsed .main-content {
 
 .node-start-indicator {
     position: absolute;
-    top: -24px;
+    top: -20px;
     left: 12px;
     background: transparent;
     color: var(--cj-text-muted);
@@ -563,15 +565,15 @@ body.sidebar-collapsed .main-content {
 
 .node-type-badge {
     position: absolute;
-    top: 16px;
+    top: 12px;
     right: 16px;
     font-size: 10px;
     font-weight: 600;
     padding: 3px 10px;
     border-radius: 12px;
-    background: #2e3038;
-    color: #a0a4b0;
-    border: 1px solid #3f424e;
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
 }
 
 /* matches "5 PLAYERS" pill style in screenshot */
@@ -1131,4 +1133,81 @@ body.sidebar-collapsed .main-content {
 
 [data-bs-theme="dark"] .vue-flow__handle {
     background: var(--cj-bg-card) !important;
+}
+
+/* Empty/unconfigured card styling */
+.page-journey-builder .vue-flow__node-custom:not([data-has-key="true"]),
+.page-journey-stats .vue-flow__node-custom:not([data-has-key="true"]) {
+    border: 2px dashed #6b7280 !important;
+    background: rgba(0,0,0,0.02) !important;
+}
+.page-journey-builder .vue-flow__node-custom:not([data-has-key="true"]):hover,
+.page-journey-stats .vue-flow__node-custom:not([data-has-key="true"]):hover {
+    border-color: var(--cj-primary) !important;
+    border-style: solid !important;
+    background: rgba(56, 198, 108, 0.05) !important;
+}
+
+/* Ensure arrow marker is applied to edges */
+.vue-flow__edge-path {
+    marker-end: url(#arrowhead) !important;
+}
+.page-journey-builder #page-topbar,
+.page-journeys-list #page-topbar,
+.page-journey-stats #page-topbar {
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* -- Card Size Overrides -------------------------------------- */
+.page-journey-builder .vue-flow__node-custom,
+.page-journey-stats .vue-flow__node-custom {
+    width: 350px !important;
+    min-height: 80px !important;
+}
+
+.page-journey-builder .vue-flow__node-custom .node-inner,
+.page-journey-stats .vue-flow__node-custom .node-inner {
+    padding: 8px 16px 10px 20px !important;
+}
+
+.page-journey-builder .vue-flow__node-custom .node-icon-wrap,
+.page-journey-stats .vue-flow__node-custom .node-icon-wrap {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 16px !important;
+}
+
+.page-journey-builder .vue-flow__node-custom .node-title,
+.page-journey-stats .vue-flow__node-custom .node-title {
+    font-size: 13px !important;
+    margin-bottom: 2px !important;
+}
+
+.page-journey-builder .vue-flow__node-custom .node-desc,
+.page-journey-stats .vue-flow__node-custom .node-desc {
+    font-size: 10.5px !important;
+    margin-bottom: 6px !important;
+}
+
+/* -- Flush Topbar to Builder --------------------------------- */
+.page-journey-builder .cj-topbar,
+.page-journey-stats .cj-topbar {
+    margin-bottom: 0 !important;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.page-journey-builder .cj-builder-wrap,
+.page-journey-stats .cj-builder-wrap {
+    border-top: none !important;
+    margin-top: 0 !important;
+    border-radius: 0 0 10px 10px !important;
+}
+
+/* -- Flush Sidebar to Topbar --------------------------------- */
+.page-journey-builder .vertical-menu,
+.page-journey-stats .vertical-menu,
+.page-journeys-list .vertical-menu {
+    top: 0 !important;
+    padding-top: 70px !important;
 }

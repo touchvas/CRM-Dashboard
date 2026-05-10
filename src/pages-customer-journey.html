@@ -32,7 +32,16 @@
 @@include("partials/body.html")
 
 <div id="layout-wrapper">
-    @@include("partials/topbar.html")
+    <script>
+        // Force light theme for this page
+        document.body.classList.add('page-journey-builder');
+        document.body.setAttribute('data-bs-theme', 'light');
+
+        // Ensure the global sidebar is closed on small screens by default
+        if (window.innerWidth < 992) {
+            document.body.classList.remove('sidebar-enable');
+        }
+    </script>
     @@include("partials/menu.html")
 
     <div class="main-content">
@@ -92,12 +101,24 @@
                     <div class="cj-canvas">
                         <vue-flow v-model="elements" :node-types="nodeTypes" @node-click="onNodeClick"
                             @pane-click="onPaneClick" :default-viewport="{ zoom: 1 }" :min-zoom="0.2" :max-zoom="4"
-                            :default-edge-options="{ animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }"
+                            :default-edge-options="{ animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' }, markerEnd: 'url(#arrowhead)' }"
                             @drop="onDrop" @dragover.prevent>
+
+                            <!-- ── SVG Markers for Arrows ── -->
+                            <svg style="position: absolute; width: 0; height: 0;">
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#38c66c" />
+                                    </marker>
+                                </defs>
+                            </svg>
 
                             <!-- ── Custom node slot ── -->
                             <template #node-custom="{ data, selected, id }">
-                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']">
+                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']"
+                                     :data-has-key="!!data.key"
+                                     @dragover.prevent
+                                     @drop.stop="onDropOnNode($event, id)">
 
                                     <!-- Accent stripe (color coded by type) -->
                                     <div :class="['node-accent-stripe', data.nodeType]"></div>

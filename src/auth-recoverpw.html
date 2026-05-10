@@ -10,13 +10,24 @@
             flex-direction: column;
         }
         .auth-icon-container {
-            background-color: #eaf9f0 !important;
-            border-color: rgba(56, 198, 108, 0.1) !important;
-            width: 55px;
+            background-color: #ffffff !important;
+            border-color: #ced4da !important;
+            border-right: none !important;
+            width: 48px;
             justify-content: center;
         }
-        .auth-icon-container i { font-size: 22px !important; color: #38c66c !important; }
-        .border-dashed { border-style: dashed !important; }
+        .auth-icon-container i { font-size: 18px !important; color: #38c66c !important; }
+        .border-dashed { border-style: solid !important; }
+
+        .form-control::placeholder {
+            font-style: normal !important;
+        }
+
+        .form-control {
+            height: 42px;
+            border-color: #ced4da !important;
+            border-left: none !important;
+        }
     </style>
 </head> 
 
@@ -49,7 +60,7 @@
                                 <input
                                     type="text"
                                     v-model="phoneNumber"
-                                    class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                    class="form-control border-dashed border-start-0 ps-0"
                                     placeholder="+254 700 000 000"
                                     required
                                     :readonly="step === 2"
@@ -70,7 +81,7 @@
                                     <input
                                         type="text"
                                         v-model="otp"
-                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        class="form-control border-dashed border-start-0 ps-0"
                                         placeholder="Enter OTP"
                                         required
                                     >
@@ -83,7 +94,7 @@
                                     <input
                                         type="password"
                                         v-model="newPassword"
-                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        class="form-control border-dashed border-start-0 ps-0"
                                         placeholder="New Password"
                                         required
                                     >
@@ -96,7 +107,7 @@
                                     <input
                                         type="password"
                                         v-model="confirmNewPassword"
-                                        class="form-control form-control-sm border-dashed border-start-0 ps-0"
+                                        class="form-control border-dashed border-start-0 ps-0"
                                         placeholder="Confirm New Password"
                                         required
                                     >

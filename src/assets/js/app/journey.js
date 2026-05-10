@@ -94,7 +94,7 @@ createApp({
 
     setup() {
         const {
-            onConnect, addEdges, addNodes,
+            onConnect, addEdges, addNodes, updateNode,
             fitView, zoomIn, zoomOut,
             getNodes, getEdges, project
         } = useVueFlow();
@@ -212,7 +212,8 @@ createApp({
         /* ── Vue Flow events ─────────────────────────────────── */
         const onNodeClick = ({ node }) => { selectedNode.value = node; };
         const onPaneClick = () => { selectedNode.value = null; };
-        onConnect(params => addEdges([{ ...params, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]));
+        onConnect(params => addEdges([{ ...params, animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' }, markerEnd: 'url(#arrowhead)' }]));
+        const dropHandledByNode = ref(false);
 
         /* ── Drag & Drop & Add ────────────────────────────────── */
         const onDragStart = (event, item) => {
@@ -227,7 +228,7 @@ createApp({
                 position: pos,
                 data: {
                     ...item,
-                    uuid: uuidv7(),
+                    uuid: item.uuid || uuidv7(),
                     blueprint_id: uuidv7(),
                     wait_event_name: '',
                     config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
@@ -246,9 +247,28 @@ createApp({
         };
 
         const onDrop = (event) => {
+            if (dropHandledByNode.value) {
+                dropHandledByNode.value = false;
+                return;
+            }
+
             const raw = event.dataTransfer.getData('application/vueflow');
             if (!raw) return;
             const item = JSON.parse(raw);
+
+            // Check if dropping on an existing node
+            const targetElement = document.elementFromPoint(event.clientX, event.clientY);
+            const nodeElement = targetElement?.closest('.vue-flow__node-custom');
+            if (nodeElement) {
+                const nodeId = nodeElement.getAttribute('data-id');
+                if (nodeId) {
+                    const node = getNodes().find(n => n.id === nodeId);
+                    if (node && node.data.key) {
+                        dropHandledByNode.value = false;
+                        return;
+                    }
+                }
+            }
 
             const isFirstTrigger =
                 elements.value.length === 1 &&
@@ -269,26 +289,85 @@ createApp({
             }
         };
 
+        /* ── Drop on empty card ───────────────────────────────────── */
+        const onDropOnNode = (event, nodeId) => {
+            dropHandledByNode.value = true;
+            event.preventDefault();
+            event.stopPropagation();
+
+            const raw = event.dataTransfer.getData('application/vueflow');
+            if (!raw) return;
+            const item = JSON.parse(raw);
+
+            const node = getNodes().find(n => n.id === nodeId);
+            if (!node) return;
+
+            // Only allow drop on empty nodes (no key)
+            if (node.data.key) return;
+
+            const newNodeData = {
+                ...item,
+                uuid: uuidv7(),
+                blueprint_id: uuidv7(),
+                wait_event_name: '',
+                config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
+                metadata: {
+                    description: item.desc,
+                    owner: 'Marketing Team',
+                    tags: [item.nodeType.toUpperCase()]
+                },
+                stats: {
+                    total: Math.floor(Math.random() * 5000),
+                    success: Math.floor(Math.random() * 4500),
+                    failed: Math.floor(Math.random() * 500)
+                }
+            };
+
+            updateNode({ id: nodeId, data: newNodeData });
+
+            if (nodeId === elements.value[0]?.id && item.nodeType === 'trigger') {
+                triggerType.value = item.key;
+            }
+        };
+
         const addEmptyNode = (sourceId) => {
-            const sourceNode = getNodes.value.find(n => n.id === sourceId);
+            const sourceNode = getNodes().find(n => n.id === sourceId);
             if (!sourceNode) return;
-            
-            const position = { x: sourceNode.position.x, y: sourceNode.position.y + 180 };
+
             const newNodeId = uuidv7();
+            const position = {
+                x: sourceNode.position.x,
+                y: sourceNode.position.y + 160
+            };
             const newNode = {
                 id: newNodeId,
                 type: 'custom',
-                position,
+                position: position,
                 data: {
-                    label: 'Select Action',
-                    desc: 'Click to select an action',
-                    isPlaceholder: true,
-                    nodeType: 'placeholder'
+                    label: 'New Step',
+                    desc: 'Pick an action or drag from sidebar',
+                    key: '',
+                    nodeType: 'action',
+                    icon: '⚡',
+                    uuid: uuidv7(),
+                    blueprint_id: uuidv7(),
+                    wait_event_name: '',
+                    config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
+                    metadata: { description: 'Unconfigured step', owner: 'Marketing Team', tags: ['ACTION'] },
+                    stats: { total: 0, success: 0, failed: 0 }
                 }
             };
-            
-            addNodes([newNode]);
-            addEdges([{ id: uuidv7(), source: sourceId, target: newNodeId, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]);
+            const newEdge = {
+                id: uuidv7(),
+                source: sourceId,
+                target: newNodeId,
+                animated: true,
+                style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' },
+                markerEnd: 'url(#arrowhead)'
+            };
+
+            // Directly update the elements ref to ensure UI reactivity
+            elements.value = [...elements.value, newNode, newEdge];
         };
 
         const addFromPicker = (item) => {
@@ -296,19 +375,19 @@ createApp({
             let sourceId = pickerSourceNodeId.value;
 
             if (sourceId) {
-                const sourceNode = getNodes.value.find(n => n.id === sourceId);
-                if (sourceNode && sourceNode.data.isPlaceholder) {
-                    // Update the placeholder node in place with the selected item
-                    sourceNode.data = {
+                const sourceNode = getNodes().find(n => n.id === sourceId);
+                if (sourceNode && (sourceNode.data.isPlaceholder || !sourceNode.data.key)) {
+                    // Update placeholder or empty card in place
+                    const newNodeData = {
                         ...item,
                         uuid: uuidv7(),
                         blueprint_id: uuidv7(),
                         wait_event_name: '',
                         config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
-                        metadata: { 
-                            description: item.desc, 
-                            owner: 'Marketing Team', 
-                            tags: [item.nodeType.toUpperCase()] 
+                        metadata: {
+                            description: item.desc,
+                            owner: 'Marketing Team',
+                            tags: [item.nodeType.toUpperCase()]
                         },
                         stats: {
                             total: Math.floor(Math.random() * 5000),
@@ -316,14 +395,16 @@ createApp({
                             failed: Math.floor(Math.random() * 500)
                         }
                     };
+
+                    updateNode({ id: sourceId, data: newNodeData });
                     pickerOpen.value = false;
-                    
+
                     if (elements.value.length === 1 && item.nodeType === 'trigger') {
                         triggerType.value = item.key;
                     }
                     return;
                 }
-                
+
                 if (sourceNode) {
                     position = { x: sourceNode.position.x, y: sourceNode.position.y + 180 };
                 }
@@ -337,7 +418,14 @@ createApp({
             } else {
                 addNodes([newNode]);
                 if (sourceId) {
-                    addEdges([{ id: uuidv7(), source: sourceId, target: newNode.id, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]);
+                    addEdges([{
+                        id: uuidv7(),
+                        source: sourceId,
+                        target: newNode.id,
+                        animated: true,
+                        style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' },
+                        markerEnd: 'url(#arrowhead)'
+                    }]);
                 }
             }
             pickerOpen.value = false;
@@ -374,8 +462,8 @@ createApp({
 
         /* ── Build API payload ───────────────────────────────── */
         const buildPayload = () => {
-            const flowNodes = getNodes.value.filter(n => !n.data?.isPlaceholder);
-            const flowEdges = getEdges.value;
+            const flowNodes = getNodes().filter(n => !n.data?.isPlaceholder);
+            const flowEdges = getEdges();
 
             const nodes = flowNodes.map(n => ({
                 uuid: n.data.uuid || n.id,
@@ -412,7 +500,7 @@ createApp({
 
         /* ── Publish ─────────────────────────────────────────── */
         const publish = async () => {
-            if (getNodes.value.some(e => e.data?.isPlaceholder)) {
+            if (getNodes().some(e => e.data?.isPlaceholder)) {
                 showToast('Warning', 'Please select a starting trigger before publishing.', 'warning');
                 return;
             }
@@ -477,7 +565,7 @@ createApp({
             pickerOpen, pickerSearch, filteredPicker, pickerInput,
             openPicker, addFromPicker, addEmptyNode,
             payloadJson, previewPayload, copyPayload, submitToApi,
-            onNodeClick, onPaneClick,
+            onNodeClick, onPaneClick, onDropOnNode,
             onDragStart, onDrop,
             removeNode, resetFlow,
             publish, buildPayload,

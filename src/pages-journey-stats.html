@@ -1,0 +1,349 @@
+@@include("partials/main.html")
+
+<head>
+    @@include("partials/title-meta.html", {"title": "Journey Statistics"})
+    @@include("partials/head-css.html")
+
+    <!-- Vue Flow CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/theme-default.css" />
+
+    <script>
+        window.process = { env: { NODE_ENV: 'development' } };
+    </script>
+
+    <!-- Import Map -->
+    <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+        "@vue-flow/core": "https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/vue-flow-core.mjs",
+        "@vue-flow/background": "https://cdn.jsdelivr.net/npm/@vue-flow/background@1.3.2/dist/vue-flow-background.mjs",
+        "@vue-flow/controls": "https://cdn.jsdelivr.net/npm/@vue-flow/controls@1.1.3/dist/vue-flow-controls.mjs"
+      }
+    }
+    </script>
+
+    <!-- Journey styles -->
+    <link rel="stylesheet" href="assets/css/clivax-journey.css">
+    <!-- Stats page additional styles -->
+    <style>
+        .stats-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid #e2e6f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .stats-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4e7adf;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        .stats-label {
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+        .stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stats-row .col-6 {
+            flex: 0 0 calc(50% - 6px);
+            max-width: calc(50% - 6px);
+        }
+
+        /* Progress bars */
+        .progress-steps {
+            padding: 8px 0;
+        }
+        .step-progress-item {
+            margin-bottom: 14px;
+        }
+        .step-progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .step-name {
+            font-size: 12px;
+            color: #4b5563;
+            font-weight: 600;
+        }
+        .step-rate {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 700;
+        }
+        .progress {
+            background: #f3f4f6;
+            border-radius: 4px;
+            height: 8px;
+        }
+        .progress-bar {
+            border-radius: 4px;
+            background: #4e7adf;
+            transition: width 0.5s ease;
+        }
+
+        /* Activity feed */
+        .activity-feed {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            color: #374151;
+        }
+        .activity-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .activity-text strong {
+            font-size: 12px;
+            color: #111827;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Hide add buttons and handles in stats view */
+        .node-add-btn { display: none !important; }
+        .vue-flow__handle { display: none !important; }
+
+        /* Stats page specific overrides */
+        .page-journey-stats .cj-topbar {
+            background: #fff;
+            border: 1px solid #e2e6f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+@@include("partials/body.html")
+
+<div id="layout-wrapper">
+    <script>
+        document.body.classList.add('page-journey-stats');
+        document.body.setAttribute('data-bs-theme', 'light');
+    </script>
+    @@include("partials/topbar.html")
+    @@include("partials/menu.html")
+
+    <div class="main-content">
+        <div class="page-content" id="journeyStatsApp" v-cloak>
+            <div class="container-fluid">
+
+                <!-- TOP BAR -->
+                <div class="cj-topbar">
+                    <a :href="'pages-customer-journeys-list.html'" class="btn btn-sm btn-light border">
+                        <i class="ri-arrow-left-line me-1"></i> Back to Journeys
+                    </a>
+
+                    <div class="vr mx-1" style="height:24px"></div>
+
+                    <div>
+                        <input class="journey-name-input" :value="journeyName" placeholder="Journey Name" readonly />
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
+                                {{ isPublished ? 'Live' : 'Draft' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 ms-auto">
+                        <button class="btn btn-light border fw-semibold" @click="refreshStats">
+                            <i class="ri-refresh-line me-1"></i> Refresh
+                        </button>
+                        <a :href="'pages-customer-journey.html?mode=edit&id=' + journeyId" class="btn btn-primary fw-bold px-4 shadow-sm" style="border-radius:8px">
+                            <i class="ri-edit-line me-1"></i> Edit Journey
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BUILDER WRAP -->
+                <div class="cj-builder-wrap">
+
+                    <!-- CANVAS (read-only) -->
+                    <div class="cj-canvas">
+                        <vue-flow v-model="elements" :node-types="nodeTypes" :nodes-draggable="false"
+                            :nodes-connectable="false" :zoom-on-scroll="false" :zoom-on-double-click="false"
+                            :default-viewport="{ zoom: 1 }" :min-zoom="0.2" :max-zoom="4"
+                            :default-edge-options="{ animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }">
+
+                            <!-- Arrowhead marker definition -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#4e7adf" />
+                                </marker>
+                            </defs>
+
+                            <!-- Custom node template - read-only view -->
+                            <template #node-custom="{ data, selected, id }">
+                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']"
+                                     :data-has-key="!!data.key">
+                                    <div :class="['node-accent-stripe', data.nodeType]"></div>
+                                    <div class="node-inner">
+                                        <span :class="['node-type-badge', data.nodeType]">{{ data.nodeType }}</span>
+                                        <div class="d-flex align-items-flex-start gap-3">
+                                            <div :class="['node-icon-wrap', data.nodeType]">{{ data.icon }}</div>
+                                            <div class="flex-1" style="flex:1;min-width:0">
+                                                <h6 class="node-title">{{ data.label }}</h6>
+                                                <p class="node-desc">{{ data.metadata?.description || data.desc }}</p>
+                                                <span class="node-plugin-key">{{ data.key }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <Background pattern-color="#e5e7eb" :gap="24" :size="1"></Background>
+                            <div class="cj-zoom-controls">
+                                <button class="cj-zoom-btn" @click="zoomIn" title="Zoom In"><i class="ri-add-line"></i></button>
+                                <button class="cj-zoom-btn" @click="zoomOut" title="Zoom Out"><i class="ri-subtract-line"></i></button>
+                                <button class="cj-zoom-btn" @click="fitView" title="Fit View"><i class="ri-fullscreen-line"></i></button>
+                            </div>
+                        </vue-flow>
+                    </div>
+
+                    <!-- STATS SIDEBAR -->
+                    <div class="cj-sidebar">
+                        <div class="cj-sidebar-header">
+                            <div>
+                                <h5 class="cj-sidebar-title">Journey Statistics</h5>
+                                <p class="cj-sidebar-sub">Real-time performance metrics</p>
+                            </div>
+                        </div>
+
+                        <div class="cj-sidebar-body">
+                            <!-- KPI cards - 2 per row -->
+                            <div class="stats-row">
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.totalEnrolled }}</div>
+                                        <div class="stats-label">Total Enrolled</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.completed }}</div>
+                                        <div class="stats-label">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-row">
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.inProgress }}</div>
+                                        <div class="stats-label">In Progress</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.dropOff }}%</div>
+                                        <div class="stats-label">Drop Off</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-row">
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.completionRate }}%</div>
+                                        <div class="stats-label">Completion</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.avgDuration }}h</div>
+                                        <div class="stats-label">Avg Duration</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="stats-row">
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.triggerEvents }}</div>
+                                        <div class="stats-label">Trigger Events</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-card">
+                                        <div class="stats-value">{{ stats.actionsExecuted }}</div>
+                                        <div class="stats-label">Actions Run</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Overview Section -->
+                            <div class="cj-sec-sep mt-3">Step Completion</div>
+                            <div class="progress-steps">
+                                <div v-for="(step, idx) in stepProgress" :key="idx" class="step-progress-item">
+                                    <div class="step-progress-label">
+                                        <span class="step-name">{{ step.name }}</span>
+                                        <span class="step-rate">{{ step.rate }}%</span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" :style="{width: step.rate + '%', background: step.color}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity -->
+                            <div class="cj-sec-sep mt-3">Recent Activity</div>
+                            <div class="activity-feed">
+                                <div v-for="(act, idx) in recentActivity" :key="idx" class="activity-item">
+                                    <div class="activity-icon" :style="{background: act.color + '20'}">
+                                        <i :class="act.icon"></i>
+                                    </div>
+                                    <div class="activity-text">
+                                        <strong>{{ act.title }}</strong>
+                                        <div class="text-muted" style="font-size:11px">{{ act.time }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div> <!-- /sidebar-body -->
+                    </div> <!-- /sidebar -->
+
+                </div> <!-- /builder-wrap -->
+
+            </div> <!-- container-fluid -->
+        </div><!-- /page-content -->
+    </div><!-- /main-content -->
+
+    @@include("partials/vendor-scripts.html")
+    <script type="module" src="assets/js/app/journey-stats.js"></script>
+</body>
+</html>
