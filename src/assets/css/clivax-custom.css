@@ -92,7 +92,7 @@
 #customerJourneyApp .page-content { 
     padding: 70px 0 0 0 !important; 
     overflow: hidden; 
-    background: #f4f7fa; 
+    /* background: #f4f7fa;  */
     min-height: 100vh;
 }
 [v-cloak] { display: none !important; }

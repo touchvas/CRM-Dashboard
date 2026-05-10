@@ -8,20 +8,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/theme-default.css" />
 
+    <script>
+        // Polyfill process for Vue Flow ES module build
+        window.process = { env: { NODE_ENV: 'development' } };
+    </script>
+
     <!-- Import Map -->
     <script type="importmap">
     {
       "imports": {
         "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-        "@vue-flow/core": "https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/vue-flow.mjs",
-        "@vue-flow/background": "https://cdn.jsdelivr.net/npm/@vue-flow/background@1.48.2/dist/vue-flow-background.mjs",
-        "@vue-flow/controls": "https://cdn.jsdelivr.net/npm/@vue-flow/controls@1.48.2/dist/vue-flow-controls.mjs"
+        "@vue-flow/core": "https://cdn.jsdelivr.net/npm/@vue-flow/core@1.48.2/dist/vue-flow-core.mjs",
+        "@vue-flow/background": "https://cdn.jsdelivr.net/npm/@vue-flow/background@1.3.2/dist/vue-flow-background.mjs",
+        "@vue-flow/controls": "https://cdn.jsdelivr.net/npm/@vue-flow/controls@1.1.3/dist/vue-flow-controls.mjs"
       }
     }
     </script>
 
-    <!-- Custom App Styles -->
-    <link rel="stylesheet" href="assets/css/clivax-custom.css">
+    <!-- Journey styles -->
+    <link rel="stylesheet" href="assets/css/clivax-journey.css">
 </head>
 
 @@include("partials/body.html")
@@ -30,406 +35,459 @@
     @@include("partials/topbar.html")
     @@include("partials/menu.html")
 
-    <div class="main-content" id="customerJourneyApp" v-cloak>
-        <div class="page-content">
+    <div class="main-content">
+        <div class="page-content" id="customerJourneyApp" v-cloak>
+            <div class="container-fluid">
 
-            <!-- ── Top bar ────────────────────────────────────── -->
-            <div class="cj-topbar">
-                <!-- Back -->
-                <a href="pages-customer-journeys.html" class="btn btn-sm btn-light border">
-                    <i class="ri-arrow-left-line me-1"></i> Journeys
-                </a>
+                <!-- ══════════════════════════════════════════════
+                     TOP BAR
+                ══════════════════════════════════════════════ -->
+                <div class="cj-topbar">
+                    <a href="pages-customer-journeys.html" class="btn btn-sm btn-light border">
+                        <i class="ri-arrow-left-line me-1"></i> Journeys
+                    </a>
 
-                <div class="vr mx-1" style="height:24px"></div>
+                    <div class="vr mx-1" style="height:24px"></div>
 
-                <!-- Journey name -->
-                <div>
-                    <input class="journey-name-input" v-model="journeyName" placeholder="Untitled Journey" />
-                    <div class="d-flex align-items-center gap-2 mt-1">
-                        <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
-                            {{ isPublished ? 'Live' : 'Draft' }}
-                        </span>
-                        <span class="text-muted" style="font-size:11px">
-                            <i class="ri-save-line me-1"></i>Auto-saved
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Active toggle -->
-                <div class="cj-toggle-wrap ms-2">
-                    <span class="text-muted" style="font-size:12px">Active</span>
-                    <div :class="['cj-toggle', isActive ? 'on' : '']" @click="isActive = !isActive"></div>
-                </div>
-
-                <!-- Right actions -->
-                <div class="d-flex gap-2 ms-auto">
-                    <button class="btn btn-light border fw-semibold" @click="previewPayload">
-                        <i class="ri-code-box-line me-1"></i> Payload
-                    </button>
-                    <button class="btn btn-light border fw-semibold" @click="resetFlow">
-                        <i class="ri-refresh-line me-1 text-danger"></i> Reset
-                    </button>
-                    <button class="btn btn-primary fw-bold px-4 shadow-sm" style="border-radius: 8px" @click="publish"
-                        :disabled="publishing">
-                        <span v-if="publishing">
-                            <span class="spinner-border spinner-border-sm me-2"></span>Publishing…
-                        </span>
-                        <span v-else><i class="ri-send-plane-fill me-1"></i>Publish Journey</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- ── Builder container ──────────────────────────── -->
-            <div class="cj-builder-wrap">
-
-                <!-- Canvas -->
-                <div class="cj-canvas">
-                    <vue-flow v-model="elements" :node-types="nodeTypes" @node-click="onNodeClick"
-                        @pane-click="onPaneClick" :fit-view-on-init="true"
-                        :default-edge-options="{ animated: true, style: { stroke: '#4e7adf', strokeWidth: 2 } }"
-                        @drop="onDrop" @dragover.prevent>
-
-                        <!-- ── Custom node template ── -->
-                        <template #node-custom="{ data, selected, id }">
-                            <div :class="['vue-flow__node-custom', selected ? 'selected' : '']">
-
-                                <!-- Accent stripe -->
-                                <div :class="['node-accent-stripe', data.nodeType]"></div>
-
-                                <!-- Placeholder state -->
-                                <div v-if="data.isPlaceholder" class="node-placeholder-wrap">
-                                    <div class="node-placeholder-dashed">
-                                        <div class="node-placeholder-icon">
-                                            <i class="ri-focus-3-line"></i>
-                                        </div>
-                                        <p class="node-placeholder-text mb-0">
-                                            Drag a trigger from the sidebar<br>or click <strong>+</strong> to pick a
-                                            step
-                                        </p>
-                                    </div>
-                                    <button class="btn btn-outline-secondary btn-sm w-100 fw-bold"
-                                        style="border-radius:8px;font-size:12px" @click="openPicker(null)">
-                                        <i class="ri-add-line me-1"></i> Choose a trigger
-                                    </button>
-                                </div>
-
-                                <!-- Actual node state -->
-                                <div v-else>
-                                    <!-- Start badge for triggers -->
-                                    <div class="node-start-indicator" v-if="data.nodeType === 'trigger'">
-                                        Trigger
-                                    </div>
-
-                                    <div class="node-inner">
-                                        <!-- Type badge -->
-                                        <span :class="['node-type-badge', data.nodeType]">
-                                            {{ data.nodeType }}
-                                        </span>
-
-                                        <!-- Icon + titles -->
-                                        <div class="d-flex align-items-flex-start gap-3">
-                                            <div :class="['node-icon-wrap', data.nodeType]">
-                                                {{ data.icon }}
-                                            </div>
-                                            <div class="flex-1" style="flex:1;min-width:0">
-                                                <h6 class="node-title">{{ data.label }}</h6>
-                                                <p class="node-desc">{{ data.metadata?.description || data.desc }}</p>
-                                                <span class="node-plugin-key">{{ data.key }}</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Node Stats -->
-                                        <div class="mt-3 pt-2 border-top d-flex justify-content-between align-items-center"
-                                            style="font-size:10px; opacity:0.8">
-                                            <div class="text-muted"><i class="ri-user-line me-1"></i>{{
-                                                data.stats?.total }}</div>
-                                            <div class="text-success fw-bold"><i class="ri-check-line me-1"></i>{{
-                                                data.stats?.success }}</div>
-                                            <div class="text-danger"><i class="ri-error-warning-line me-1"></i>{{
-                                                data.stats?.failed }}</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Add next step button -->
-                                    <div class="node-add-btn" @click.stop="openPicker(id)" title="Add next step">+</div>
-                                </div>
-
-                                <!-- Handles -->
-                                <Handle type="target" position="top"
-                                    v-if="!data.isPlaceholder && data.nodeType !== 'trigger'" />
-                                <Handle type="source" position="bottom" v-if="!data.isPlaceholder" />
-                            </div>
-                        </template>
-
-                        <!-- Background grid -->
-                        <Background pattern-color="#cbd5e1" :gap="24" :size="1" />
-
-                        <!-- Zoom controls -->
-                        <div class="cj-zoom-controls">
-                            <button class="cj-zoom-btn" @click="zoomIn" title="Zoom In"><i
-                                    class="ri-add-line"></i></button>
-                            <button class="cj-zoom-btn" @click="zoomOut" title="Zoom Out"><i
-                                    class="ri-subtract-line"></i></button>
-                            <button class="cj-zoom-btn" @click="fitView" title="Fit View"><i
-                                    class="ri-fullscreen-line"></i></button>
-                        </div>
-
-                    </vue-flow>
-                </div>
-
-                <!-- ── Right Sidebar ───────────────────────────── -->
-                <div class="cj-sidebar">
-
-                    <!-- Header -->
-                    <div class="cj-sidebar-header">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="cj-sidebar-title">{{ sidebarTitle }}</h5>
-                                <p class="cj-sidebar-sub">
-                                    {{ isCatalogView ? 'Design your journey flow' : 'Configure step properties' }}
-                                </p>
-                            </div>
-                            <button v-if="!isCatalogView" class="btn btn-sm btn-light rounded-circle"
-                                @click="selectedNode = null">
-                                <i class="ri-close-line"></i>
-                            </button>
-                        </div>
-
-                        <!-- Tabs (only in catalog view) -->
-                        <div class="cj-sidebar-tabs" v-if="isCatalogView">
-                            <div :class="['cj-sidebar-tab', activeTab==='triggers' ? 'active' : '']"
-                                @click="activeTab='triggers'">
-                                <i class="ri-flashlight-fill"></i> Triggers
-                            </div>
-                            <div :class="['cj-sidebar-tab', activeTab==='actions' ? 'active' : '']"
-                                @click="activeTab='actions'">
-                                <i class="ri-play-fill"></i> Actions
-                            </div>
-                        </div>
-
-                        <!-- Search (only in catalog view) -->
-                        <div class="cj-search-box" v-if="isCatalogView">
-                            <i class="ri-search-2-line"></i>
-                            <input v-model="sidebarSearch" placeholder="Find a step..." />
+                    <div>
+                        <input class="journey-name-input" v-model="journeyName" placeholder="Untitled Journey" />
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
+                                {{ isPublished ? 'Live' : 'Draft' }}
+                            </span>
+                            <span class="text-muted" style="font-size:11px">
+                                <i class="ri-save-line me-1"></i>Auto-saved
+                            </span>
                         </div>
                     </div>
 
-                    <!-- ── CATALOG VIEW ── -->
-                    <div class="cj-sidebar-body" v-if="isCatalogView">
-
-                        <!-- TRIGGERS TAB -->
-                        <template v-if="activeTab === 'triggers'">
-                            <div class="cj-sec-label">Most Popular</div>
-                            <div v-for="item in filteredCatalog.triggers.slice(0, 5)" :key="item.key"
-                                class="cj-catalog-item" draggable="true" @dragstart="onDragStart($event, item)">
-                                <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
-                                <div style="flex:1;min-width:0">
-                                    <div class="cj-catalog-name">{{ item.label }}</div>
-                                    <div class="cj-catalog-desc">{{ item.desc }}</div>
-                                </div>
-                                <i class="ri-drag-move-line cj-drag-hint" title="Drag to canvas"></i>
-                            </div>
-
-                            <div class="cj-sec-label mt-2" v-if="filteredCatalog.triggers.length > 5">All Events</div>
-                            <div v-for="item in filteredCatalog.triggers.slice(5)" :key="item.key"
-                                class="cj-catalog-item" draggable="true" @dragstart="onDragStart($event, item)">
-                                <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
-                                <div style="flex:1;min-width:0">
-                                    <div class="cj-catalog-name">{{ item.label }}</div>
-                                    <div class="cj-catalog-desc">{{ item.desc }}</div>
-                                </div>
-                                <i class="ri-drag-move-line cj-drag-hint"></i>
-                            </div>
-
-                            <div v-if="filteredCatalog.triggers.length === 0" class="text-center text-muted py-4"
-                                style="font-size:13px">
-                                No triggers match "{{ sidebarSearch }}"
-                            </div>
-                        </template>
-
-                        <!-- ACTIONS TAB -->
-                        <template v-if="activeTab === 'actions'">
-                            <div class="cj-sec-label">Actions & Logic</div>
-                            <div v-for="item in filteredCatalog.actions" :key="item.key" class="cj-catalog-item"
-                                draggable="true" @dragstart="onDragStart($event, item)">
-                                <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
-                                <div style="flex:1;min-width:0">
-                                    <div class="cj-catalog-name">{{ item.label }}</div>
-                                    <div class="cj-catalog-desc">{{ item.desc }}</div>
-                                </div>
-                                <i class="ri-drag-move-line cj-drag-hint"></i>
-                            </div>
-
-                            <div v-if="filteredCatalog.actions.length === 0" class="text-center text-muted py-4"
-                                style="font-size:13px">
-                                No actions match "{{ sidebarSearch }}"
-                            </div>
-                        </template>
+                    <div class="cj-toggle-wrap ms-2">
+                        <span class="text-muted" style="font-size:12px">Active</span>
+                        <div :class="['cj-toggle', isActive ? 'on' : '']" @click="isActive = !isActive"></div>
                     </div>
 
-                    <!-- ── PROPERTIES VIEW ── -->
-                    <div class="cj-sidebar-body" v-else>
-
-                        <!-- Back link -->
-                        <button class="btn btn-sm btn-light border w-100 mb-3 text-start" @click="selectedNode = null">
-                            <i class="ri-arrow-left-line me-1"></i> Back to steps
+                    <div class="d-flex gap-2 ms-auto">
+                        <button class="btn btn-light border fw-semibold" @click="previewPayload">
+                            <i class="ri-code-box-line me-1"></i> Payload
                         </button>
+                        <button class="btn btn-light border fw-semibold" @click="resetFlow">
+                            <i class="ri-refresh-line me-1 text-danger"></i> Reset
+                        </button>
+                        <button class="btn btn-primary fw-bold px-4 shadow-sm" style="border-radius:8px"
+                            @click="publish" :disabled="publishing">
+                            <span v-if="publishing">
+                                <span class="spinner-border spinner-border-sm me-2"></span>Publishing…
+                            </span>
+                            <span v-else><i class="ri-send-plane-fill me-1"></i>Publish Journey</span>
+                        </button>
+                    </div>
+                </div>
 
-                        <!-- Node IDs -->
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">UUID</label>
-                            <div class="cj-props-uuid">{{ selectedNode.data.uuid || selectedNode.id }}</div>
-                        </div>
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Blueprint ID</label>
-                            <div class="cj-props-uuid">{{ selectedNode.data.blueprint_id || '—' }}</div>
-                        </div>
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Plugin Key</label>
-                            <div class="cj-props-uuid">{{ selectedNode.data.key }}</div>
-                        </div>
+                <!-- ══════════════════════════════════════════════
+                 BUILDER WRAP  (canvas + sidebar side by side)
+            ══════════════════════════════════════════════ -->
+                <div class="cj-builder-wrap">
 
-                        <div class="cj-sec-sep">Display</div>
+                    <!-- ── CANVAS ─────────────────────────────── -->
+                    <div class="cj-canvas">
+                        <vue-flow v-model="elements" :node-types="nodeTypes" @node-click="onNodeClick"
+                            @pane-click="onPaneClick" :default-viewport="{ zoom: 1 }" :min-zoom="0.2" :max-zoom="4"
+                            :default-edge-options="{ animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }"
+                            @drop="onDrop" @dragover.prevent>
 
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Label</label>
-                            <input class="cj-props-input" v-model="selectedNode.data.label" placeholder="Node label" />
-                        </div>
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Description</label>
-                            <textarea class="cj-props-textarea" rows="3"
-                                v-model="selectedNode.data.metadata.description"
-                                placeholder="Describe this step…"></textarea>
-                        </div>
+                            <!-- ── Custom node slot ── -->
+                            <template #node-custom="{ data, selected, id }">
+                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']">
 
-                        <div class="cj-sec-sep">Configuration</div>
+                                    <!-- Accent stripe (color coded by type) -->
+                                    <div :class="['node-accent-stripe', data.nodeType]"></div>
 
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Wait Event Name</label>
-                            <input class="cj-props-input" v-model="selectedNode.data.wait_event_name"
-                                placeholder="event_name…" />
-                        </div>
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Retry Attempts</label>
-                            <input class="cj-props-input" type="number"
-                                v-model.number="selectedNode.data.config.retry_attempts" min="0" max="10" />
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="cj-props-group">
-                                    <label class="cj-props-label">Retry Interval (s)</label>
-                                    <input class="cj-props-input" type="number"
-                                        v-model.number="selectedNode.data.config.retry_interval_seconds" min="0" />
+                                    <!-- ── PLACEHOLDER: no trigger chosen yet ── -->
+                                    <div v-if="data.isPlaceholder" class="node-placeholder-wrap">
+                                        <div class="node-placeholder-dashed">
+                                            <div class="node-placeholder-icon">
+                                                <i class="ri-focus-3-line"></i>
+                                            </div>
+                                            <p class="node-placeholder-text mb-0">
+                                                Drag a trigger from the sidebar<br>
+                                                or click the button below to pick one
+                                            </p>
+                                        </div>
+                                        <!-- Click to open picker -->
+                                        <button class="btn btn-outline-primary btn-sm w-100 fw-bold"
+                                            style="border-radius:8px;font-size:12px;margin-top:4px"
+                                            @click.stop="openPicker(null)">
+                                            <i class="ri-flashlight-fill me-1"></i> Select a Trigger
+                                        </button>
+                                    </div>
+
+                                    <!-- ── REAL NODE ── -->
+                                    <div v-else>
+                                        <!-- "Trigger" label above the card -->
+                                        <div class="node-start-indicator" v-if="data.nodeType === 'trigger'">
+                                            Trigger
+                                        </div>
+
+                                        <div class="node-inner">
+                                            <!-- Type badge pill -->
+                                            <span :class="['node-type-badge', data.nodeType]">
+                                                {{ data.nodeType }}
+                                            </span>
+
+                                            <!-- Icon + title row -->
+                                            <div class="d-flex align-items-flex-start gap-3">
+                                                <div :class="['node-icon-wrap', data.nodeType]">
+                                                    {{ data.icon }}
+                                                </div>
+                                                <div class="flex-1" style="flex:1;min-width:0">
+                                                    <h6 class="node-title">{{ data.label }}</h6>
+                                                    <p class="node-desc">{{ data.metadata?.description || data.desc }}
+                                                    </p>
+                                                    <span class="node-plugin-key">{{ data.key }}</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Stats row -->
+                                            <div class="mt-3 pt-2 border-top d-flex justify-content-between align-items-center"
+                                                style="font-size:10px;opacity:.8">
+                                                <div class="text-muted">
+                                                    <i class="ri-user-line me-1"></i>{{ data.stats?.total }}
+                                                </div>
+                                                <div class="text-success fw-bold">
+                                                    <i class="ri-check-line me-1"></i>{{ data.stats?.success }}
+                                                </div>
+                                                <div class="text-danger">
+                                                    <i class="ri-error-warning-line me-1"></i>{{ data.stats?.failed }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- + button below node to add next step -->
+                                        <div class="node-add-btn" @click.stop="addEmptyNode(id)" title="Add next step">
+                                            +
+                                        </div>
+                                    </div>
+
+                                    <!-- Vue Flow handles -->
+                                    <Handle type="target" position="top"
+                                        v-if="!data.isPlaceholder && data.nodeType !== 'trigger'"></Handle>
+                                    <Handle type="source" position="bottom" v-if="!data.isPlaceholder"></Handle>
+                                </div>
+                            </template>
+
+                            <!-- Dot grid background -->
+                            <Background pattern-color="#2e3038" :gap="24" :size="1"></Background>
+
+                            <!-- Zoom controls -->
+                            <div class="cj-zoom-controls">
+                                <button class="cj-zoom-btn" @click="zoomIn" title="Zoom In">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                                <button class="cj-zoom-btn" @click="zoomOut" title="Zoom Out">
+                                    <i class="ri-subtract-line"></i>
+                                </button>
+                                <button class="cj-zoom-btn" @click="fitView" title="Fit View">
+                                    <i class="ri-fullscreen-line"></i>
+                                </button>
+                            </div>
+
+                        </vue-flow>
+                    </div><!-- /canvas -->
+
+                    <!-- ══════════════════════════════════════════
+                     RIGHT SIDEBAR
+                ══════════════════════════════════════════ -->
+                    <div class="cj-sidebar">
+
+                        <!-- ── Header ─────────────────────────── -->
+                        <div class="cj-sidebar-header">
+
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <div>
+                                    <h5 class="cj-sidebar-title">{{ sidebarTitle }}</h5>
+                                    <p class="cj-sidebar-sub">
+                                        {{ isCatalogView ? 'Design your journey flow' : 'Configure step properties' }}
+                                    </p>
+                                </div>
+                                <!-- Close button when in properties view -->
+                                <button v-if="!isCatalogView" class="btn btn-sm btn-light rounded-circle"
+                                    @click="selectedNode = null">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
+
+                            <!-- SEARCH — always visible in catalog view -->
+                            <div class="cj-search-box" v-if="isCatalogView">
+                                <i class="ri-search-2-line"></i>
+                                <input v-model="sidebarSearch" placeholder="Search triggers & actions…" />
+                            </div>
+
+                            <!-- TABS — Triggers | Actions -->
+                            <div class="cj-sidebar-tabs" v-if="isCatalogView">
+                                <div :class="['cj-sidebar-tab', activeTab === 'triggers' ? 'active' : '']"
+                                    @click="activeTab = 'triggers'">
+                                    <i class="ri-flashlight-fill"></i> Triggers
+                                </div>
+                                <div :class="['cj-sidebar-tab', activeTab === 'actions' ? 'active' : '']"
+                                    @click="activeTab = 'actions'">
+                                    <i class="ri-play-fill"></i> Actions
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="cj-props-group">
-                                    <label class="cj-props-label">Timeout (s)</label>
-                                    <input class="cj-props-input" type="number"
-                                        v-model.number="selectedNode.data.config.timeout_seconds" min="0" />
+
+                        </div><!-- /sidebar-header -->
+
+                        <!-- ══════════════════════════════════════
+                         CATALOG VIEW  (triggers + actions)
+                    ══════════════════════════════════════ -->
+                        <div class="cj-sidebar-body" v-if="isCatalogView">
+
+                            <!-- ── TRIGGERS TAB ── -->
+                            <template v-if="activeTab === 'triggers'">
+
+                                <div class="cj-sec-label">Most Popular</div>
+
+                                <div v-for="item in filteredCatalog.triggers.slice(0, 5)" :key="item.key"
+                                    class="cj-catalog-item" draggable="true" @dragstart="onDragStart($event, item)"
+                                    @click="addFromPicker(item)" title="Drag to canvas or click to add">
+                                    <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
+                                    <div style="flex:1;min-width:0">
+                                        <div class="cj-catalog-name">{{ item.label }}</div>
+                                        <div class="cj-catalog-desc">{{ item.desc }}</div>
+                                    </div>
+                                    <i class="ri-drag-move-line cj-drag-hint" title="Drag to canvas"></i>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="cj-sec-sep">Metadata</div>
+                                <template v-if="filteredCatalog.triggers.length > 5">
+                                    <div class="cj-sec-label mt-2">All Events</div>
+                                    <div v-for="item in filteredCatalog.triggers.slice(5)" :key="item.key"
+                                        class="cj-catalog-item" draggable="true" @dragstart="onDragStart($event, item)"
+                                        @click="addFromPicker(item)" title="Drag to canvas or click to add">
+                                        <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
+                                        <div style="flex:1;min-width:0">
+                                            <div class="cj-catalog-name">{{ item.label }}</div>
+                                            <div class="cj-catalog-desc">{{ item.desc }}</div>
+                                        </div>
+                                        <i class="ri-drag-move-line cj-drag-hint"></i>
+                                    </div>
+                                </template>
 
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Owner</label>
-                            <input class="cj-props-input" v-model="selectedNode.data.metadata.owner"
-                                placeholder="team-name" />
-                        </div>
-                        <div class="cj-props-group">
-                            <label class="cj-props-label">Tags</label>
-                            <div class="d-flex flex-wrap gap-1 mt-1">
-                                <span v-for="t in selectedNode.data.metadata.tags" :key="t"
-                                    class="badge bg-light border text-muted" style="font-size:11px">{{ t }}</span>
-                                <span v-if="!selectedNode.data.metadata.tags?.length" class="text-muted"
-                                    style="font-size:12px">No tags</span>
-                            </div>
-                        </div>
+                                <div v-if="filteredCatalog.triggers.length === 0" class="text-center text-muted py-4"
+                                    style="font-size:13px">
+                                    No triggers match "<strong>{{ sidebarSearch }}</strong>"
+                                </div>
+                            </template>
 
-                        <!-- Danger zone -->
-                        <div class="mt-4 pt-3 border-top">
-                            <button class="btn btn-soft-danger w-100 fw-bold rounded-3 py-2"
-                                @click="removeNode(selectedNode.id)">
-                                <i class="ri-delete-bin-line me-2"></i>Remove Step
+                            <!-- ── ACTIONS TAB ── -->
+                            <template v-if="activeTab === 'actions'">
+
+                                <div class="cj-sec-label">Actions &amp; Logic</div>
+
+                                <div v-for="item in filteredCatalog.actions" :key="item.key" class="cj-catalog-item"
+                                    draggable="true" @dragstart="onDragStart($event, item)" @click="addFromPicker(item)"
+                                    title="Drag to canvas or click to add">
+                                    <div :class="['cj-catalog-icon', item.nodeType]">{{ item.icon }}</div>
+                                    <div style="flex:1;min-width:0">
+                                        <div class="cj-catalog-name">{{ item.label }}</div>
+                                        <div class="cj-catalog-desc">{{ item.desc }}</div>
+                                    </div>
+                                    <i class="ri-drag-move-line cj-drag-hint"></i>
+                                </div>
+
+                                <div v-if="filteredCatalog.actions.length === 0" class="text-center text-muted py-4"
+                                    style="font-size:13px">
+                                    No actions match "<strong>{{ sidebarSearch }}</strong>"
+                                </div>
+                            </template>
+
+                        </div><!-- /catalog view -->
+
+                        <!-- ══════════════════════════════════════
+                         PROPERTIES VIEW  (node selected)
+                    ══════════════════════════════════════ -->
+                        <div class="cj-sidebar-body" v-else>
+
+                            <button class="btn btn-sm btn-light border w-100 mb-3 text-start"
+                                @click="selectedNode = null">
+                                <i class="ri-arrow-left-line me-1"></i> Back to steps
                             </button>
+
+                            <!-- IDs -->
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">UUID</label>
+                                <div class="cj-props-uuid">{{ selectedNode.data.uuid || selectedNode.id }}</div>
+                            </div>
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Blueprint ID</label>
+                                <div class="cj-props-uuid">{{ selectedNode.data.blueprint_id || '—' }}</div>
+                            </div>
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Plugin Key</label>
+                                <div class="cj-props-uuid">{{ selectedNode.data.key }}</div>
+                            </div>
+
+                            <div class="cj-sec-sep">Display</div>
+
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Label</label>
+                                <input class="cj-props-input" v-model="selectedNode.data.label"
+                                    placeholder="Node label" />
+                            </div>
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Description</label>
+                                <textarea class="cj-props-textarea" rows="3"
+                                    v-model="selectedNode.data.metadata.description"
+                                    placeholder="Describe this step…"></textarea>
+                            </div>
+
+                            <div class="cj-sec-sep">Configuration</div>
+
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Wait Event Name</label>
+                                <input class="cj-props-input" v-model="selectedNode.data.wait_event_name"
+                                    placeholder="event_name…" />
+                            </div>
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Retry Attempts</label>
+                                <input class="cj-props-input" type="number"
+                                    v-model.number="selectedNode.data.config.retry_attempts" min="0" max="10" />
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="cj-props-group">
+                                        <label class="cj-props-label">Retry Interval (s)</label>
+                                        <input class="cj-props-input" type="number"
+                                            v-model.number="selectedNode.data.config.retry_interval_seconds" min="0" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="cj-props-group">
+                                        <label class="cj-props-label">Timeout (s)</label>
+                                        <input class="cj-props-input" type="number"
+                                            v-model.number="selectedNode.data.config.timeout_seconds" min="0" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cj-sec-sep">Metadata</div>
+
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Owner</label>
+                                <input class="cj-props-input" v-model="selectedNode.data.metadata.owner"
+                                    placeholder="team-name" />
+                            </div>
+                            <div class="cj-props-group">
+                                <label class="cj-props-label">Tags</label>
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    <span v-for="t in selectedNode.data.metadata.tags" :key="t"
+                                        class="badge bg-light border text-muted" style="font-size:11px">{{ t }}</span>
+                                    <span v-if="!selectedNode.data.metadata.tags?.length" class="text-muted"
+                                        style="font-size:12px">No tags</span>
+                                </div>
+                            </div>
+
+                            <!-- Remove -->
+                            <div class="mt-4 pt-3 border-top">
+                                <button class="btn btn-soft-danger w-100 fw-bold rounded-3 py-2"
+                                    @click="removeNode(selectedNode.id)">
+                                    <i class="ri-delete-bin-line me-2"></i>Remove Step
+                                </button>
+                            </div>
+
+                        </div><!-- /properties view -->
+
+                    </div><!-- /sidebar -->
+
+                </div><!-- /builder-wrap -->
+
+                <!-- ══════════════════════════════════════════════
+                     STEP PICKER MODAL  (keyboard-friendly)
+                ══════════════════════════════════════════════ -->
+                <div :class="['cj-picker-backdrop', pickerOpen ? 'open' : '']" @click.self="pickerOpen = false">
+                    <div class="cj-picker">
+
+                        <div class="cj-picker-hdr">
+                            <div class="cj-picker-title">Add a step</div>
+                            <div class="cj-picker-close" @click="pickerOpen = false">&times;</div>
+                        </div>
+
+                        <div class="cj-picker-search">
+                            <i class="ri-search-line"></i>
+                            <input v-model="pickerSearch" ref="pickerInput" placeholder="Search triggers and actions…" />
+                        </div>
+
+                        <div class="cj-picker-list">
+
+                            <template v-if="filteredPicker.triggers.length">
+                                <div class="cj-picker-sec">Triggers</div>
+                                <div v-for="item in filteredPicker.triggers" :key="item.key" class="cj-picker-item"
+                                    @click="addFromPicker(item)">
+                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
+                                    </div>
+                                    <div class="meta">
+                                        <div class="name">{{ item.label }}</div>
+                                        <div class="desc">{{ item.desc }}</div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template v-if="filteredPicker.actions.length">
+                                <div class="cj-picker-sec mt-2">Actions &amp; Logic</div>
+                                <div v-for="item in filteredPicker.actions" :key="item.key" class="cj-picker-item"
+                                    @click="addFromPicker(item)">
+                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
+                                    </div>
+                                    <div class="meta">
+                                        <div class="name">{{ item.label }}</div>
+                                        <div class="desc">{{ item.desc }}</div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div v-if="!filteredPicker.triggers.length && !filteredPicker.actions.length"
+                                class="text-center text-muted py-4" style="font-size:13px">
+                                No results for "<strong>{{ pickerSearch }}</strong>"
+                            </div>
+
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <!-- ══════════════════════════════════════════════
+                     PAYLOAD PREVIEW MODAL
+                ══════════════════════════════════════════════ -->
+                <div class="modal fade" id="payloadModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="ri-code-box-line me-2 text-primary"></i>Journey Payload
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body p-0">
+                                <pre class="cj-payload-preview">{{ payloadJson }}</pre>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-light border" @click="copyPayload">
+                                    <i class="ri-file-copy-line me-1"></i>Copy JSON
+                                </button>
+                                <button class="btn btn-primary fw-bold" @click="submitToApi" :disabled="publishing">
+                                    <span v-if="publishing">
+                                        <span class="spinner-border spinner-border-sm me-2"></span>Submitting…
+                                    </span>
+                                    <span v-else>
+                                        <i class="ri-send-plane-fill me-1"></i>Submit to API
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /container-fluid -->
         </div><!-- /page-content -->
     </div><!-- /main-content -->
 
-    <!-- Step Picker Modal -->
-    <div :class="['cj-picker-backdrop', pickerOpen ? 'open' : '']" @click.self="pickerOpen = false">
-        <div class="cj-picker">
-            <div class="cj-picker-hdr">
-                <div class="cj-picker-title">Add a step</div>
-                <div class="cj-picker-close" @click="pickerOpen = false">×</div>
-            </div>
-            <div class="cj-picker-search">
-                <i class="ri-search-line"></i>
-                <input v-model="pickerSearch" ref="pickerInput" placeholder="Search triggers and actions…" />
-            </div>
-            <div class="cj-picker-list">
-                <template v-if="filteredPicker.triggers.length">
-                    <div class="cj-picker-sec">Triggers</div>
-                    <div v-for="item in filteredPicker.triggers" :key="item.key" class="cj-picker-item"
-                        @click="addFromPicker(item)">
-                        <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
-                        </div>
-                        <div class="meta">
-                            <div class="name">{{ item.label }}</div>
-                            <div class="desc">{{ item.desc }}</div>
-                        </div>
-                    </div>
-                </template>
-                <template v-if="filteredPicker.actions.length">
-                    <div class="cj-picker-sec mt-2">Actions & Logic</div>
-                    <div v-for="item in filteredPicker.actions" :key="item.key" class="cj-picker-item"
-                        @click="addFromPicker(item)">
-                        <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
-                        </div>
-                        <div class="meta">
-                            <div class="name">{{ item.label }}</div>
-                            <div class="desc">{{ item.desc }}</div>
-                        </div>
-                    </div>
-                </template>
-                <div v-if="!filteredPicker.triggers.length && !filteredPicker.actions.length"
-                    class="text-center text-muted py-4" style="font-size:13px">
-                    No results for "{{ pickerSearch }}"
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payload Preview Modal -->
-    <div class="modal fade" id="payloadModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="ri-code-box-line me-2 text-primary"></i>Journey Payload</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <pre class="cj-payload-preview">{{ payloadJson }}</pre>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-light border" @click="copyPayload">
-                        <i class="ri-file-copy-line me-1"></i>Copy JSON
-                    </button>
-                    <button class="btn btn-primary fw-bold" @click="submitToApi" :disabled="publishing">
-                        <span v-if="publishing"><span
-                                class="spinner-border spinner-border-sm me-2"></span>Submitting…</span>
-                        <span v-else><i class="ri-send-plane-fill me-1"></i>Submit to API</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </div><!-- /layout-wrapper -->
 

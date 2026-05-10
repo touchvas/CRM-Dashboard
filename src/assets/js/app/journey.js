@@ -212,7 +212,7 @@ createApp({
         /* ── Vue Flow events ─────────────────────────────────── */
         const onNodeClick = ({ node }) => { selectedNode.value = node; };
         const onPaneClick = () => { selectedNode.value = null; };
-        onConnect(params => addEdges([{ ...params, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2 } }]));
+        onConnect(params => addEdges([{ ...params, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]));
 
         /* ── Drag & Drop & Add ────────────────────────────────── */
         const onDragStart = (event, item) => {
@@ -269,12 +269,61 @@ createApp({
             }
         };
 
+        const addEmptyNode = (sourceId) => {
+            const sourceNode = getNodes.value.find(n => n.id === sourceId);
+            if (!sourceNode) return;
+            
+            const position = { x: sourceNode.position.x, y: sourceNode.position.y + 180 };
+            const newNodeId = uuidv7();
+            const newNode = {
+                id: newNodeId,
+                type: 'custom',
+                position,
+                data: {
+                    label: 'Select Action',
+                    desc: 'Click to select an action',
+                    isPlaceholder: true,
+                    nodeType: 'placeholder'
+                }
+            };
+            
+            addNodes([newNode]);
+            addEdges([{ id: uuidv7(), source: sourceId, target: newNodeId, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]);
+        };
+
         const addFromPicker = (item) => {
             let position = { x: 300, y: 300 };
             let sourceId = pickerSourceNodeId.value;
 
             if (sourceId) {
                 const sourceNode = getNodes.value.find(n => n.id === sourceId);
+                if (sourceNode && sourceNode.data.isPlaceholder) {
+                    // Update the placeholder node in place with the selected item
+                    sourceNode.data = {
+                        ...item,
+                        uuid: uuidv7(),
+                        blueprint_id: uuidv7(),
+                        wait_event_name: '',
+                        config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
+                        metadata: { 
+                            description: item.desc, 
+                            owner: 'Marketing Team', 
+                            tags: [item.nodeType.toUpperCase()] 
+                        },
+                        stats: {
+                            total: Math.floor(Math.random() * 5000),
+                            success: Math.floor(Math.random() * 4500),
+                            failed: Math.floor(Math.random() * 500)
+                        }
+                    };
+                    pickerOpen.value = false;
+                    
+                    if (elements.value.length === 1 && item.nodeType === 'trigger') {
+                        triggerType.value = item.key;
+                    }
+                    return;
+                }
+                
                 if (sourceNode) {
                     position = { x: sourceNode.position.x, y: sourceNode.position.y + 180 };
                 }
@@ -288,7 +337,7 @@ createApp({
             } else {
                 addNodes([newNode]);
                 if (sourceId) {
-                    addEdges([{ id: uuidv7(), source: sourceId, target: newNode.id, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2 } }]);
+                    addEdges([{ id: uuidv7(), source: sourceId, target: newNode.id, animated: true, style: { stroke: '#4e7adf', strokeWidth: 2, strokeDasharray: '6,6' } }]);
                 }
             }
             pickerOpen.value = false;
@@ -426,7 +475,7 @@ createApp({
             sidebarSearch, activeTab,
             isCatalogView, sidebarTitle,
             pickerOpen, pickerSearch, filteredPicker, pickerInput,
-            openPicker, addFromPicker,
+            openPicker, addFromPicker, addEmptyNode,
             payloadJson, previewPayload, copyPayload, submitToApi,
             onNodeClick, onPaneClick,
             onDragStart, onDrop,
