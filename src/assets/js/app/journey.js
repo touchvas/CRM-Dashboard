@@ -1,9 +1,9 @@
-import { createApp, ref, computed, onMounted, nextTick, watch } from 'vue';
+import { createApp, ref, computed, onMounted, nextTick } from 'vue';
 import { VueFlow, useVueFlow, Handle } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 
 /* ─────────────────────────────────────────────
-   API HELPERS  (matches segmentation.js pattern)
+   API HELPERS
 ───────────────────────────────────────────── */
 const API_BASE = 'https://crm.gamesapi.dev/v1';
 const getApiKey = () => sessionStorage.getItem('api_key') || '';
@@ -51,40 +51,53 @@ function uuidv7() {
 ───────────────────────────────────────────── */
 const CATALOG = {
     triggers: [
-        { key: 'DEPOSIT', icon: '💰', label: 'Deposit', desc: 'Any successful payment', nodeType: 'trigger' },
-        { key: 'SIGN_IN', icon: '🔑', label: 'Sign In', desc: 'User authentication event', nodeType: 'trigger' },
-        { key: 'CASINO_BET', icon: '🎰', label: 'Casino Bet', desc: 'Any casino game stake placed', nodeType: 'trigger' },
-        { key: 'SPORTS_BET', icon: '⚽', label: 'Sports Bet', desc: 'Any sportsbook wager placed', nodeType: 'trigger' },
-        { key: 'CASINO_WIN', icon: '💎', label: 'Casino Win', desc: 'User won a casino round', nodeType: 'trigger' },
-        { key: 'WINNING', icon: '🏆', label: 'Winning', desc: 'Any winning event fired', nodeType: 'trigger' },
-        { key: 'WITHDRAWAL', icon: '🏧', label: 'Withdrawal', desc: 'User payout request submitted', nodeType: 'trigger' },
-        { key: 'RAW_EVENTS', icon: '📡', label: 'Raw Events', desc: 'Listen to any raw custom event', nodeType: 'trigger' },
-        { key: 'JOIN_SEGMENT', icon: '🎯', label: 'Join Segment', desc: 'User enters a segment', nodeType: 'trigger' },
-        { key: 'LEAVE_SEGMENT', icon: '🚪', label: 'Leave Segment', desc: 'User exits a segment', nodeType: 'trigger' },
-        { key: 'SCHEDULE', icon: '🕐', label: 'Schedule', desc: 'Time-based or cron trigger', nodeType: 'trigger' },
-        { key: 'FIRST_DEPOSIT', icon: '✨', label: 'First Deposit', desc: 'First-time player funded', nodeType: 'trigger' },
-        { key: 'FIRST_STAKE', icon: '🎯', label: 'First Stake', desc: 'First sportsbook bet placed', nodeType: 'trigger' },
-        { key: 'FIRST_CASINO', icon: '🎲', label: 'First Casino Bet', desc: 'First casino round played', nodeType: 'trigger' },
-        { key: 'FIRST_WIN', icon: '🔥', label: 'First Winning', desc: 'First win of any kind', nodeType: 'trigger' },
-        { key: 'FIRST_CASINO_WIN', icon: '🎉', label: 'First Casino Win', desc: 'First casino round victory', nodeType: 'trigger' },
-        { key: 'FIRST_BET_LOSS', icon: '📉', label: 'First Bet Loss', desc: 'First sportsbook loss', nodeType: 'trigger' },
-        { key: 'FIRST_CASINO_LOSS', icon: '💔', label: 'First Casino Loss', desc: 'First casino round loss', nodeType: 'trigger' },
+        { key: 'DEPOSIT',           icon: '💰', label: 'Deposit',           desc: 'Any successful payment',            nodeType: 'trigger' },
+        { key: 'SIGN_IN',           icon: '🔑', label: 'Sign In',           desc: 'User authentication event',         nodeType: 'trigger' },
+        { key: 'CASINO_BET',        icon: '🎰', label: 'Casino Bet',        desc: 'Any casino game stake placed',      nodeType: 'trigger' },
+        { key: 'SPORTS_BET',        icon: '⚽', label: 'Sports Bet',        desc: 'Any sportsbook wager placed',       nodeType: 'trigger' },
+        { key: 'CASINO_WIN',        icon: '💎', label: 'Casino Win',        desc: 'User won a casino round',           nodeType: 'trigger' },
+        { key: 'WINNING',           icon: '🏆', label: 'Winning',           desc: 'Any winning event fired',           nodeType: 'trigger' },
+        { key: 'WITHDRAWAL',        icon: '🏧', label: 'Withdrawal',        desc: 'User payout request submitted',     nodeType: 'trigger' },
+        { key: 'RAW_EVENTS',        icon: '📡', label: 'Raw Events',        desc: 'Listen to any raw custom event',    nodeType: 'trigger' },
+        { key: 'JOIN_SEGMENT',      icon: '🎯', label: 'Join Segment',      desc: 'User enters a segment',             nodeType: 'trigger' },
+        { key: 'LEAVE_SEGMENT',     icon: '🚪', label: 'Leave Segment',     desc: 'User exits a segment',              nodeType: 'trigger' },
+        { key: 'SCHEDULE',          icon: '🕐', label: 'Schedule',          desc: 'Time-based or cron trigger',        nodeType: 'trigger' },
+        { key: 'FIRST_DEPOSIT',     icon: '✨', label: 'First Deposit',     desc: 'First-time player funded',          nodeType: 'trigger' },
+        { key: 'FIRST_STAKE',       icon: '🎯', label: 'First Stake',       desc: 'First sportsbook bet placed',       nodeType: 'trigger' },
+        { key: 'FIRST_CASINO',      icon: '🎲', label: 'First Casino Bet',  desc: 'First casino round played',         nodeType: 'trigger' },
+        { key: 'FIRST_WIN',         icon: '🔥', label: 'First Winning',     desc: 'First win of any kind',             nodeType: 'trigger' },
+        { key: 'FIRST_CASINO_WIN',  icon: '🎉', label: 'First Casino Win',  desc: 'First casino round victory',        nodeType: 'trigger' },
+        { key: 'FIRST_BET_LOSS',    icon: '📉', label: 'First Bet Loss',    desc: 'First sportsbook loss',             nodeType: 'trigger' },
+        { key: 'FIRST_CASINO_LOSS', icon: '💔', label: 'First Casino Loss', desc: 'First casino round loss',           nodeType: 'trigger' },
     ],
     actions: [
-        { key: 'novu_notification', icon: '🔔', label: 'Novu Notification', desc: 'Push / email / SMS via Novu', nodeType: 'action' },
-        { key: 'send_email', icon: '✉️', label: 'Send Email', desc: 'Deliver an email to the user', nodeType: 'action' },
-        { key: 'send_sms', icon: '💬', label: 'Send SMS', desc: 'Send a text message', nodeType: 'action' },
-        { key: 'send_push', icon: '📲', label: 'Push Notification', desc: 'Mobile push alert', nodeType: 'action' },
-        { key: 'award_bonus', icon: '🎁', label: 'Award Bonus', desc: 'Credit bonus to user wallet', nodeType: 'action' },
-        { key: 'add_tag', icon: '🏷️', label: 'Add Tag', desc: 'Tag the user profile', nodeType: 'action' },
-        { key: 'update_attribute', icon: '✏️', label: 'Update Attribute', desc: 'Modify a user attribute', nodeType: 'action' },
-        { key: 'webhook', icon: '🔗', label: 'Webhook', desc: 'Call an external HTTP endpoint', nodeType: 'action' },
-        { key: 'add_to_segment', icon: '➕', label: 'Add to Segment', desc: 'Move user into a segment', nodeType: 'action' },
-        { key: 'remove_from_segment', icon: '➖', label: 'Remove from Segment', desc: 'Remove user from a segment', nodeType: 'action' },
-        { key: 'wait_delay', icon: '⏳', label: 'Wait / Delay', desc: 'Pause for a fixed duration', nodeType: 'wait' },
-        { key: 'wait_event', icon: '👀', label: 'Wait for Event', desc: 'Pause until a specific event', nodeType: 'wait' },
+        { key: 'novu_notification',    icon: '🔔', label: 'Novu Notification',    desc: 'Push / email / SMS via Novu',       nodeType: 'action' },
+        { key: 'send_email',           icon: '✉️', label: 'Send Email',           desc: 'Deliver an email to the user',      nodeType: 'action' },
+        { key: 'send_sms',             icon: '💬', label: 'Send SMS',             desc: 'Send a text message',               nodeType: 'action' },
+        { key: 'send_push',            icon: '📲', label: 'Push Notification',    desc: 'Mobile push alert',                 nodeType: 'action' },
+        { key: 'award_bonus',          icon: '🎁', label: 'Award Bonus',          desc: 'Credit bonus to user wallet',       nodeType: 'action' },
+        { key: 'add_tag',              icon: '🏷️', label: 'Add Tag',              desc: 'Tag the user profile',              nodeType: 'action' },
+        { key: 'update_attribute',     icon: '✏️', label: 'Update Attribute',     desc: 'Modify a user attribute',           nodeType: 'action' },
+        { key: 'webhook',              icon: '🔗', label: 'Webhook',              desc: 'Call an external HTTP endpoint',    nodeType: 'action' },
+        { key: 'add_to_segment',       icon: '➕', label: 'Add to Segment',       desc: 'Move user into a segment',          nodeType: 'action' },
+        { key: 'remove_from_segment',  icon: '➖', label: 'Remove from Segment',  desc: 'Remove user from a segment',        nodeType: 'action' },
+        { key: 'wait_delay',           icon: '⏳', label: 'Wait / Delay',         desc: 'Pause for a fixed duration',        nodeType: 'wait'   },
+        { key: 'wait_event',           icon: '👀', label: 'Wait for Event',       desc: 'Pause until a specific event',      nodeType: 'wait'   },
     ]
 };
+
+/* ─────────────────────────────────────────────
+   EDGE FACTORY  — single source of truth
+───────────────────────────────────────────── */
+const makeEdge = (sourceId, targetId) => ({
+    id: uuidv7(),
+    source: sourceId,
+    target: targetId,
+    type: 'default',
+    animated: true,
+    style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,4' },
+    markerEnd: 'url(#arrowhead)'
+});
 
 /* ─────────────────────────────────────────────
    VUE APP
@@ -94,25 +107,47 @@ createApp({
 
     setup() {
         const {
-            onConnect, addEdges, addNodes, updateNode,
+            onConnect,
             fitView, zoomIn, zoomOut,
-            getNodes, getEdges, project
+            getNodes, getEdges,
+            project
         } = useVueFlow();
 
-        /* ── Journey meta ────────────────────────────────────── */
-        const journeyName = ref('High Roller Re-engagement');
-        const isActive = ref(false);
-        const isPublished = ref(false);
-        const publishing = ref(false);
-        const journeyUuid = ref(uuidv7());
-
-        const triggerType = ref('RAW_EVENTS');
+        /* ── Journey meta ──────────────────────────────────────── */
+        const journeyName  = ref('High Roller Re-engagement');
+        const isActive     = ref(false);
+        const isPublished  = ref(false);
+        const publishing   = ref(false);
+        const journeyUuid  = ref(uuidv7());
+        const triggerType  = ref('RAW_EVENTS');
         const triggerValue = ref('DEPOSIT_FAILED_HIGH_VALUE');
 
-        /* ── Sidebar / node selection ────────────────────────── */
-        const selectedNode = ref(null);
-        const sidebarSearch = ref('');
-        const activeTab = ref('triggers'); // 'triggers' | 'actions'
+        /* ── SPLIT nodes / edges (fixes invisible-until-drag bug) ── */
+        const nodes = ref([
+            {
+                id: 'root-placeholder',
+                type: 'custom',
+                position: { x: 300, y: 160 },
+                data: {
+                    label: 'Select Trigger',
+                    desc: 'Click "Select Trigger" or pick from the sidebar',
+                    isPlaceholder: true,
+                    nodeType: 'placeholder'
+                }
+            }
+        ]);
+
+        const edges = ref([]);   // ← always separate, never mixed into nodes
+
+        const nodeTypes = { custom: 'custom' };
+
+        /* ── Sidebar state ─────────────────────────────────────── */
+        const selectedNode   = ref(null);
+        const sidebarSearch  = ref('');
+        const activeTab      = ref('triggers');
+
+        // pendingSourceId: set when user clicks +, cleared after sidebar pick
+        const pendingSourceId = ref(null);
 
         const isCatalogView = computed(() =>
             !selectedNode.value || selectedNode.value.data.isPlaceholder
@@ -121,11 +156,11 @@ createApp({
             isCatalogView.value ? 'Add a Step' : 'Edit Step'
         );
 
-        /* ── Picker Modal ────────────────────────────────────── */
-        const pickerOpen = ref(false);
-        const pickerSearch = ref('');
-        const pickerSourceNodeId = ref(null); // Node that triggered the picker
-        const pickerInput = ref(null);
+        /* ── Picker modal (kept for "Select Trigger" placeholder click) */
+        const pickerOpen         = ref(false);
+        const pickerSearch       = ref('');
+        const pickerSourceNodeId = ref(null);
+        const pickerInput        = ref(null);
 
         const openPicker = (sourceId = null) => {
             pickerSourceNodeId.value = sourceId;
@@ -142,52 +177,10 @@ createApp({
                 i.key.toLowerCase().includes(q) ||
                 i.desc.toLowerCase().includes(q)
             );
-            return {
-                triggers: f(CATALOG.triggers),
-                actions: f(CATALOG.actions)
-            };
+            return { triggers: f(CATALOG.triggers), actions: f(CATALOG.actions) };
         });
 
-        /* ── Payload Preview ─────────────────────────────────── */
-        const payloadJson = ref('');
-        const previewPayload = () => {
-            payloadJson.value = JSON.stringify(buildPayload(), null, 4);
-            if (window.bootstrap) {
-                const modal = new bootstrap.Modal(document.getElementById('payloadModal'));
-                modal.show();
-            } else {
-                console.warn('[Journey] Bootstrap not found. Falling back to alert.');
-                alert(payloadJson.value);
-            }
-        };
-
-        const copyPayload = () => {
-            navigator.clipboard.writeText(payloadJson.value);
-            if (window.showToast) {
-                showToast('Success', 'Payload copied to clipboard', 'success');
-            } else {
-                alert('Payload copied to clipboard');
-            }
-        };
-
-        /* ── Flow elements ───────────────────────────────────── */
-        const elements = ref([
-            {
-                id: 'root-placeholder',
-                type: 'custom',
-                position: { x: 300, y: 160 },
-                data: {
-                    label: 'Select Trigger',
-                    desc: 'Drag a trigger from the panel to start',
-                    isPlaceholder: true,
-                    nodeType: 'placeholder'
-                }
-            }
-        ]);
-
-        const nodeTypes = { custom: 'custom' };
-
-        /* ── Filtered catalog ────────────────────────────────── */
+        /* ── Filtered sidebar catalog ──────────────────────────── */
         const filteredCatalog = computed(() => {
             const q = sidebarSearch.value.toLowerCase().trim();
             const f = arr => arr.filter(i =>
@@ -196,116 +189,35 @@ createApp({
                 i.key.toLowerCase().includes(q) ||
                 i.desc.toLowerCase().includes(q)
             );
-            return {
-                triggers: f(CATALOG.triggers),
-                actions: f(CATALOG.actions)
-            };
+            return { triggers: f(CATALOG.triggers), actions: f(CATALOG.actions) };
         });
 
-        const popularTriggers = computed(() =>
-            filteredCatalog.value.triggers.slice(0, 5)
-        );
-        const allTriggers = computed(() =>
-            filteredCatalog.value.triggers.slice(5)
-        );
+        const popularTriggers = computed(() => filteredCatalog.value.triggers.slice(0, 5));
+        const allTriggers     = computed(() => filteredCatalog.value.triggers.slice(5));
 
-        /* ── Vue Flow events ─────────────────────────────────── */
-        const onNodeClick = ({ node }) => { selectedNode.value = node; };
-        const onPaneClick = () => { selectedNode.value = null; };
-        onConnect(params => addEdges([{ ...params, animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' }, markerEnd: 'url(#arrowhead)' }]));
-        const dropHandledByNode = ref(false);
+        /* ── Payload preview ───────────────────────────────────── */
+        const payloadJson = ref('');
 
-        /* ── Drag & Drop & Add ────────────────────────────────── */
-        const onDragStart = (event, item) => {
-            event.dataTransfer.setData('application/vueflow', JSON.stringify(item));
-            event.dataTransfer.effectAllowed = 'move';
-        };
-
-        const createNewNode = (item, pos) => {
-            return {
-                id: uuidv7(),
-                type: 'custom',
-                position: pos,
-                data: {
-                    ...item,
-                    uuid: item.uuid || uuidv7(),
-                    blueprint_id: uuidv7(),
-                    wait_event_name: '',
-                    config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
-                    metadata: { 
-                        description: item.desc, 
-                        owner: 'Marketing Team', 
-                        tags: [item.nodeType.toUpperCase()] 
-                    },
-                    stats: {
-                        total: Math.floor(Math.random() * 5000),
-                        success: Math.floor(Math.random() * 4500),
-                        failed: Math.floor(Math.random() * 500)
-                    }
-                }
-            };
-        };
-
-        const onDrop = (event) => {
-            if (dropHandledByNode.value) {
-                dropHandledByNode.value = false;
-                return;
-            }
-
-            const raw = event.dataTransfer.getData('application/vueflow');
-            if (!raw) return;
-            const item = JSON.parse(raw);
-
-            // Check if dropping on an existing node
-            const targetElement = document.elementFromPoint(event.clientX, event.clientY);
-            const nodeElement = targetElement?.closest('.vue-flow__node-custom');
-            if (nodeElement) {
-                const nodeId = nodeElement.getAttribute('data-id');
-                if (nodeId) {
-                    const node = getNodes().find(n => n.id === nodeId);
-                    if (node && node.data.key) {
-                        dropHandledByNode.value = false;
-                        return;
-                    }
-                }
-            }
-
-            const isFirstTrigger =
-                elements.value.length === 1 &&
-                elements.value[0].data.isPlaceholder &&
-                item.nodeType === 'trigger';
-
-            const position = isFirstTrigger
-                ? elements.value[0].position
-                : project({ x: event.clientX - 115, y: event.clientY - 60 });
-
-            const newNode = createNewNode(item, position);
-
-            if (isFirstTrigger) {
-                elements.value = [newNode];
-                triggerType.value = item.key;
+        const previewPayload = () => {
+            payloadJson.value = JSON.stringify(buildPayload(), null, 4);
+            if (window.bootstrap) {
+                new bootstrap.Modal(document.getElementById('payloadModal')).show();
             } else {
-                addNodes([newNode]);
+                alert(payloadJson.value);
             }
         };
 
-        /* ── Drop on empty card ───────────────────────────────────── */
-        const onDropOnNode = (event, nodeId) => {
-            dropHandledByNode.value = true;
-            event.preventDefault();
-            event.stopPropagation();
+        const copyPayload = () => {
+            navigator.clipboard.writeText(payloadJson.value);
+            showToast('Success', 'Payload copied to clipboard', 'success');
+        };
 
-            const raw = event.dataTransfer.getData('application/vueflow');
-            if (!raw) return;
-            const item = JSON.parse(raw);
-
-            const node = getNodes().find(n => n.id === nodeId);
-            if (!node) return;
-
-            // Only allow drop on empty nodes (no key)
-            if (node.data.key) return;
-
-            const newNodeData = {
+        /* ── Node factory ──────────────────────────────────────── */
+        const createNewNode = (item, pos) => ({
+            id: uuidv7(),
+            type: 'custom',
+            position: pos,
+            data: {
                 ...item,
                 uuid: uuidv7(),
                 blueprint_id: uuidv7(),
@@ -317,190 +229,194 @@ createApp({
                     tags: [item.nodeType.toUpperCase()]
                 },
                 stats: {
-                    total: Math.floor(Math.random() * 5000),
+                    total:   Math.floor(Math.random() * 5000),
                     success: Math.floor(Math.random() * 4500),
-                    failed: Math.floor(Math.random() * 500)
+                    failed:  Math.floor(Math.random() * 500)
                 }
-            };
-
-            updateNode({ id: nodeId, data: newNodeData });
-
-            if (nodeId === elements.value[0]?.id && item.nodeType === 'trigger') {
-                triggerType.value = item.key;
             }
+        });
+
+        /* ── Vue Flow events ───────────────────────────────────── */
+        const onNodeClick  = ({ node }) => {
+            // if + was pending, clicking a node cancels the pending state
+            pendingSourceId.value = null;
+            selectedNode.value = node;
         };
 
-        const addEmptyNode = (sourceId) => {
-            const sourceNode = getNodes().find(n => n.id === sourceId);
+        const onPaneClick  = () => {
+            pendingSourceId.value = null;
+            selectedNode.value = null;
+        };
+
+        // User drags handle → handle manually
+        onConnect(params => {
+            edges.value = [...edges.value, {
+                ...makeEdge(params.source, params.target),
+                ...params          // preserve sourceHandle / targetHandle
+            }];
+        });
+
+        /* ── + button: set pending source, NO modal ────────────── */
+        const setPendingSource = (id) => {
+            pendingSourceId.value = id;
+            selectedNode.value = null;   // close properties panel if open
+            openPicker(id); // Open the picker modal when '+' is clicked
+        };
+
+        /* ── Core: add item from sidebar OR picker modal ───────── */
+        const addFromPicker = (item) => {
+            // close modal if it was open
+            pickerOpen.value = false;
+
+            // priority: pendingSourceId (from + button) > pickerSourceNodeId (from modal)
+            const sourceId = pendingSourceId.value || pickerSourceNodeId.value;
+            pendingSourceId.value   = null;
+            pickerSourceNodeId.value = null;
+
+            // ── Case 1: no source → replace root placeholder ────
+            if (!sourceId) {
+                const placeholder = nodes.value.find(n => n.data?.isPlaceholder);
+                if (placeholder) {
+                    const newNode = createNewNode(item, placeholder.position);
+                    nodes.value = [newNode];
+                    if (item.nodeType === 'trigger') triggerType.value = item.key;
+                }
+                return;
+            }
+
+            const sourceNode = nodes.value.find(n => n.id === sourceId);
             if (!sourceNode) return;
 
-            const newNodeId = uuidv7();
-            const position = {
+            // ── Case 2: source IS the placeholder → replace it ──
+            if (sourceNode.data?.isPlaceholder) {
+                const newNode = createNewNode(item, sourceNode.position);
+                nodes.value = [newNode];
+                edges.value = [];
+                if (item.nodeType === 'trigger') triggerType.value = item.key;
+                return;
+            }
+
+            // ── Case 3: real node → add below + connect ─────────
+            const newNode = createNewNode(item, {
                 x: sourceNode.position.x,
                 y: sourceNode.position.y + 160
-            };
-            const newNode = {
-                id: newNodeId,
-                type: 'custom',
-                position: position,
-                data: {
-                    label: 'New Step',
-                    desc: 'Pick an action or drag from sidebar',
-                    key: '',
-                    nodeType: 'action',
-                    icon: '⚡',
-                    uuid: uuidv7(),
-                    blueprint_id: uuidv7(),
-                    wait_event_name: '',
-                    config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
-                    metadata: { description: 'Unconfigured step', owner: 'Marketing Team', tags: ['ACTION'] },
-                    stats: { total: 0, success: 0, failed: 0 }
-                }
-            };
-            const newEdge = {
-                id: uuidv7(),
-                source: sourceId,
-                target: newNodeId,
-                animated: true,
-                style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' },
-                markerEnd: 'url(#arrowhead)'
-            };
-
-            // Directly update the elements ref to ensure UI reactivity
-            elements.value = [...elements.value, newNode, newEdge];
+            });
+            nodes.value = [...nodes.value, newNode];
+            edges.value = [...edges.value, makeEdge(sourceId, newNode.id)];
         };
 
-        const addFromPicker = (item) => {
-            let position = { x: 300, y: 300 };
-            let sourceId = pickerSourceNodeId.value;
+        /* ── Drag from sidebar → canvas ────────────────────────── */
+        const onDragStart = (event, item) => {
+            event.dataTransfer.setData('application/vueflow', JSON.stringify(item));
+            event.dataTransfer.effectAllowed = 'move';
+        };
 
-            if (sourceId) {
-                const sourceNode = getNodes().find(n => n.id === sourceId);
-                if (sourceNode && (sourceNode.data.isPlaceholder || !sourceNode.data.key)) {
-                    // Update placeholder or empty card in place
-                    const newNodeData = {
-                        ...item,
-                        uuid: uuidv7(),
-                        blueprint_id: uuidv7(),
-                        wait_event_name: '',
-                        config: { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
-                        metadata: {
-                            description: item.desc,
-                            owner: 'Marketing Team',
-                            tags: [item.nodeType.toUpperCase()]
-                        },
-                        stats: {
-                            total: Math.floor(Math.random() * 5000),
-                            success: Math.floor(Math.random() * 4500),
-                            failed: Math.floor(Math.random() * 500)
-                        }
-                    };
+        const onDrop = (event) => {
+            const raw = event.dataTransfer.getData('application/vueflow');
+            if (!raw) return;
+            const item = JSON.parse(raw);
 
-                    updateNode({ id: sourceId, data: newNodeData });
-                    pickerOpen.value = false;
+            const isFirstTrigger =
+                nodes.value.length === 1 &&
+                nodes.value[0].data.isPlaceholder &&
+                item.nodeType === 'trigger';
 
-                    if (elements.value.length === 1 && item.nodeType === 'trigger') {
-                        triggerType.value = item.key;
-                    }
-                    return;
-                }
+            let pos = project({ x: event.clientX - 150, y: event.clientY - 50 });
+            if (!pos || isNaN(pos.x)) pos = { x: 300, y: 300 };
+            if (isFirstTrigger) pos = nodes.value[0].position;
 
-                if (sourceNode) {
-                    position = { x: sourceNode.position.x, y: sourceNode.position.y + 180 };
-                }
-            }
+            const newNode = createNewNode(item, pos);
 
-            const newNode = createNewNode(item, position);
-
-            if (elements.value.length === 1 && elements.value[0].data.isPlaceholder && item.nodeType === 'trigger') {
-                elements.value = [newNode];
+            if (isFirstTrigger) {
+                nodes.value = [newNode];
+                edges.value = [];
                 triggerType.value = item.key;
             } else {
-                addNodes([newNode]);
-                if (sourceId) {
-                    addEdges([{
-                        id: uuidv7(),
-                        source: sourceId,
-                        target: newNode.id,
-                        animated: true,
-                        style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' },
-                        markerEnd: 'url(#arrowhead)'
-                    }]);
-                }
+                nodes.value = [...nodes.value, newNode];
+                showToast('Hint', 'Drag handles to connect this step, or use the + button.', 'info');
             }
-            pickerOpen.value = false;
         };
 
-        /* ── Remove node ─────────────────────────────────────── */
+        /* ── Drop item onto an unconfigured node ───────────────── */
+        const onDropOnNode = (event, nodeId) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const raw = event.dataTransfer.getData('application/vueflow');
+            if (!raw) return;
+            const item = JSON.parse(raw);
+            const idx  = nodes.value.findIndex(n => n.id === nodeId);
+            if (idx === -1 || nodes.value[idx].data.key) return;   // only empty nodes
+            const updated = { ...nodes.value[idx], data: createNewNode(item, nodes.value[idx].position).data };
+            nodes.value = nodes.value.map((n, i) => i === idx ? updated : n);
+            if (nodeId === nodes.value[0]?.id && item.nodeType === 'trigger') {
+                triggerType.value = item.key;
+            }
+        };
+
+        /* ── Remove node + its edges ───────────────────────────── */
         const removeNode = (id) => {
-            elements.value = elements.value.filter(
-                el => el.id !== id && el.source !== id && el.target !== id
-            );
-            if (elements.value.filter(e => !e.source).length === 0) {
-                elements.value = [{
-                    id: 'root-placeholder',
-                    type: 'custom',
+            nodes.value = nodes.value.filter(n => n.id !== id);
+            edges.value = edges.value.filter(e => e.source !== id && e.target !== id);
+            if (nodes.value.length === 0) {
+                nodes.value = [{
+                    id: 'root-placeholder', type: 'custom',
                     position: { x: 300, y: 160 },
-                    data: { label: 'Select Trigger', desc: 'Drag a trigger to start', isPlaceholder: true, nodeType: 'placeholder' }
+                    data: { label: 'Select Trigger', desc: 'Pick from sidebar to start', isPlaceholder: true, nodeType: 'placeholder' }
                 }];
             }
             selectedNode.value = null;
         };
 
-        /* ── Reset ───────────────────────────────────────────── */
+        /* ── Reset ─────────────────────────────────────────────── */
         const resetFlow = () => {
             if (!confirm('Clear the entire journey and start over?')) return;
-            elements.value = [{
+            nodes.value = [{
                 id: 'root-placeholder', type: 'custom',
                 position: { x: 300, y: 160 },
-                data: { label: 'Select Trigger', desc: 'Drag a trigger to start', isPlaceholder: true, nodeType: 'placeholder' }
+                data: { label: 'Select Trigger', desc: 'Pick from sidebar to start', isPlaceholder: true, nodeType: 'placeholder' }
             }];
+            edges.value      = [];
             journeyUuid.value = uuidv7();
             selectedNode.value = null;
+            pendingSourceId.value = null;
             isPublished.value = false;
         };
 
-        /* ── Build API payload ───────────────────────────────── */
+        /* ── Build payload ─────────────────────────────────────── */
         const buildPayload = () => {
-            const flowNodes = getNodes().filter(n => !n.data?.isPlaceholder);
-            const flowEdges = getEdges();
-
-            const nodes = flowNodes.map(n => ({
-                uuid: n.data.uuid || n.id,
-                blueprint_id: n.data.blueprint_id || uuidv7(),
-                plugin_key: n.data.key,
-                type: n.data.nodeType === 'trigger' ? 'TRIGGER' : 'ACTION',
-                wait_event_name: n.data.wait_event_name || '',
-                config: n.data.config || { retry_attempts: 3, retry_interval_seconds: 300, timeout_seconds: 60 },
-                metadata: n.data.metadata || { description: n.data.desc || '', owner: '', tags: [] },
-                created: new Date().toISOString()
-            }));
-
-            const edges = flowEdges.map(e => ({
-                uuid: uuidv7(),
-                source: flowNodes.find(n => n.id === e.source)?.data?.uuid || e.source,
-                target: flowNodes.find(n => n.id === e.target)?.data?.uuid || e.target,
-                priority_number: 0
-            }));
-
-            const startNode = flowNodes[0];
+            const flowNodes = nodes.value.filter(n => !n.data?.isPlaceholder);
+            const flowEdges = edges.value;
 
             return {
-                uuid: journeyUuid.value,
-                name: journeyName.value.trim(),
-                is_active: isActive.value,
-                trigger_type: triggerType.value,
-                trigger_value: triggerValue.value,
-                start_node: startNode?.data?.uuid || startNode?.id || '',
-                created: new Date().toISOString(),
-                nodes,
-                edges
+                uuid:          journeyUuid.value,
+                name:          journeyName.value.trim(),
+                is_active:     isActive.value,
+                trigger_type:  triggerType.value,
+                trigger_Value: triggerValue.value,
+                start_node:    flowNodes[0]?.data?.uuid || flowNodes[0]?.id || '',
+                created:       new Date().toISOString(),
+                nodes: flowNodes.map(n => ({
+                    uuid:             n.data.uuid || n.id,
+                    blueprint_id:     n.data.blueprint_id || uuidv7(),
+                    plugin_key:       n.data.key,
+                    type:             n.data.nodeType === 'trigger' ? 'TRIGGER' : 'ACTION',
+                    wait_event_name:  n.data.wait_event_name || '',
+                    config:           n.data.config || {},
+                    metadata:         n.data.metadata || {},
+                    created:          new Date().toISOString()
+                })),
+                edges: flowEdges.map(e => ({
+                    uuid:            e.id || uuidv7(),
+                    source:          flowNodes.find(n => n.id === e.source)?.data?.uuid || e.source,
+                    target:          flowNodes.find(n => n.id === e.target)?.data?.uuid || e.target,
+                    priority_number: 0
+                }))
             };
         };
 
-        /* ── Publish ─────────────────────────────────────────── */
+        /* ── Publish ───────────────────────────────────────────── */
         const publish = async () => {
-            if (getNodes().some(e => e.data?.isPlaceholder)) {
+            if (nodes.value.some(n => n.data?.isPlaceholder)) {
                 showToast('Warning', 'Please select a starting trigger before publishing.', 'warning');
                 return;
             }
@@ -508,14 +424,13 @@ createApp({
                 showToast('Warning', 'Please enter a journey name.', 'warning');
                 return;
             }
-
             publishing.value = true;
             try {
                 const payload = buildPayload();
                 payload.is_active = true;
                 await apiRequest(`${API_BASE}/customer-journey`, 'POST', payload);
                 isPublished.value = true;
-                isActive.value = true;
+                isActive.value    = true;
                 showToast('Success', 'Journey published successfully!', 'success');
             } catch (err) {
                 console.error('[Journey] Publish error:', err);
@@ -527,43 +442,51 @@ createApp({
 
         const submitToApi = () => publish();
 
-        /* ── Toast (reuse window.showToast pattern from segmentation.js) */
+        /* ── Toast ─────────────────────────────────────────────── */
         const showToast = (title, message, type = 'info') => {
             if (window.showToast) {
                 window.showToast(title, message, type);
-            } else {
-                const id = 'toast-' + Date.now();
-                const color = type === 'success' ? 'bg-success'
-                    : type === 'error' ? 'bg-danger'
-                        : type === 'warning' ? 'bg-warning'
-                            : 'bg-info';
-                const html = `
-                    <div id="${id}" class="toast align-items-center text-white ${color} border-0 show position-fixed"
-                         style="bottom:20px;right:20px;z-index:9999;min-width:260px" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body fw-semibold">${title}: ${message}</div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                                    onclick="document.getElementById('${id}').remove()"></button>
-                        </div>
-                    </div>`;
-                document.body.insertAdjacentHTML('beforeend', html);
-                setTimeout(() => document.getElementById(id)?.remove(), 4000);
+                return;
             }
+            const id    = 'toast-' + Date.now();
+            const color = type === 'success' ? 'bg-success'
+                        : type === 'error'   ? 'bg-danger'
+                        : type === 'warning' ? 'bg-warning'
+                        : 'bg-info';
+            document.body.insertAdjacentHTML('beforeend', `
+                <div id="${id}" class="toast align-items-center text-white ${color} border-0 show position-fixed"
+                     style="bottom:20px;right:20px;z-index:9999;min-width:260px" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body fw-semibold">${title}: ${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                onclick="document.getElementById('${id}').remove()"></button>
+                    </div>
+                </div>`);
+            setTimeout(() => document.getElementById(id)?.remove(), 4000);
         };
 
-        onMounted(() => {
-            console.log('[Journey] Customer Journey Builder mounted.');
-        });
+        onMounted(() => console.log('[Journey] mounted.'));
 
+        /* ── Expose to template ────────────────────────────────── */
         return {
             journeyName, isActive, isPublished, publishing,
             triggerType, triggerValue, journeyUuid,
-            elements, nodeTypes, selectedNode,
-            catalog: CATALOG, filteredCatalog, popularTriggers, allTriggers,
+
+            // ← split refs (v-model:nodes / v-model:edges in HTML)
+            nodes, edges,
+            nodeTypes, selectedNode,
+
+            filteredCatalog, popularTriggers, allTriggers,
             sidebarSearch, activeTab,
             isCatalogView, sidebarTitle,
+
+            // pendingSourceId for + button → sidebar flow
+            pendingSourceId, setPendingSource,
+
+            // picker modal (placeholder click only)
             pickerOpen, pickerSearch, filteredPicker, pickerInput,
-            openPicker, addFromPicker, addEmptyNode,
+            openPicker, addFromPicker,
+
             payloadJson, previewPayload, copyPayload, submitToApi,
             onNodeClick, onPaneClick, onDropOnNode,
             onDragStart, onDrop,
