@@ -25,12 +25,12 @@
         <div class="d-flex align-items-center gap-3 pe-2">
 
             <!-- Search Bar -->
-            <form class="app-search d-none d-xl-block" style="width: 320px;">
+            <form class="app-search d-none d-xl-block" style="width: 300px; margin-bottom: 10px;">
                 <div class="position-relative">
                     <input type="text" class="form-control bg-light-subtle border-0 shadow-sm" placeholder="Search..."
-                        style="padding-left: 40px; height: 38px; border-radius: 10px; font-size: 13px;">
-                    <span class="fas fa-search position-absolute text-muted"
-                        style="top: 11px; left: 15px; font-size: 14px;"></span>
+                        style="padding-left: 40px; height: 20px; border-radius: 10px; font-size: 13px;">
+                    <i class="ri-search-line position-absolute text-muted"
+                        style="top: 50%; transform: translateY(-50%); left: 12px; font-size: 14px;"></i>
                 </div>
             </form>
 
@@ -164,8 +164,10 @@
         #page-topbar {
             z-index: 1010;
         }
+
         .vertical-menu {
-            top: 85px !important; /* Matches $header-height */
+            top: 85px !important;
+            /* Matches $header-height */
             border-top: 1px solid var(--bs-border-color);
             z-index: 1005;
         }
@@ -174,27 +176,36 @@
     /* Mobile Sidebar Overlay */
     @media (max-width: 991.98px) {
         #page-topbar {
-            z-index: 1090 !important; /* Ensure it stays above everything */
+            z-index: 1090 !important;
+            /* Ensure it stays above everything */
             position: fixed !important;
-            display: block !important; /* Prevent it from being hidden by template logic */
+            display: block !important;
+            /* Prevent it from being hidden by template logic */
             width: 100% !important;
-            background: #ffffff !important; /* Solid background to keep it distinct */
+            background: #ffffff !important;
+            /* Solid background to keep it distinct */
         }
 
         .vertical-menu {
             top: 85px !important;
             width: 260px !important;
             height: calc(100vh - 85px) !important;
-            box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08); /* Refined shadow */
-            z-index: 1085; /* Above overlay, below topbar */
+            box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
+            /* Refined shadow */
+            z-index: 1085;
+            /* Above overlay, below topbar */
             border-top: 1px solid var(--bs-border-color);
-            background: #ffffff !important; /* Force solid background to hide ghost layers */
-            transform: translateX(-100%); /* Start off-screen */
+            background: #ffffff !important;
+            /* Force solid background to hide ghost layers */
+            transform: translateX(-100%);
+            /* Start off-screen */
             transition: transform 0.3s ease-in-out;
             display: block !important;
-            left: 0 !important; /* Reset template-specific positioning */
+            left: 0 !important;
+            /* Reset template-specific positioning */
             margin: 0 !important;
-            pointer-events: auto !important; /* Ensure sidebar items are clickable */
+            pointer-events: auto !important;
+            /* Ensure sidebar items are clickable */
         }
 
         /* Show sidebar when enabled */
@@ -212,20 +223,25 @@
             display: block !important;
             opacity: 1 !important;
             visibility: visible !important;
-            margin-left: 0 !important; /* Prevent content from shifting right */
-            pointer-events: none; /* Block interaction with background content only */
+            margin-left: 0 !important;
+            /* Prevent content from shifting right */
+            pointer-events: none;
+            /* Block interaction with background content only */
         }
 
         .mobile-sidebar-overlay {
             position: fixed;
             inset: 0;
-            top: 85px; /* Start shadow effect below the topbar */
-            background: rgba(0, 0, 0, 0.5); /* Transparent dark layer */
+            top: 85px;
+            /* Start shadow effect below the topbar */
+            background: rgba(0, 0, 0, 0.5);
+            /* Transparent dark layer */
             z-index: 1070;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
         }
+
         /* Toggle visibility based on global sidebar-enable class */
         body.sidebar-enable .mobile-sidebar-overlay {
             opacity: 1;

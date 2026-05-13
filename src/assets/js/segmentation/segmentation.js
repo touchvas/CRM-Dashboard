@@ -378,7 +378,7 @@ if (document.getElementById('savedSegmentsApp')) {
                 const id = seg.id || seg._id;
                 if (!id) return;
 
-                if (!confirm(`Are you sure you want to delete segment "${seg.name}"?`)) return;
+                // Removed confirm dialog for seamless UX, relying on toast confirmation below
 
                 try {
                     await window.deleteSegment(id);
@@ -711,7 +711,7 @@ if (document.getElementById('segmentViewApp')) {
                 $('#deleteTemplateBtn').on('click', async function () {
                     const templateId = $('#smsTemplateSelect option:selected').data('id');
                     if (!templateId) return;
-                    if (!confirm("Are you sure you want to delete this template?")) return;
+                    // Removed confirm dialog for seamless UX, relying on toast confirmation below
 
                     try {
                         await window.deleteNotificationTemplate(templateId);
@@ -915,7 +915,7 @@ if (document.getElementById('segmentViewApp')) {
                 deleteSegment: async () => {
                     const id = segmentData.value?.id;
                     if (!id) return;
-                    if (!confirm(`Permanently delete "${segmentData.value.name}"?`)) return;
+                    // Removed confirm dialog for seamless UX
 
                     try {
                         await window.deleteSegment(id);

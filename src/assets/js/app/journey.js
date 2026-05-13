@@ -1,5 +1,5 @@
 import { createApp, ref, computed, onMounted, nextTick } from 'vue';
-import { VueFlow, useVueFlow, Handle } from '@vue-flow/core';
+import { VueFlow, useVueFlow, Handle, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 
 /* ─────────────────────────────────────────────
@@ -51,38 +51,38 @@ function uuidv7() {
 ───────────────────────────────────────────── */
 const CATALOG = {
     triggers: [
-        { key: 'DEPOSIT',           icon: '💰', label: 'Deposit',           desc: 'Any successful payment',            nodeType: 'trigger' },
-        { key: 'SIGN_IN',           icon: '🔑', label: 'Sign In',           desc: 'User authentication event',         nodeType: 'trigger' },
-        { key: 'CASINO_BET',        icon: '🎰', label: 'Casino Bet',        desc: 'Any casino game stake placed',      nodeType: 'trigger' },
-        { key: 'SPORTS_BET',        icon: '⚽', label: 'Sports Bet',        desc: 'Any sportsbook wager placed',       nodeType: 'trigger' },
-        { key: 'CASINO_WIN',        icon: '💎', label: 'Casino Win',        desc: 'User won a casino round',           nodeType: 'trigger' },
-        { key: 'WINNING',           icon: '🏆', label: 'Winning',           desc: 'Any winning event fired',           nodeType: 'trigger' },
-        { key: 'WITHDRAWAL',        icon: '🏧', label: 'Withdrawal',        desc: 'User payout request submitted',     nodeType: 'trigger' },
-        { key: 'RAW_EVENTS',        icon: '📡', label: 'Raw Events',        desc: 'Listen to any raw custom event',    nodeType: 'trigger' },
-        { key: 'JOIN_SEGMENT',      icon: '🎯', label: 'Join Segment',      desc: 'User enters a segment',             nodeType: 'trigger' },
-        { key: 'LEAVE_SEGMENT',     icon: '🚪', label: 'Leave Segment',     desc: 'User exits a segment',              nodeType: 'trigger' },
-        { key: 'SCHEDULE',          icon: '🕐', label: 'Schedule',          desc: 'Time-based or cron trigger',        nodeType: 'trigger' },
-        { key: 'FIRST_DEPOSIT',     icon: '✨', label: 'First Deposit',     desc: 'First-time player funded',          nodeType: 'trigger' },
-        { key: 'FIRST_STAKE',       icon: '🎯', label: 'First Stake',       desc: 'First sportsbook bet placed',       nodeType: 'trigger' },
-        { key: 'FIRST_CASINO',      icon: '🎲', label: 'First Casino Bet',  desc: 'First casino round played',         nodeType: 'trigger' },
-        { key: 'FIRST_WIN',         icon: '🔥', label: 'First Winning',     desc: 'First win of any kind',             nodeType: 'trigger' },
-        { key: 'FIRST_CASINO_WIN',  icon: '🎉', label: 'First Casino Win',  desc: 'First casino round victory',        nodeType: 'trigger' },
-        { key: 'FIRST_BET_LOSS',    icon: '📉', label: 'First Bet Loss',    desc: 'First sportsbook loss',             nodeType: 'trigger' },
-        { key: 'FIRST_CASINO_LOSS', icon: '💔', label: 'First Casino Loss', desc: 'First casino round loss',           nodeType: 'trigger' },
+        { key: 'DEPOSIT', icon: '💰', label: 'Deposit', desc: 'Any successful payment', nodeType: 'trigger' },
+        { key: 'SIGN_IN', icon: '🔑', label: 'Sign In', desc: 'User authentication event', nodeType: 'trigger' },
+        { key: 'CASINO_BET', icon: '🎰', label: 'Casino Bet', desc: 'Any casino game stake placed', nodeType: 'trigger' },
+        { key: 'SPORTS_BET', icon: '⚽', label: 'Sports Bet', desc: 'Any sportsbook wager placed', nodeType: 'trigger' },
+        { key: 'CASINO_WIN', icon: '💎', label: 'Casino Win', desc: 'User won a casino round', nodeType: 'trigger' },
+        { key: 'WINNING', icon: '🏆', label: 'Winning', desc: 'Any winning event fired', nodeType: 'trigger' },
+        { key: 'WITHDRAWAL', icon: '🏧', label: 'Withdrawal', desc: 'User payout request submitted', nodeType: 'trigger' },
+        { key: 'RAW_EVENTS', icon: '📡', label: 'Raw Events', desc: 'Listen to any raw custom event', nodeType: 'trigger' },
+        { key: 'JOIN_SEGMENT', icon: '🎯', label: 'Join Segment', desc: 'User enters a segment', nodeType: 'trigger' },
+        { key: 'LEAVE_SEGMENT', icon: '🚪', label: 'Leave Segment', desc: 'User exits a segment', nodeType: 'trigger' },
+        { key: 'SCHEDULE', icon: '🕐', label: 'Schedule', desc: 'Time-based or cron trigger', nodeType: 'trigger' },
+        { key: 'FIRST_DEPOSIT', icon: '✨', label: 'First Deposit', desc: 'First-time player funded', nodeType: 'trigger' },
+        { key: 'FIRST_STAKE', icon: '🎯', label: 'First Stake', desc: 'First sportsbook bet placed', nodeType: 'trigger' },
+        { key: 'FIRST_CASINO', icon: '🎲', label: 'First Casino Bet', desc: 'First casino round played', nodeType: 'trigger' },
+        { key: 'FIRST_WIN', icon: '🔥', label: 'First Winning', desc: 'First win of any kind', nodeType: 'trigger' },
+        { key: 'FIRST_CASINO_WIN', icon: '🎉', label: 'First Casino Win', desc: 'First casino round victory', nodeType: 'trigger' },
+        { key: 'FIRST_BET_LOSS', icon: '📉', label: 'First Bet Loss', desc: 'First sportsbook loss', nodeType: 'trigger' },
+        { key: 'FIRST_CASINO_LOSS', icon: '💔', label: 'First Casino Loss', desc: 'First casino round loss', nodeType: 'trigger' },
     ],
     actions: [
-        { key: 'novu_notification',    icon: '🔔', label: 'Novu Notification',    desc: 'Push / email / SMS via Novu',       nodeType: 'action' },
-        { key: 'send_email',           icon: '✉️', label: 'Send Email',           desc: 'Deliver an email to the user',      nodeType: 'action' },
-        { key: 'send_sms',             icon: '💬', label: 'Send SMS',             desc: 'Send a text message',               nodeType: 'action' },
-        { key: 'send_push',            icon: '📲', label: 'Push Notification',    desc: 'Mobile push alert',                 nodeType: 'action' },
-        { key: 'award_bonus',          icon: '🎁', label: 'Award Bonus',          desc: 'Credit bonus to user wallet',       nodeType: 'action' },
-        { key: 'add_tag',              icon: '🏷️', label: 'Add Tag',              desc: 'Tag the user profile',              nodeType: 'action' },
-        { key: 'update_attribute',     icon: '✏️', label: 'Update Attribute',     desc: 'Modify a user attribute',           nodeType: 'action' },
-        { key: 'webhook',              icon: '🔗', label: 'Webhook',              desc: 'Call an external HTTP endpoint',    nodeType: 'action' },
-        { key: 'add_to_segment',       icon: '➕', label: 'Add to Segment',       desc: 'Move user into a segment',          nodeType: 'action' },
-        { key: 'remove_from_segment',  icon: '➖', label: 'Remove from Segment',  desc: 'Remove user from a segment',        nodeType: 'action' },
-        { key: 'wait_delay',           icon: '⏳', label: 'Wait / Delay',         desc: 'Pause for a fixed duration',        nodeType: 'wait'   },
-        { key: 'wait_event',           icon: '👀', label: 'Wait for Event',       desc: 'Pause until a specific event',      nodeType: 'wait'   },
+        { key: 'novu_notification', icon: '🔔', label: 'Novu Notification', desc: 'Push / email / SMS via Novu', nodeType: 'action' },
+        { key: 'send_email', icon: '✉️', label: 'Send Email', desc: 'Deliver an email to the user', nodeType: 'action' },
+        { key: 'send_sms', icon: '💬', label: 'Send SMS', desc: 'Send a text message', nodeType: 'action' },
+        { key: 'send_push', icon: '📲', label: 'Push Notification', desc: 'Mobile push alert', nodeType: 'action' },
+        { key: 'award_bonus', icon: '🎁', label: 'Award Bonus', desc: 'Credit bonus to user wallet', nodeType: 'action' },
+        { key: 'add_tag', icon: '🏷️', label: 'Add Tag', desc: 'Tag the user profile', nodeType: 'action' },
+        { key: 'update_attribute', icon: '✏️', label: 'Update Attribute', desc: 'Modify a user attribute', nodeType: 'action' },
+        { key: 'webhook', icon: '🔗', label: 'Webhook', desc: 'Call an external HTTP endpoint', nodeType: 'action' },
+        { key: 'add_to_segment', icon: '➕', label: 'Add to Segment', desc: 'Move user into a segment', nodeType: 'action' },
+        { key: 'remove_from_segment', icon: '➖', label: 'Remove from Segment', desc: 'Remove user from a segment', nodeType: 'action' },
+        { key: 'wait_delay', icon: '⏳', label: 'Wait / Delay', desc: 'Pause for a fixed duration', nodeType: 'wait' },
+        { key: 'wait_event', icon: '👀', label: 'Wait for Event', desc: 'Pause until a specific event', nodeType: 'wait' },
     ]
 };
 
@@ -93,10 +93,10 @@ const makeEdge = (sourceId, targetId) => ({
     id: uuidv7(),
     source: sourceId,
     target: targetId,
-    type: 'default',
+    type: 'smoothstep',
     animated: true,
-    style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,4' },
-    markerEnd: 'url(#arrowhead)'
+    style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '5,5' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#38c66c', width: 16, height: 16 }
 });
 
 /* ─────────────────────────────────────────────
@@ -114,12 +114,12 @@ createApp({
         } = useVueFlow();
 
         /* ── Journey meta ──────────────────────────────────────── */
-        const journeyName  = ref('High Roller Re-engagement');
-        const isActive     = ref(false);
-        const isPublished  = ref(false);
-        const publishing   = ref(false);
-        const journeyUuid  = ref(uuidv7());
-        const triggerType  = ref('RAW_EVENTS');
+        const journeyName = ref('');
+        const isActive = ref(false);
+        const isPublished = ref(false);
+        const publishing = ref(false);
+        const journeyUuid = ref(uuidv7());
+        const triggerType = ref('RAW_EVENTS');
         const triggerValue = ref('DEPOSIT_FAILED_HIGH_VALUE');
 
         /* ── SPLIT nodes / edges (fixes invisible-until-drag bug) ── */
@@ -142,9 +142,9 @@ createApp({
         const nodeTypes = { custom: 'custom' };
 
         /* ── Sidebar state ─────────────────────────────────────── */
-        const selectedNode   = ref(null);
-        const sidebarSearch  = ref('');
-        const activeTab      = ref('triggers');
+        const selectedNode = ref(null);
+        const sidebarSearch = ref('');
+        const activeTab = ref('triggers');
 
         // pendingSourceId: set when user clicks +, cleared after sidebar pick
         const pendingSourceId = ref(null);
@@ -157,10 +157,10 @@ createApp({
         );
 
         /* ── Picker modal (kept for "Select Trigger" placeholder click) */
-        const pickerOpen         = ref(false);
-        const pickerSearch       = ref('');
+        const pickerOpen = ref(false);
+        const pickerSearch = ref('');
         const pickerSourceNodeId = ref(null);
-        const pickerInput        = ref(null);
+        const pickerInput = ref(null);
 
         const openPicker = (sourceId = null) => {
             pickerSourceNodeId.value = sourceId;
@@ -193,7 +193,7 @@ createApp({
         });
 
         const popularTriggers = computed(() => filteredCatalog.value.triggers.slice(0, 5));
-        const allTriggers     = computed(() => filteredCatalog.value.triggers.slice(5));
+        const allTriggers = computed(() => filteredCatalog.value.triggers.slice(5));
 
         /* ── Payload preview ───────────────────────────────────── */
         const payloadJson = ref('');
@@ -229,21 +229,21 @@ createApp({
                     tags: [item.nodeType.toUpperCase()]
                 },
                 stats: {
-                    total:   Math.floor(Math.random() * 5000),
+                    total: Math.floor(Math.random() * 5000),
                     success: Math.floor(Math.random() * 4500),
-                    failed:  Math.floor(Math.random() * 500)
+                    failed: Math.floor(Math.random() * 500)
                 }
             }
         });
 
         /* ── Vue Flow events ───────────────────────────────────── */
-        const onNodeClick  = ({ node }) => {
+        const onNodeClick = ({ node }) => {
             // if + was pending, clicking a node cancels the pending state
             pendingSourceId.value = null;
             selectedNode.value = node;
         };
 
-        const onPaneClick  = () => {
+        const onPaneClick = () => {
             pendingSourceId.value = null;
             selectedNode.value = null;
         };
@@ -256,30 +256,65 @@ createApp({
             }];
         });
 
-        /* ── + button: set pending source, NO modal ────────────── */
-        const setPendingSource = (id) => {
-            pendingSourceId.value = id;
-            selectedNode.value = null;   // close properties panel if open
-            openPicker(id); // Open the picker modal when '+' is clicked
+        /* ── + button: add placeholder card directly ────────────── */
+        const setPendingSource = (sourceId) => {
+            const sourceNode = nodes.value.find(n => n.id === sourceId);
+            if (!sourceNode) return;
+
+            const newId = uuidv7();
+            const placeholder = {
+                id: newId,
+                type: 'custom',
+                position: {
+                    x: sourceNode.position.x,
+                    y: sourceNode.position.y + 160
+                },
+                data: {
+                    label: 'Select Action',
+                    desc: 'Pick from the sidebar',
+                    isPlaceholder: true,
+                    nodeType: 'placeholder',
+                    icon: '🖱️'
+                }
+            };
+
+            nodes.value = [...nodes.value, placeholder];
+            edges.value = [...edges.value, makeEdge(sourceId, newId)];
+
+            pendingSourceId.value = newId;
+            selectedNode.value = placeholder; // Focus sidebar on it
+            activeTab.value = 'actions';
         };
 
         /* ── Core: add item from sidebar OR picker modal ───────── */
         const addFromPicker = (item) => {
-            // close modal if it was open
             pickerOpen.value = false;
 
-            // priority: pendingSourceId (from + button) > pickerSourceNodeId (from modal)
-            const sourceId = pendingSourceId.value || pickerSourceNodeId.value;
-            pendingSourceId.value   = null;
+            // priority: pendingSourceId > selected placeholder > pickerSourceNodeId
+            let sourceId = pendingSourceId.value;
+            if (!sourceId && selectedNode.value && selectedNode.value.data?.isPlaceholder) {
+                sourceId = selectedNode.value.id;
+            }
+            if (!sourceId) sourceId = pickerSourceNodeId.value;
+
+            pendingSourceId.value = null;
             pickerSourceNodeId.value = null;
 
-            // ── Case 1: no source → replace root placeholder ────
             if (!sourceId) {
-                const placeholder = nodes.value.find(n => n.data?.isPlaceholder);
-                if (placeholder) {
-                    const newNode = createNewNode(item, placeholder.position);
-                    nodes.value = [newNode];
-                    if (item.nodeType === 'trigger') triggerType.value = item.key;
+                // Case 1: no source → replace root placeholder
+                const rootPlaceholder = nodes.value.find(n => n.data?.isPlaceholder);
+                if (rootPlaceholder) {
+                    if (item.nodeType !== 'trigger') {
+                        showToast('Warning', 'The first step must be a trigger.', 'warning');
+                        return;
+                    }
+                    const newNode = createNewNode(item, rootPlaceholder.position);
+                    newNode.id = rootPlaceholder.id;
+                    nodes.value = nodes.value.map(n => n.id === rootPlaceholder.id ? newNode : n);
+                    triggerType.value = item.key;
+                    selectedNode.value = newNode;
+                } else {
+                    showToast('Info', 'Drag this item to the canvas to place it anywhere.', 'info');
                 }
                 return;
             }
@@ -287,22 +322,34 @@ createApp({
             const sourceNode = nodes.value.find(n => n.id === sourceId);
             if (!sourceNode) return;
 
-            // ── Case 2: source IS the placeholder → replace it ──
-            if (sourceNode.data?.isPlaceholder) {
-                const newNode = createNewNode(item, sourceNode.position);
-                nodes.value = [newNode];
-                edges.value = [];
-                if (item.nodeType === 'trigger') triggerType.value = item.key;
+            // Strict single-journey enforcement: Cannot add a trigger if there is already a real trigger
+            const hasRealTrigger = nodes.value.some(n => !n.data?.isPlaceholder && n.data?.nodeType === 'trigger');
+            if (item.nodeType === 'trigger' && hasRealTrigger) {
+                showToast('Warning', 'A journey can only have one starting trigger.', 'warning');
                 return;
             }
 
-            // ── Case 3: real node → add below + connect ─────────
+            // Case 2: source IS a placeholder → replace it in place (preserves edges)
+            if (sourceNode.data?.isPlaceholder) {
+                const newNode = createNewNode(item, sourceNode.position);
+                newNode.id = sourceNode.id;
+
+                nodes.value = nodes.value.map(n => n.id === sourceNode.id ? newNode : n);
+                if (item.nodeType === 'trigger') triggerType.value = item.key;
+
+                selectedNode.value = newNode;
+                return;
+            }
+
+            // Case 3: real node → add below + connect (fallback)
             const newNode = createNewNode(item, {
                 x: sourceNode.position.x,
                 y: sourceNode.position.y + 160
             });
             nodes.value = [...nodes.value, newNode];
             edges.value = [...edges.value, makeEdge(sourceId, newNode.id)];
+
+            selectedNode.value = newNode;
         };
 
         /* ── Drag from sidebar → canvas ────────────────────────── */
@@ -320,6 +367,11 @@ createApp({
                 nodes.value.length === 1 &&
                 nodes.value[0].data.isPlaceholder &&
                 item.nodeType === 'trigger';
+
+            if (item.nodeType === 'trigger' && !isFirstTrigger) {
+                showToast('Warning', 'A journey can only have one trigger.', 'warning');
+                return;
+            }
 
             let pos = project({ x: event.clientX - 150, y: event.clientY - 50 });
             if (!pos || isNaN(pos.x)) pos = { x: 300, y: 300 };
@@ -344,7 +396,7 @@ createApp({
             const raw = event.dataTransfer.getData('application/vueflow');
             if (!raw) return;
             const item = JSON.parse(raw);
-            const idx  = nodes.value.findIndex(n => n.id === nodeId);
+            const idx = nodes.value.findIndex(n => n.id === nodeId);
             if (idx === -1 || nodes.value[idx].data.key) return;   // only empty nodes
             const updated = { ...nodes.value[idx], data: createNewNode(item, nodes.value[idx].position).data };
             nodes.value = nodes.value.map((n, i) => i === idx ? updated : n);
@@ -369,17 +421,18 @@ createApp({
 
         /* ── Reset ─────────────────────────────────────────────── */
         const resetFlow = () => {
-            if (!confirm('Clear the entire journey and start over?')) return;
             nodes.value = [{
                 id: 'root-placeholder', type: 'custom',
                 position: { x: 300, y: 160 },
                 data: { label: 'Select Trigger', desc: 'Pick from sidebar to start', isPlaceholder: true, nodeType: 'placeholder' }
             }];
-            edges.value      = [];
+            edges.value = [];
             journeyUuid.value = uuidv7();
             selectedNode.value = null;
             pendingSourceId.value = null;
             isPublished.value = false;
+            
+            showToast('Journey Reset', 'The canvas has been cleared.', 'info');
         };
 
         /* ── Build payload ─────────────────────────────────────── */
@@ -388,27 +441,27 @@ createApp({
             const flowEdges = edges.value;
 
             return {
-                uuid:          journeyUuid.value,
-                name:          journeyName.value.trim(),
-                is_active:     isActive.value,
-                trigger_type:  triggerType.value,
+                uuid: journeyUuid.value,
+                name: (journeyName.value || '').trim(),
+                is_active: isActive.value,
+                trigger_type: triggerType.value,
                 trigger_Value: triggerValue.value,
-                start_node:    flowNodes[0]?.data?.uuid || flowNodes[0]?.id || '',
-                created:       new Date().toISOString(),
+                start_node: flowNodes[0]?.data?.uuid || flowNodes[0]?.id || '',
+                created: new Date().toISOString(),
                 nodes: flowNodes.map(n => ({
-                    uuid:             n.data.uuid || n.id,
-                    blueprint_id:     n.data.blueprint_id || uuidv7(),
-                    plugin_key:       n.data.key,
-                    type:             n.data.nodeType === 'trigger' ? 'TRIGGER' : 'ACTION',
-                    wait_event_name:  n.data.wait_event_name || '',
-                    config:           n.data.config || {},
-                    metadata:         n.data.metadata || {},
-                    created:          new Date().toISOString()
+                    uuid: n.data.uuid || n.id,
+                    blueprint_id: n.data.blueprint_id || uuidv7(),
+                    plugin_key: n.data.key,
+                    type: n.data.nodeType === 'trigger' ? 'TRIGGER' : 'ACTION',
+                    wait_event_name: n.data.wait_event_name || '',
+                    config: n.data.config || {},
+                    metadata: n.data.metadata || {},
+                    created: new Date().toISOString()
                 })),
                 edges: flowEdges.map(e => ({
-                    uuid:            e.id || uuidv7(),
-                    source:          flowNodes.find(n => n.id === e.source)?.data?.uuid || e.source,
-                    target:          flowNodes.find(n => n.id === e.target)?.data?.uuid || e.target,
+                    uuid: e.id || uuidv7(),
+                    source: flowNodes.find(n => n.id === e.source)?.data?.uuid || e.source,
+                    target: flowNodes.find(n => n.id === e.target)?.data?.uuid || e.target,
                     priority_number: 0
                 }))
             };
@@ -416,11 +469,13 @@ createApp({
 
         /* ── Publish ───────────────────────────────────────────── */
         const publish = async () => {
+            console.log('[Journey] Publish clicked!'); // Debug log
             if (nodes.value.some(n => n.data?.isPlaceholder)) {
                 showToast('Warning', 'Please select a starting trigger before publishing.', 'warning');
                 return;
             }
-            if (!journeyName.value.trim()) {
+            const name = journeyName.value || '';
+            if (!name.trim()) {
                 showToast('Warning', 'Please enter a journey name.', 'warning');
                 return;
             }
@@ -430,7 +485,7 @@ createApp({
                 payload.is_active = true;
                 await apiRequest(`${API_BASE}/customer-journey`, 'POST', payload);
                 isPublished.value = true;
-                isActive.value    = true;
+                isActive.value = true;
                 showToast('Success', 'Journey published successfully!', 'success');
             } catch (err) {
                 console.error('[Journey] Publish error:', err);
@@ -455,20 +510,20 @@ createApp({
 
         /* ── Toast ─────────────────────────────────────────────── */
         const showToast = (title, message, type = 'info') => {
-            if (window.showToast) {
-                window.showToast(title, message, type);
-                return;
-            }
-            const id    = 'toast-' + Date.now();
+            // Force using local Bootstrap toast to guarantee visibility
+            const id = 'toast-' + Date.now();
             const color = type === 'success' ? 'bg-success'
-                        : type === 'error'   ? 'bg-danger'
-                        : type === 'warning' ? 'bg-warning'
+                : type === 'error' ? 'bg-danger'
+                    : type === 'warning' ? 'bg-warning'
                         : 'bg-info';
             document.body.insertAdjacentHTML('beforeend', `
                 <div id="${id}" class="toast align-items-center text-white ${color} border-0 show position-fixed"
-                     style="bottom:20px;right:20px;z-index:9999;min-width:260px" role="alert">
+                     style="top:24px;left:50%;transform:translateX(-50%);z-index:9999;min-width:300px;box-shadow:0 10px 25px rgba(0,0,0,0.15);border-radius:10px;padding:4px" role="alert">
                     <div class="d-flex">
-                        <div class="toast-body fw-semibold">${title}: ${message}</div>
+                        <div class="toast-body fw-semibold fs-14">
+                            <i class="${type === 'success' ? 'ri-checkbox-circle-fill' : type === 'error' ? 'ri-error-warning-fill' : type === 'warning' ? 'ri-alert-fill' : 'ri-information-fill'} me-2 fs-16 align-middle"></i>
+                            ${title}: <span class="fw-normal opacity-75">${message}</span>
+                        </div>
                         <button type="button" class="btn-close btn-close-white me-2 m-auto"
                                 onclick="document.getElementById('${id}').remove()"></button>
                     </div>

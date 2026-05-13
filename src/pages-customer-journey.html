@@ -27,9 +27,25 @@
 
     <!-- Journey styles -->
     <link rel="stylesheet" href="assets/css/clivax-journey.css">
+
+    <!-- Auth guard: hide body until login confirmed (same pattern as all other pages) -->
+    <style>
+        body {
+            display: none !important;
+        }
+
+        .is-authenticated body {
+            display: block !important;
+        }
+    </style>
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
+        else { document.documentElement.classList.add('is-authenticated'); }
+    </script>
 </head>
 
 @@include("partials/body.html")
+
 
 <div id="layout-wrapper">
     <script>
@@ -59,7 +75,7 @@
                     <!-- <div class="vr mx-1" style="height:24px"></div> -->
 
                     <div>
-                        <input class="journey-name-input" v-model="journeyName" placeholder="Untitled Journey" />
+                        <input class="journey-name-input" v-model="journeyName" placeholder="Add Journey Name" />
                         <div class="d-flex align-items-center gap-2 mt-1">
                             <!--  <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
                                 {{ isPublished ? 'Live' : 'Draft' }}
@@ -102,18 +118,9 @@
                         <vue-flow v-model:nodes="nodes" v-model:edges="edges" :node-types="nodeTypes"
                             @node-click="onNodeClick" @pane-click="onPaneClick" :default-viewport="{ zoom: 1 }"
                             :min-zoom="0.2" :max-zoom="4"
-                            :default-edge-options="{ animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' }, markerEnd: 'url(#arrowhead)' }"
+                            :default-edge-options="{ type: 'smoothstep', animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '5,5' } }"
                             @drop="onDrop" @dragover.prevent>
 
-                            <!-- ── SVG Markers for Arrows ── -->
-                            <svg style="position: absolute; width: 0; height: 0;">
-                                <defs>
-                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5"
-                                        orient="auto">
-                                        <polygon points="0 0, 10 3.5, 0 7" fill="#38c66c" />
-                                    </marker>
-                                </defs>
-                            </svg>
 
                             <!-- ── Custom node slot ── -->
                             <template #node-custom="{ data, selected, id }">
@@ -308,19 +315,7 @@
                                 <i class="ri-arrow-left-line me-1"></i> Back to steps
                             </button>
 
-                            <!-- IDs -->
-                            <div class="cj-props-group">
-                                <label class="cj-props-label">UUID</label>
-                                <div class="cj-props-uuid">{{ selectedNode.data.uuid || selectedNode.id }}</div>
-                            </div>
-                            <div class="cj-props-group">
-                                <label class="cj-props-label">Blueprint ID</label>
-                                <div class="cj-props-uuid">{{ selectedNode.data.blueprint_id || '—' }}</div>
-                            </div>
-                            <div class="cj-props-group">
-                                <label class="cj-props-label">Plugin Key</label>
-                                <div class="cj-props-uuid">{{ selectedNode.data.key }}</div>
-                            </div>
+                            <!-- Removed complex technical IDs for cleaner user experience -->
 
                             <div class="cj-sec-sep">Display</div>
 

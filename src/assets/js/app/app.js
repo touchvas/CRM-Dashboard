@@ -11,32 +11,37 @@
 // ─── Toast Notification Helper (Global) ─────────────────────────────────────────────
 // Defined at the very top to ensure availability for other scripts
 window.showToast = function (title, message, type = 'info') {
-    if (typeof toastr === 'undefined') {
-        console.warn("Toastr is not loaded. Falling back to console log.");
-        console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
-        return;
-    }
+    const id = 'toast-' + Date.now() + Math.floor(Math.random() * 1000);
+    const color = type === 'success' ? 'bg-success'
+        : type === 'error' || type === 'danger' ? 'bg-danger'
+            : type === 'warning' ? 'bg-warning'
+                : 'bg-primary';
 
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": true,
-        "progressBar": true,
-        "positionClass": "toast-top-center",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
+    // Remove old toasts to prevent stacking off-screen (since it's top-center)
+    const existingToasts = document.querySelectorAll('.global-toast');
+    existingToasts.forEach(t => t.remove());
 
-    const method = type === 'error' || type === 'danger' ? 'error' : (type === 'success' || type === 'primary' ? 'success' : (type === 'warning' ? 'warning' : 'info'));
-    toastr[method](message, title);
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="${id}" class="toast global-toast align-items-center text-white ${color} border-0 show position-fixed"
+             style="top:24px;left:50%;transform:translateX(-50%);z-index:9999;min-width:300px;box-shadow:0 10px 25px rgba(0,0,0,0.15);border-radius:10px;padding:4px" role="alert">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold fs-14">
+                    <i class="${type === 'success' ? 'ri-checkbox-circle-fill' : type === 'error' || type === 'danger' ? 'ri-error-warning-fill' : type === 'warning' ? 'ri-alert-fill' : 'ri-information-fill'} me-2 fs-16 align-middle"></i>
+                    ${title}: <span class="fw-normal opacity-75">${message}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        onclick="document.getElementById('${id}').remove()"></button>
+            </div>
+        </div>`);
+
+    setTimeout(() => {
+        const t = document.getElementById(id);
+        if (t) {
+            t.style.opacity = '0';
+            t.style.transition = 'opacity 0.4s ease';
+            setTimeout(() => t.remove(), 400);
+        }
+    }, 4000);
 };
 
 document.addEventListener('DOMContentLoaded', function () {
