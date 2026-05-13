@@ -44,7 +44,7 @@ a {
 }
 
 @each $color, $value in $theme-colors {
-  .btn-#{$color} {
+  /* .btn-#{$color} {
     color: $white !important;
 
     &:hover,
@@ -54,7 +54,7 @@ a {
     &.disabled {
       color: $white !important;
     }
-  }
+  } */
 
   .btn-outline-#{$color} {
 

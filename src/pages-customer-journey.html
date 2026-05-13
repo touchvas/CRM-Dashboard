@@ -61,7 +61,7 @@
                     <div>
                         <input class="journey-name-input" v-model="journeyName" placeholder="Untitled Journey" />
                         <div class="d-flex align-items-center gap-2 mt-1">
-                           <!--  <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
+                            <!--  <span :class="['cj-badge-status', isPublished ? 'cj-badge-live' : 'cj-badge-draft']">
                                 {{ isPublished ? 'Live' : 'Draft' }}
                             </span>
                             <span class="text-muted" style="font-size:11px">
@@ -70,10 +70,10 @@
                         </div>
                     </div>
 
-                    <div class="cj-toggle-wrap ms-2">
+                    <!-- <div class="cj-toggle-wrap ms-2">
                         <span class="text-muted" style="font-size:12px">Active</span>
                         <div :class="['cj-toggle', isActive ? 'on' : '']" @click="isActive = !isActive"></div>
-                    </div>
+                    </div> -->
 
                     <div class="d-flex gap-2 ms-auto">
                         <!-- <button class="btn btn-light border fw-semibold" @click="previewPayload">
@@ -99,16 +99,17 @@
 
                     <!-- ── CANVAS ─────────────────────────────── -->
                     <div class="cj-canvas">
-                        <vue-flow v-model:nodes="nodes"
-    v-model:edges="edges" :node-types="nodeTypes" @node-click="onNodeClick"
-                            @pane-click="onPaneClick" :default-viewport="{ zoom: 1 }" :min-zoom="0.2" :max-zoom="4"
+                        <vue-flow v-model:nodes="nodes" v-model:edges="edges" :node-types="nodeTypes"
+                            @node-click="onNodeClick" @pane-click="onPaneClick" :default-viewport="{ zoom: 1 }"
+                            :min-zoom="0.2" :max-zoom="4"
                             :default-edge-options="{ animated: true, style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' }, markerEnd: 'url(#arrowhead)' }"
                             @drop="onDrop" @dragover.prevent>
 
                             <!-- ── SVG Markers for Arrows ── -->
                             <svg style="position: absolute; width: 0; height: 0;">
                                 <defs>
-                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5"
+                                        orient="auto">
                                         <polygon points="0 0, 10 3.5, 0 7" fill="#38c66c" />
                                     </marker>
                                 </defs>
@@ -116,28 +117,26 @@
 
                             <!-- ── Custom node slot ── -->
                             <template #node-custom="{ data, selected, id }">
-                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']"
-                                     :id="'node-' + id"
-                                     :data-id="id"
-                                     :data-has-key="!!data.key"
-                                     @dragover.prevent
-                                     @drop.stop="onDropOnNode($event, id)">
+                                <div :class="['vue-flow__node-custom', selected ? 'selected' : '']" :id="'node-' + id"
+                                    :data-id="id" :data-has-key="!!data.key" @dragover.prevent
+                                    @drop.stop="onDropOnNode($event, id)">
 
                                     <!-- Accent stripe (color coded by type) -->
-                                    <div :class="['node-accent-stripe', data.nodeType]"></div>
+                                    <div :class="[ data.nodeType]"></div>
 
                                     <!-- ── CARD CONTENT ── -->
                                     <div v-if="data.isPlaceholder" class="node-placeholder-wrap">
-                                        <p class="node-placeholder-text text-center w-100" @click.stop="openPicker(null)" style="cursor:pointer">
+                                        <p class="node-placeholder-text text-center w-100"
+                                            @click.stop="openPicker(null)" style="cursor:pointer">
                                             Select Trigger
                                         </p>
                                     </div>
 
                                     <div v-else>
                                         <!-- "Trigger" label above the card -->
-                                        <div class="node-start-indicator" v-if="data.nodeType === 'trigger'">
+                                        <!--  <div class="node-start-indicator" v-if="data.nodeType === 'trigger'">
                                             Trigger
-                                        </div>
+                                        </div> -->
 
                                         <div class="node-inner">
                                             <!-- Type badge pill -->
@@ -154,14 +153,15 @@
                                                     <h6 class="node-title">{{ data.label }}</h6>
                                                     <p class="node-desc">{{ data.metadata?.description || data.desc }}
                                                     </p>
-                                                    <span class="node-plugin-key">{{ data.key }}</span>
+                                                    <!--  <span class="node-plugin-key">{{ data.key }}</span> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- + button below node to add next step (shown on all nodes) -->
-                                    <div class="node-add-btn" @click.stop="setPendingSource(id)" title="Add next step" style="bottom: -14px; z-index: 20;">
+                                    <div class="node-add-btn" @click.stop="setPendingSource(id)" title="Add next step"
+                                        style="bottom: -14px; z-index: 20;">
                                         +
                                     </div>
 
@@ -409,7 +409,8 @@
 
                         <div class="cj-picker-search">
                             <i class="ri-search-line"></i>
-                            <input v-model="pickerSearch" ref="pickerInput" placeholder="Search triggers and actions…" />
+                            <input v-model="pickerSearch" ref="pickerInput"
+                                placeholder="Search triggers and actions…" />
                         </div>
 
                         <div class="cj-picker-list">
@@ -418,7 +419,8 @@
                                 <div class="cj-picker-sec">Triggers</div>
                                 <div v-for="item in filteredPicker.triggers" :key="item.key" class="cj-picker-item"
                                     @click="addFromPicker(item)">
-                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
+                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{
+                                        item.icon }}
                                     </div>
                                     <div class="meta">
                                         <div class="name">{{ item.label }}</div>
@@ -431,7 +433,8 @@
                                 <div class="cj-picker-sec mt-2">Actions &amp; Logic</div>
                                 <div v-for="item in filteredPicker.actions" :key="item.key" class="cj-picker-item"
                                     @click="addFromPicker(item)">
-                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{ item.icon }}
+                                    <div :class="['cj-catalog-icon', item.nodeType]" style="width:36px;height:36px">{{
+                                        item.icon }}
                                     </div>
                                     <div class="meta">
                                         <div class="name">{{ item.label }}</div>
