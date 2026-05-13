@@ -442,6 +442,17 @@ createApp({
 
         const submitToApi = () => publish();
 
+        const journeys = ref([]);
+        const listJourneys = async () => {
+            try {
+                const response = await apiRequest(`${API_BASE}/customer-journey`, 'GET');
+                console.log('Journeys:', response);
+                journeys.value = response;
+            } catch (err) {
+                console.error('Error listing journeys:', err);
+            }
+        };
+
         /* ── Toast ─────────────────────────────────────────────── */
         const showToast = (title, message, type = 'info') => {
             if (window.showToast) {
