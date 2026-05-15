@@ -13,16 +13,45 @@
                 const fetchSegments = async () => {
                     isLoading.value = true;
                     try {
-                        let data = null;
-                        if (window.fetchSegmentsDummy) {
-                            data = await window.fetchSegmentsDummy();
-                        } else if (window.fetchSegments) {
-                            const res = await window.fetchSegments(1, 100);
-                            data = res?.results || res?.data || res;
+                        // 1. Fetch Dummy Data
+                        const dummyRes = await (window.fetchSegmentsDummy ? window.fetchSegmentsDummy() : Promise.resolve([]));
+                        
+                        // 2. Fetch API Data
+                        let apiRes = [];
+                        if (window.fetchSegments) {
+                            try {
+                                const apiData = await window.fetchSegments(1, 100);
+                                apiRes = apiData?.results || apiData?.data || (Array.isArray(apiData) ? apiData : []);
+                            } catch (apiErr) {
+                                console.error("[SavedSegments] API fetch error:", apiErr);
+                            }
                         }
-                        segments.value = data || [];
+
+                        // 3. Combine and Map
+                        const combined = [...apiRes, ...dummyRes];
+                        const colors = ['#4e7adf', '#38c66c', '#ffd166', '#f43f5e', '#a78bfa', '#fb923c'];
+                        
+                        const mapped = await Promise.all(combined.map(async (s, i) => {
+                            let players = [];
+                            if (window.getPlayersForSegment) {
+                                players = await window.getPlayersForSegment(s);
+                            }
+                            return {
+                                ...s,
+                                id: s.id || s._id || ('api_' + i),
+                                name: s.name || 'Unnamed Segment',
+                                color: s.color || colors[i % colors.length],
+                                is_favorite: s.is_favorite || false,
+                                total_players: s.total_players || players.length,
+                                total_deposits: s.total_deposits || players.reduce((sum, p) => sum + (p.lifetime_deposits || 0), 0),
+                                total_bets: s.total_bets || players.reduce((sum, p) => sum + (p.lifetime_bets || 0), 0),
+                                total_withdrawals: s.total_withdrawals || players.reduce((sum, p) => sum + (p.lifetime_withdrawals || 0), 0)
+                            };
+                        }));
+
+                        segments.value = mapped;
                     } catch (e) {
-                        console.error("[SavedSegments] Fetch error:", e);
+                        console.error("[SavedSegments] Critical fetch error:", e);
                     } finally {
                         isLoading.value = false;
                     }
@@ -48,6 +77,7 @@
                     toggleFavorite: async (seg) => {
                         if (window.toggleSegmentFavoriteDummy) {
                             await window.toggleSegmentFavoriteDummy(seg.id);
+                            // Optimistic UI update or re-fetch
                             seg.is_favorite = !seg.is_favorite;
                         }
                     },
