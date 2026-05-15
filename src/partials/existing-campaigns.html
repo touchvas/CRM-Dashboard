@@ -1,116 +1,165 @@
-<div class="page-title-right">
-    <ol class="breadcrumb m-0 text-sm">
-        <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
-        <li class="breadcrumb-item active">Existing Campaigns</li>
-    </ol>
-</div>
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
-    <h3 class="mb-0">Existing Campaigns</h3>
-    <a href="pages-starter.html" class="btn btn-primary w-sm-auto"><i class="mdi mdi-plus me-1"></i>Create Campaign</a>
-</div>
+<div id="existingCampaignsApp" v-cloak>
+    <div class="page-title-right">
+        <ol class="breadcrumb m-0 text-sm">
+            <li class="breadcrumb-item"><a href="javascript: void(0);">Campaigns</a></li>
+            <li class="breadcrumb-item active">Existing Campaigns</li>
+        </ol>
+    </div>
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
+        <h3 class="mb-0">Existing Campaigns</h3>
+        <a href="pages-starter.html" class="btn btn-primary w-sm-auto"><i class="mdi mdi-plus me-1"></i>Create Campaign</a>
+    </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="row g-3 mb-3">
-            <div class="col-sm-6 col-md-4">
-                <input type="text" class="form-control" placeholder="Search campaigns...">
-            </div>
-            <div class="col-sm-6 col-md-8 text-sm-end">
-                <div class="btn-group">
-                    <button class="btn btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Status: All
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">All</a></li>
-                        <li><a class="dropdown-item" href="#">Active</a></li>
-                        <li><a class="dropdown-item" href="#">Draft</a></li>
-                        <li><a class="dropdown-item" href="#">Completed</a></li>
-                    </ul>
+    <div class="card">
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6 col-md-4">
+                    <input type="text" class="form-control" v-model="search" placeholder="Search campaigns...">
+                </div>
+                <div class="col-sm-6 col-md-8 text-sm-end">
+                    <div class="btn-group">
+                        <button class="btn btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Status: {{ statusFilter }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="javascript:void(0);" @click="statusFilter = 'All'">All</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);" @click="statusFilter = 'Active'">Active</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);" @click="statusFilter = 'Draft'">Draft</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0);" @click="statusFilter = 'Completed'">Completed</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col" style="width: 40%;">Campaign Name</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col" class="text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span
-                                    class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-16 me-2"
-                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="mdi mdi-rocket-launch"></i>
-                                </span>
-                                <div>
-                                    <h6 class="mb-0">Summer Sale 2026</h6>
-                                    <small class="text-muted">Target: All Users</small>
+            <div class="table-responsive">
+                <div v-if="loading" class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Loading campaigns...</p>
+                </div>
+                <table v-else class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" style="width: 40%;">Campaign Name</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Cron / Schedule</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in filteredSchedules" :key="item.id">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="avatar-title rounded-circle bg-primary-subtle text-primary font-size-16 me-2"
+                                        style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="mdi mdi-rocket-launch"></i>
+                                    </span>
+                                    <div>
+                                        <h6 class="mb-0">{{ item.name }}</h6>
+                                        <small class="text-muted">Target: {{ item.target_type }} ({{ item.target_value }})</small>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-success-subtle text-success">Active</span></td>
-                        <td>Push Notification</td>
-                        <td>Jan 15, 2026</td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span
-                                    class="avatar-title rounded-circle bg-warning-subtle text-warning font-size-16 me-2"
-                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="mdi mdi-file-document-edit"></i>
+                            </td>
+                            <td>
+                                <span :class="['badge', item.is_active ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary']">
+                                    {{ item.is_active ? 'Active' : 'Inactive' }}
                                 </span>
-                                <div>
-                                    <h6 class="mb-0">Draft: Re-engagement</h6>
-                                    <small class="text-muted">Target: Dormant Users</small>
+                            </td>
+                            <td><code class="text-primary">{{ item.cron_expression }}</code></td>
+                            <td>{{ new Date(item.created_at || Date.now()).toLocaleDateString() }}</td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-light border-0" @click="activateSchedule(item)" v-if="!item.is_active" title="Activate">
+                                        <i class="ri-play-circle-line text-success"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border-0" @click="deactivateSchedule(item)" v-if="item.is_active" title="Deactivate">
+                                        <i class="ri-stop-circle-line text-warning"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light border-0" @click="deleteSchedule(item)" title="Delete">
+                                        <i class="ri-delete-bin-line text-danger"></i>
+                                    </button>
                                 </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-warning-subtle text-warning">Draft</span></td>
-                        <td>Email</td>
-                        <td>Jan 18, 2026</td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span
-                                    class="avatar-title rounded-circle bg-secondary-subtle text-secondary font-size-16 me-2"
-                                    style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="mdi mdi-check-all"></i>
-                                </span>
-                                <div>
-                                    <h6 class="mb-0">Welcome Message</h6>
-                                    <small class="text-muted">Target: New Signups</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-secondary-subtle text-secondary">Completed</span></td>
-                        <td>In-App</td>
-                        <td>Dec 20, 2025</td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-pencil"></i></button>
-                            <button class="btn btn-sm btn-light"><i class="mdi mdi-delete"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                        <tr v-if="filteredSchedules.length === 0">
+                            <td colspan="5" class="text-center p-4 text-muted">No campaigns found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Vue === 'undefined') return;
+    
+    Vue.createApp({
+        setup() {
+            const schedules = Vue.ref([]);
+            const loading = Vue.ref(true);
+            const search = Vue.ref('');
+            const statusFilter = Vue.ref('All');
+
+            const fetchSchedules = async () => {
+                loading.value = true;
+                try {
+                    const res = await window.fetchNotificationSchedules(1, 100);
+                    schedules.value = res?.results || res?.data || (Array.isArray(res) ? res : []);
+                } catch (err) {
+                    console.error('Fetch error:', err);
+                    window.showToast('Error', 'Failed to load campaigns', 'error');
+                } finally {
+                    loading.value = false;
+                }
+            };
+
+            const filteredSchedules = Vue.computed(() => {
+                return schedules.value.filter(s => {
+                    const matchSearch = s.name.toLowerCase().includes(search.value.toLowerCase());
+                    const matchStatus = statusFilter.value === 'All' || 
+                                      (statusFilter.value === 'Active' && s.is_active) ||
+                                      (statusFilter.value === 'Inactive' && !s.is_active);
+                    return matchSearch && matchStatus;
+                });
+            });
+
+            const activateSchedule = async (item) => {
+                try {
+                    await window.activateNotificationSchedule(item.id);
+                    window.showToast('Success', 'Campaign activated', 'success');
+                    fetchSchedules();
+                } catch (err) {
+                    window.showToast('Error', 'Activation failed', 'error');
+                }
+            };
+
+            const deactivateSchedule = async (item) => {
+                try {
+                    await window.deactivateNotificationSchedule(item.id);
+                    window.showToast('Success', 'Campaign deactivated', 'success');
+                    fetchSchedules();
+                } catch (err) {
+                    window.showToast('Error', 'Deactivation failed', 'error');
+                }
+            };
+
+            const deleteSchedule = async (item) => {
+                if (!confirm(`Are you sure you want to delete "${item.name}"?`)) return;
+                try {
+                    await window.deleteNotificationSchedule(item.id);
+                    window.showToast('Success', 'Campaign deleted', 'success');
+                    fetchSchedules();
+                } catch (err) {
+                    window.showToast('Error', 'Delete failed', 'error');
+                }
+            };
+
+            Vue.onMounted(fetchSchedules);
+
+            return { schedules, loading, search, statusFilter, filteredSchedules, activateSchedule, deactivateSchedule, deleteSchedule };
+        }
+    }).mount('#existingCampaignsApp');
+});
+</script>

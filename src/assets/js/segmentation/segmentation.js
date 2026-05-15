@@ -114,6 +114,22 @@ window.fetchSegmentById = (id) =>
 window.executeAnalyticsQuery = (data) =>
     apiRequest(`${SEGMENTATION_BASE_URL}/analytics/query`, 'POST', data);
 
+// Notification Schedules API helpers
+window.fetchNotificationSchedules = (page = 1, per_page = 20) =>
+    apiRequest(`${CRM_API_BASE}/notifications/schedules?page=${page}&per_page=${per_page}`);
+
+window.createNotificationSchedule = (data) =>
+    apiRequest(`${CRM_API_BASE}/notifications/schedules`, 'POST', data);
+
+window.deleteNotificationSchedule = (id) =>
+    apiRequest(`${CRM_API_BASE}/notifications/schedules/${id}`, 'DELETE');
+
+window.deactivateNotificationSchedule = (id) =>
+    apiRequest(`${CRM_API_BASE}/notifications/schedules/${id}/deactivate`, 'PATCH');
+
+window.activateNotificationSchedule = (id) =>
+    apiRequest(`${CRM_API_BASE}/notifications/schedules/${id}/activate`, 'PATCH');
+
 /* ── Shared Formatting Helpers ────────────────────────────────── */
 const fmtShort = (n) => {
     if (!n && n !== 0) return '0';
@@ -538,78 +554,46 @@ if (document.getElementById('segmentViewApp')) {
                     dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + "%" }
                 });
 
-                renderChart("#playerStatusChart", {
-                    series: visual.engagement.series,
-                    chart: { type: 'donut', height: 350 },
-                    labels: visual.engagement.labels,
-                    colors: visual.engagement.colors,
-                    legend: { show: true, position: 'right', verticalAlign: 'middle', fontSize: '12px' },
-                    plotOptions: { pie: { startAngle: -90, endAngle: 90, offsetY: 40, donut: { size: '75%', labels: { show: true, total: { show: true, label: 'Active' } } } } },
-                    grid: { padding: { bottom: -80, right: 10 } },
-                    dataLabels: { enabled: true, formatter: (val) => val.toFixed(1) + "%" }
+                // Player Activity Profile (Simple Stacked Bar Chart)
+                renderChart("#playerActivityStacked", {
+                    series: [
+                        { name: 'Active', data: [44, 55, 41, 67, 22, 43] },
+                        { name: 'Inactive', data: [13, 23, 20, 8, 13, 27] },
+                        { name: 'Churn Risk', data: [11, 17, 15, 15, 21, 14] }
+                    ],
+                    chart: { type: 'bar', height: 350, stacked: true, toolbar: { show: false }, zoom: { enabled: true } },
+                    responsive: [{ breakpoint: 480, options: { legend: { position: 'bottom', offsetX: -10, offsetY: 0 } } }],
+                    plotOptions: { bar: { horizontal: false, borderRadius: 10, columnWidth: '45%' } },
+                    xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+                    legend: { position: 'right', offsetY: 40 },
+                    fill: { opacity: 1 },
+                    colors: ['#5b73e8', '#f1b44c', '#ef6767']
                 });
 
-                const donutOptions = (labels, colors, height = 350) => ({
-                    chart: { type: 'donut', height: height },
-                    labels: labels,
-                    colors: colors,
-                    legend: { show: true, position: 'right', fontSize: '12px' },
-                    plotOptions: { pie: { donut: { size: '70%' } } },
-                    dataLabels: { enabled: true, formatter: (val) => val.toFixed(0) + "%" }
-                });
-
-                let providerSeries = visual.casino_providers.series;
-                let providerLabels = visual.casino_providers.labels;
-                let gameSeries = visual.casino_games.series;
-                let gameLabels = visual.casino_games.labels;
-
-                if (casinoComparison.value && casinoComparison.value.length > 0) {
-                    const data = casinoComparison.value[0]?.data || [];
-                    const providers = {};
-                    data.forEach(d => {
-                        providers[d.provider_name] = (providers[d.provider_name] || 0) + (d.total_stake || 0);
-                    });
-                    const sortedProviders = Object.entries(providers).sort((a, b) => b[1] - a[1]).slice(0, 5);
-                    providerLabels = sortedProviders.map(p => p[0]);
-                    providerSeries = sortedProviders.map(p => p[1]);
-                    const sortedGames = [...data].sort((a, b) => b.total_stake - a.total_stake).slice(0, 5);
-                    gameLabels = sortedGames.map(g => g.game_name);
-                    gameSeries = sortedGames.map(g => g.total_stake);
-                }
-
-                renderChart("#casinoGamesChart", {
-                    ...donutOptions(gameLabels, visual.casino_games.colors),
-                    series: gameSeries
-                });
-
-                renderChart("#casinoBetsChart", {
-                    ...donutOptions(providerLabels, visual.casino_providers.colors),
-                    series: providerSeries
-                });
-
-                renderChart("#deviceBreakdownChart", {
-                    series: visual.device_breakdown.series,
-                    chart: { type: 'radialBar', height: 250 },
-                    plotOptions: {
-                        radialBar: {
-                            dataLabels: {
-                                name: { fontSize: '22px' },
-                                value: { fontSize: '16px' },
-                                total: { show: true, label: 'Mobile', formatter: () => '72%' }
-                            }
+                // Betting Velocity Heatmap (Expanded Height)
+                renderChart("#bettingVelocityHeatmap", {
+                    series: [
+                        { name: 'Mon', data: [12, 45, 31, 47, 21, 10, 5, 8, 12, 34, 56, 78] },
+                        { name: 'Tue', data: [23, 12, 45, 12, 56, 34, 12, 45, 67, 89, 23, 45] },
+                        { name: 'Wed', data: [45, 67, 12, 34, 56, 78, 12, 34, 56, 78, 90, 12] },
+                        { name: 'Thu', data: [12, 34, 56, 78, 90, 12, 34, 56, 78, 90, 12, 34] },
+                        { name: 'Fri', data: [34, 56, 78, 90, 12, 34, 56, 78, 90, 12, 34, 56] },
+                        { name: 'Sat', data: [90, 95, 99, 88, 77, 66, 55, 44, 33, 22, 11, 5] },
+                        { name: 'Sun', data: [80, 85, 90, 95, 99, 100, 95, 90, 85, 80, 75, 70] }
+                    ],
+                    chart: { height: 500, type: 'heatmap', toolbar: { show: false } },
+                    dataLabels: { enabled: false },
+                    colors: ["#5b73e8"],
+                    xaxis: {
+                        type: 'category',
+                        categories: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+                        labels: {
+                            rotate: -45,
+                            rotateAlways: true,
+                            style: { fontSize: '11px' }
                         }
                     },
-                    labels: visual.device_breakdown.labels,
-                    colors: visual.device_breakdown.colors,
-                });
-
-                renderChart("#regionalDistributionChart", {
-                    series: [{ data: visual.regional_distribution.series }],
-                    chart: { type: 'bar', height: 250, toolbar: { show: false } },
-                    plotOptions: { bar: { horizontal: true, columnWidth: '55%', borderRadius: 4 } },
-                    dataLabels: { enabled: false },
-                    colors: ['#5b73e8'],
-                    xaxis: { categories: visual.regional_distribution.labels },
+                    title: { text: 'Peak Hours (UTC)', align: 'left', style: { fontSize: '13px', fontWeight: 600 } }
                 });
 
                 renderChart("#growthTrendChart", {
@@ -771,6 +755,46 @@ if (document.getElementById('segmentViewApp')) {
                         const seg = window.__segmentData__;
                         showToast('Success', `Gifts awarded to ${seg?.total_players || seg?.players?.length || 0} players in "${seg?.name || 'Current Segment'}"`, 'success');
                     }, 1500);
+                });
+
+                $('#saveScheduleBtn').on('click', async function () {
+                    const btn = $(this);
+                    const name = $('#schedCampaignName').val().trim();
+                    const templateId = $('#schedTemplateSelect').val();
+                    const cron = $('#schedCron').val().trim();
+                    const tz = $('#schedTimezone').val();
+                    const seg = window.__segmentData__;
+
+                    if (!name || !templateId || !cron) {
+                        window.showToast('Warning', 'Please fill in all required fields.', 'warning');
+                        return;
+                    }
+
+                    const payload = {
+                        name: name,
+                        template_id: templateId,
+                        cron_expression: cron,
+                        timezone: tz,
+                        target_type: 'segment',
+                        target_value: String(seg?.id || ''),
+                        end_date: null
+                    };
+
+                    const oldText = btn.html();
+                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Saving...');
+
+                    try {
+                        await window.createNotificationSchedule(payload);
+                        window.showToast('Success', 'Campaign schedule created successfully', 'success');
+                        $('#scheduleCampaignModal').modal('hide');
+                        $('#schedCampaignName').val('');
+                        $('#schedCron').val('');
+                    } catch (err) {
+                        console.error("[Schedule] Save error:", err);
+                        window.showToast('Error', 'Failed to save schedule: ' + err.message, 'error');
+                    } finally {
+                        btn.prop('disabled', false).html(oldText);
+                    }
                 });
             };
 

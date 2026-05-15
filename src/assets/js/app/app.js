@@ -51,6 +51,28 @@ document.addEventListener('DOMContentLoaded', function () {
     if (typeof $ !== 'undefined' && $('#side-menu').length) {
         $('#side-menu').metisMenu();
         console.log("MetisMenu initialized on #side-menu");
+
+        // ── Highlight Active Menu Item ──
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        $('#side-menu a').each(function () {
+            const page = $(this).attr('href');
+            if (!page || page === 'javascript: void(0);') return;
+
+            let isMatch = (page === currentPath);
+            
+            // Handle sub-pages (e.g. creating a segment should highlight the main Segmentation menu)
+            if (currentPath === 'pages-segmentation.html' && page === 'pages-saved-segments.html') isMatch = true;
+            if (currentPath === 'pages-segment-details.html' && page === 'pages-saved-segments.html') isMatch = true;
+            if (currentPath === 'pages-customer-journey.html' && page === 'pages-customer-journeys-list.html') isMatch = true;
+
+            if (isMatch) {
+                $(this).addClass('active');
+                $(this).parent().addClass('mm-active');
+                $(this).parent().parent().addClass('mm-show');
+                $(this).parent().parent().prev().addClass('mm-active'); // For parent has-arrow
+                $(this).parent().parent().parent().addClass('mm-active');
+            }
+        });
     } else {
         console.warn("MetisMenu or #side-menu not found.");
     }
@@ -318,4 +340,29 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modalEl) new bootstrap.Modal(modalEl).show();
     };
 
+    window.openScheduleModal = async function () {
+        console.log("[Schedule Modal] Opening modal and fetching templates...");
+        const modalEl = document.getElementById('scheduleCampaignModal');
+        if (modalEl) new bootstrap.Modal(modalEl).show();
+
+        const templateSelect = document.getElementById('schedTemplateSelect');
+        if (!templateSelect) return;
+
+        templateSelect.innerHTML = '<option value="">-- Select Template --</option>';
+
+        try {
+            const templatesData = await window.fetchNotificationTemplates(1, 100);
+            const templates = templatesData?.results || templatesData?.data || (Array.isArray(templatesData) ? templatesData : []);
+
+            templates.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.name;
+                templateSelect.appendChild(opt);
+            });
+        } catch (error) {
+            console.error("Failed to fetch templates for schedule:", error);
+            if (window.showToast) window.showToast('Error', 'Failed to load templates.', 'error');
+        }
+    };
 });

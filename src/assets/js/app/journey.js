@@ -93,10 +93,10 @@ const makeEdge = (sourceId, targetId) => ({
     id: uuidv7(),
     source: sourceId,
     target: targetId,
-    type: 'smoothstep',
-    animated: true,
-    style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '5,5' },
-    markerEnd: { type: MarkerType.ArrowClosed, color: '#38c66c', width: 16, height: 16 }
+    type: 'straight',
+    animated: false,
+    style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '8,6' },
+    markerEnd: { type: MarkerType.ArrowClosed, color: '#38c66c', width: 20, height: 20 }
 });
 
 /* ─────────────────────────────────────────────
@@ -122,6 +122,10 @@ createApp({
         const triggerType = ref('RAW_EVENTS');
         const triggerValue = ref('DEPOSIT_FAILED_HIGH_VALUE');
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        const journeyIdParam = urlParams.get('id');
+
         /* ── SPLIT nodes / edges (fixes invisible-until-drag bug) ── */
         const nodes = ref([
             {
@@ -138,6 +142,77 @@ createApp({
         ]);
 
         const edges = ref([]);   // ← always separate, never mixed into nodes
+
+        if (mode === 'edit' && journeyIdParam === '1') {
+            journeyName.value = 'Welcome Series for New Players';
+            isPublished.value = true;
+            isActive.value = true;
+            triggerType.value = 'SIGN_IN';
+            
+            const node1Id = uuidv7();
+            const node2Id = uuidv7();
+            const node3Id = uuidv7();
+
+            nodes.value = [
+                {
+                    id: node1Id,
+                    type: 'custom',
+                    position: { x: 300, y: 160 },
+                    data: {
+                        label: 'Sign In',
+                        desc: 'User authentication event',
+                        key: 'SIGN_IN',
+                        nodeType: 'trigger',
+                        icon: '🔑',
+                        uuid: node1Id,
+                        metadata: { description: 'User authentication event', tags: ['TRIGGER'] },
+                        config: {},
+                        stats: { total: 14204, success: 14204, failed: 0 }
+                    }
+                },
+                {
+                    id: node2Id,
+                    type: 'custom',
+                    position: { x: 300, y: 320 },
+                    data: {
+                        label: 'Wait / Delay',
+                        desc: 'Pause for a fixed duration',
+                        key: 'wait_delay',
+                        nodeType: 'wait',
+                        icon: '⏳',
+                        uuid: node2Id,
+                        metadata: { description: 'Pause for a fixed duration', tags: ['WAIT'] },
+                        config: {},
+                        stats: { total: 14204, success: 14204, failed: 0 }
+                    }
+                },
+                {
+                    id: node3Id,
+                    type: 'custom',
+                    position: { x: 300, y: 480 },
+                    data: {
+                        label: 'Send Email',
+                        desc: 'Deliver an email to the user',
+                        key: 'send_email',
+                        nodeType: 'action',
+                        icon: '✉️',
+                        uuid: node3Id,
+                        metadata: { description: 'Deliver an email to the user', tags: ['ACTION'] },
+                        config: {},
+                        stats: { total: 14204, success: 11647, failed: 2557 }
+                    }
+                }
+            ];
+
+            edges.value = [
+                makeEdge(node1Id, node2Id),
+                makeEdge(node2Id, node3Id)
+            ];
+            
+            setTimeout(() => {
+                 fitView({ padding: 0.2 });
+            }, 300);
+        }
 
         const nodeTypes = { custom: 'custom' };
 
@@ -489,7 +564,17 @@ createApp({
                 showToast('Success', 'Journey published successfully!', 'success');
             } catch (err) {
                 console.error('[Journey] Publish error:', err);
-                showToast('Error', err.message, 'error');
+                let userFriendlyMsg = 'Failed to publish journey. Please check your configuration.';
+                
+                // Tailor errors: avoid technical details, provide helpful context
+                if (err.message) {
+                    if (err.message.includes('401')) userFriendlyMsg = 'Your session has expired. Please log in again.';
+                    else if (err.message.includes('500')) userFriendlyMsg = 'Server error. Our team has been notified. Please try again later.';
+                    else if (err.message.includes('400')) userFriendlyMsg = 'Validation error: Please ensure all nodes are correctly connected and named.';
+                    else userFriendlyMsg = err.message.length > 100 ? 'An unexpected error occurred. Please verify your journey settings.' : err.message;
+                }
+                
+                showToast('Error', userFriendlyMsg, 'error');
             } finally {
                 publishing.value = false;
             }

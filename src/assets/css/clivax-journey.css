@@ -30,8 +30,10 @@
     --cj-text-muted: #9ca3af;
 }
 
-[v-cloak] {
-    display: none;
+[v-cloak],
+.page-journey-builder .page-content[v-cloak],
+.page-journey-stats .page-content[v-cloak] {
+    display: none !important;
 }
 
 /* Sidebar pulse when user clicks + (pending source) */
@@ -1246,4 +1248,66 @@
 
 [data-bs-theme="dark"] .vue-flow__handle {
     background: var(--cj-bg-card) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 991.98px) {
+    .page-journey-builder .page-content,
+    .page-journey-stats .page-content {
+        padding-top: 85px !important;
+        overflow-y: auto !important;
+        height: auto !important;
+    }
+
+    .cj-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .cj-topbar .d-flex.ms-auto {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    .cj-topbar .btn {
+        flex: 1;
+    }
+
+    .cj-builder-wrap {
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: 800px;
+        overflow: visible !important;
+    }
+
+    .cj-canvas {
+        height: 500px !important;
+        order: 1 !important;
+        border-bottom: 1px solid var(--cj-border);
+    }
+
+    .cj-sidebar {
+        width: 100% !important;
+        order: 2 !important;
+        border-left: none;
+        min-height: auto;
+    }
+
+    .vue-flow__node-custom {
+        width: 280px !important;
+    }
+
+    .cj-picker {
+        width: 95%;
+        max-height: 85vh;
+    }
+
+    .cj-payload-preview {
+        font-size: 11px;
+        padding: 15px;
+    }
 }

@@ -37,63 +37,80 @@
             <!-- Notifications -->
             <div class="dropdown d-inline-block">
                 <button type="button"
-                    class="btn btn-icon btn-topbar rounded-circle border border-2 border-primary border-opacity-10"
-                    id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="ri-notification-3-line fs-20 text-primary"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="margin-top: 10px; margin-left: -10px; padding: 3px 4px; font-size: 8px; border: 1px solid #fff;">
+                    class="btn btn-icon btn-topbar rounded-circle position-relative bg-white bg-opacity-75 shadow-sm border border-white border-opacity-50"
+                    id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); transition: all 0.2s ease;">
+                    <i class="ri-notification-badge-line fs-20 text-primary"></i>
+                    <span class="position-absolute badge rounded-pill bg-danger"
+                        style="top: 0px; right: 0px; padding: 4px 5px; font-size: 9px; border: 2px solid #fff; transform: translate(25%, -25%);">
                         3
                     </span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg border-0 animated-dropdown"
                     aria-labelledby="page-header-notifications-dropdown"
-                    style="border-radius: 16px; overflow: hidden; width: 340px;">
-                    <div class="p-3 bg-primary bg-gradient">
+                    style="border-radius: 20px; overflow: hidden; width: 340px; margin-top: 15px;">
+                    <div class="p-4 bg-primary bg-gradient position-relative">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h6 class="text-white m-0 fw-bold">Notifications</h6>
+                                <h5 class="text-white m-0 fw-bold fs-16">Activity Feed</h5>
+                                <p class="text-white-50 mb-0 small">You have 3 unread updates</p>
                             </div>
                             <div class="col-auto">
-                                <span class="badge bg-white bg-opacity-20 text-white">3 New</span>
+                                <span class="badge bg-white bg-opacity-20 text-white rounded-pill px-3">New</span>
                             </div>
                         </div>
                     </div>
-                    <div data-simplebar style="max-height: 300px;">
+                    <div data-simplebar style="max-height: 320px;" class="bg-white">
                         <a href="#!"
                             class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
                             <div class="d-flex align-items-center">
-                                <div class="avatar-xs me-3 flex-shrink-0">
-                                    <span class="avatar-title bg-info-subtle text-info rounded-circle fs-16">
-                                        <i class="ri-user-follow-line"></i>
+                                <div class="avatar-sm me-3 flex-shrink-0">
+                                    <span class="avatar-title bg-soft-primary text-primary rounded-pill fs-18 shadow-sm">
+                                        <i class="ri-user-add-line"></i>
                                     </span>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1 small fw-bold text-dark text-truncate">New segment member added</h6>
-                                    <p class="mb-0 fs-12 text-muted">A new player joined "High Rollers"</p>
+                                    <h6 class="mb-1 small fw-bold text-dark">New Player Segment</h6>
+                                    <p class="mb-0 fs-12 text-muted">"High Roller" segment gained 12 players</p>
+                                    <span class="fs-11 text-primary fw-medium mt-1 d-block"><i class="ri-time-line me-1"></i>2 mins ago</span>
                                 </div>
-                                <span class="fs-11 text-muted ms-2">2m</span>
                             </div>
                         </a>
                         <a href="#!"
                             class="text-reset notification-item d-block p-3 border-bottom border-light hover-bg-light transition-all">
                             <div class="d-flex align-items-center">
-                                <div class="avatar-xs me-3 flex-shrink-0">
-                                    <span class="avatar-title bg-success-subtle text-success rounded-circle fs-16">
-                                        <i class="ri-mail-send-line"></i>
+                                <div class="avatar-sm me-3 flex-shrink-0">
+                                    <span class="avatar-title bg-soft-success text-success rounded-pill fs-18 shadow-sm">
+                                        <i class="ri-checkbox-circle-line"></i>
                                     </span>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1 small fw-bold text-dark text-truncate">Campaign completed</h6>
-                                    <p class="mb-0 fs-12 text-muted">Successfully delivered to 4.2k users</p>
+                                    <h6 class="mb-1 small fw-bold text-dark">Campaign Success</h6>
+                                    <p class="mb-0 fs-12 text-muted">Weekly Bonus SMS delivered (98.4%)</p>
+                                    <span class="fs-11 text-primary fw-medium mt-1 d-block"><i class="ri-time-line me-1"></i>1 hour ago</span>
                                 </div>
-                                <span class="fs-11 text-muted ms-2">1h</span>
+                            </div>
+                        </a>
+                        <a href="#!"
+                            class="text-reset notification-item d-block p-3 hover-bg-light transition-all">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm me-3 flex-shrink-0">
+                                    <span class="avatar-title bg-soft-warning text-warning rounded-pill fs-18 shadow-sm">
+                                        <i class="ri-error-warning-line"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 small fw-bold text-dark">Churn Alert</h6>
+                                    <p class="mb-0 fs-12 text-muted">VIP Segment showing 5% drop in activity</p>
+                                    <span class="fs-11 text-primary fw-medium mt-1 d-block"><i class="ri-time-line me-1"></i>3 hours ago</span>
+                                </div>
                             </div>
                         </a>
                     </div>
-                    <div class="p-2 border-top text-center bg-light-subtle">
-                        <a class="btn btn-sm btn-link fw-bold text-primary text-decoration-none"
+                    <div class="p-3 border-top text-center bg-light-subtle">
+                        <a class="btn btn-sm btn-soft-primary fw-bold w-100 rounded-pill"
                             href="javascript:void(0)">
-                            View All Activity <i class="ri-arrow-right-line ms-1"></i>
+                            View All Notifications <i class="ri-arrow-right-line ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -101,54 +118,49 @@
 
             <!-- Profile Dropdown -->
             <div class="dropdown d-inline-block">
-                <button type="button" class="btn btn-topbar p-1 ms-1" id="page-header-user-dropdown"
-                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="d-flex align-items-center">
-                        <img class="rounded-circle header-profile-user border border-2 border-primary border-opacity-10"
+                <button type="button" class="btn btn-topbar p-0 ms-1 bg-transparent border-0" id="page-header-user-dropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="transition: all 0.3s ease;">
+                    <div class="position-relative profile-pill-hover" style="width: 42px; height: 42px;">
+                        <img class="rounded-circle header-profile-user border border-2 border-white shadow-sm"
                             src="assets/images/users/avatar-6.png" alt="Header Avatar"
-                            style="width: 38px; height: 38px; object-fit: cover;">
-                        <i class="mdi mdi-chevron-down d-none d-xl-inline-block ms-1 text-muted"></i>
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle" style="width: 11px; height: 11px; border-width: 2px !important;"></span>
                     </div>
                 </button>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated shadow-lg border-0 py-0 overflow-hidden mt-2"
-                    style="width: 280px; border-radius: 20px;">
-                    <div class="p-3 bg-primary bg-gradient border-bottom">
-                        <div class="d-flex align-items-center">
-                            <img class="rounded-circle border border-2 border-white border-opacity-50"
-                                src="assets/images/users/avatar-6.png" height="48" width="48">
-                            <div class="ms-3">
-                                <h6 class="text-white m-0 fw-bold">Charlie Stone</h6>
-                                <span class="text-white-50 fs-12">charlie@clivax.com</span>
-                            </div>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated shadow-lg border-0 py-0 overflow-hidden mt-3"
+                    style="width: 260px; border-radius: 20px;">
+                    <div class="p-4 bg-primary bg-gradient border-bottom text-center">
+                        <div class="position-relative d-inline-block mb-3">
+                            <img class="rounded-circle border border-3 border-white shadow-sm"
+                                src="assets/images/users/avatar-6.png" height="64" width="64">
+                            <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-1" style="width: 14px; height: 14px;"></span>
                         </div>
+                        <h6 class="text-white m-0 fw-bold fs-16">Charlie Stone</h6>
+                        <span class="text-white-50 fs-12">Administrator</span>
                     </div>
-                    <div class="p-2">
-                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
+                    <div class="p-2 bg-white">
+                        <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-3" href="#!">
                             <div class="avatar-xs me-3">
-                                <span class="avatar-title bg-primary-subtle text-primary rounded-circle"><i
-                                        class="ri-user-line"></i></span>
+                                <span class="avatar-title bg-soft-primary text-primary rounded-pill"><i
+                                        class="ri-user-settings-line fs-16"></i></span>
                             </div>
-                            <span>My Profile</span>
+                            <span class="fw-medium">Account Settings</span>
                         </a>
-                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
+                        <a class="dropdown-item d-flex align-items-center py-2 px-3 rounded-3" href="#!">
                             <div class="avatar-xs me-3">
-                                <span class="avatar-title bg-info-subtle text-info rounded-circle"><i
-                                        class="ri-settings-3-line"></i></span>
+                                <span class="avatar-title bg-soft-info text-info rounded-pill"><i
+                                        class="ri-shield-user-line fs-16"></i></span>
                             </div>
-                            <span>Settings</span>
+                            <span class="fw-medium">Privacy Center</span>
                         </a>
-                        <a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="#!">
-                            <div class="avatar-xs me-3">
-                                <span class="avatar-title bg-success-subtle text-success rounded-circle"><i
-                                        class="ri-wallet-3-line"></i></span>
-                            </div>
-                            <span>Billing</span>
-                        </a>
-                    </div>
-                    <div class="p-3 bg-light-subtle border-top">
+                        <div class="dropdown-divider border-light opacity-50"></div>
                         <a href="javascript:void(0);" onclick="logout()"
-                            class="btn btn-soft-danger w-100 fw-bold rounded-pill">
-                            <i class="ri-logout-box-r-line me-2"></i>Sign out
+                            class="dropdown-item d-flex align-items-center py-2 px-3 rounded-3 text-danger">
+                            <div class="avatar-xs me-3">
+                                <span class="avatar-title bg-soft-danger text-danger rounded-pill"><i
+                                        class="ri-logout-circle-r-line fs-16"></i></span>
+                            </div>
+                            <span class="fw-bold">Sign out</span>
                         </a>
                     </div>
                 </div>
@@ -159,6 +171,11 @@
 </header>
 <!-- End topbar -->
 <style>
+    .bg-soft-primary { background-color: rgba(91, 115, 232, 0.1) !important; }
+    .bg-soft-success { background-color: rgba(52, 195, 143, 0.1) !important; }
+    .bg-soft-warning { background-color: rgba(241, 180, 76, 0.1) !important; }
+    .bg-soft-danger { background-color: rgba(239, 103, 103, 0.1) !important; }
+
     /* Joint Look: Ensure sidebar aligns perfectly with topbar */
     @media (min-width: 992px) {
         #page-topbar {
@@ -167,7 +184,6 @@
 
         .vertical-menu {
             top: 85px !important;
-            /* Matches $header-height */
             border-top: 1px solid var(--bs-border-color);
             z-index: 1005;
         }
@@ -177,13 +193,10 @@
     @media (max-width: 991.98px) {
         #page-topbar {
             z-index: 1090 !important;
-            /* Ensure it stays above everything */
             position: fixed !important;
             display: block !important;
-            /* Prevent it from being hidden by template logic */
             width: 100% !important;
             background: #ffffff !important;
-            /* Solid background to keep it distinct */
         }
 
         .vertical-menu {
@@ -191,30 +204,22 @@
             width: 260px !important;
             height: calc(100vh - 85px) !important;
             box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
-            /* Refined shadow */
             z-index: 1085;
-            /* Above overlay, below topbar */
             border-top: 1px solid var(--bs-border-color);
             background: #ffffff !important;
-            /* Force solid background to hide ghost layers */
             transform: translateX(-100%);
-            /* Start off-screen */
             transition: transform 0.3s ease-in-out;
             display: block !important;
             left: 0 !important;
-            /* Reset template-specific positioning */
             margin: 0 !important;
             pointer-events: auto !important;
-            /* Ensure sidebar items are clickable */
         }
 
-        /* Show sidebar when enabled */
         body.sidebar-enable .vertical-menu {
             transform: translateX(0);
             visibility: visible !important;
         }
 
-        /* Keep layout visible on mobile */
         body.sidebar-enable #layout-wrapper {
             display: block !important;
         }
@@ -224,28 +229,48 @@
             opacity: 1 !important;
             visibility: visible !important;
             margin-left: 0 !important;
-            /* Prevent content from shifting right */
             pointer-events: none;
-            /* Block interaction with background content only */
         }
 
         .mobile-sidebar-overlay {
             position: fixed;
             inset: 0;
             top: 85px;
-            /* Start shadow effect below the topbar */
             background: rgba(0, 0, 0, 0.5);
-            /* Transparent dark layer */
             z-index: 1070;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
         }
 
-        /* Toggle visibility based on global sidebar-enable class */
         body.sidebar-enable .mobile-sidebar-overlay {
             opacity: 1;
             visibility: visible;
         }
+    }
+
+    .profile-pill-hover {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .profile-pill-hover:hover {
+        transform: scale(1.1);
+        filter: brightness(1.1);
+    }
+
+    .profile-pill-hover:active {
+        transform: scale(0.95);
+    }
+
+    /* Animation for dropdowns */
+    .animated-dropdown {
+        animation: dropdownFadeIn 0.3s ease forwards;
+        transform-origin: top right;
+    }
+
+    @keyframes dropdownFadeIn {
+        from { opacity: 0; transform: translateY(10px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
     }
 </style>

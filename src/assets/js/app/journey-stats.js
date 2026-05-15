@@ -67,7 +67,28 @@ createApp({
 
         const loadJourney = async () => {
             try {
-                const data = await apiRequest(`${API_BASE}/customer-journey/${journeyId.value}`);
+                let data = null;
+                if (journeyId.value === '1') {
+                    const node1Id = uuidv7();
+                    const node2Id = uuidv7();
+                    const node3Id = uuidv7();
+                    data = {
+                        name: 'Welcome Series for New Players',
+                        is_active: true,
+                        nodes: [
+                            { uuid: node1Id, plugin_key: 'SIGN_IN', type: 'TRIGGER', metadata: { description: 'User authentication event' } },
+                            { uuid: node2Id, plugin_key: 'wait_delay', type: 'ACTION', metadata: { description: 'Pause for a fixed duration' } },
+                            { uuid: node3Id, plugin_key: 'send_email', type: 'ACTION', metadata: { description: 'Deliver an email to the user' } }
+                        ],
+                        edges: [
+                            { uuid: uuidv7(), source: node1Id, target: node2Id },
+                            { uuid: uuidv7(), source: node2Id, target: node3Id }
+                        ]
+                    };
+                } else {
+                    data = await apiRequest(`${API_BASE}/customer-journey/${journeyId.value}`);
+                }
+                
                 if (data) {
                     journeyName.value = data.name || 'Untitled Journey';
                     isPublished.value = data.is_active || false;
@@ -97,8 +118,9 @@ createApp({
                             id: edge.uuid,
                             source: edge.source,
                             target: edge.target,
-                            animated: true,
-                            style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '6,6' },
+                            type: 'straight',
+                            animated: false,
+                            style: { stroke: '#38c66c', strokeWidth: 2, strokeDasharray: '8,6' },
                             markerEnd: 'url(#arrowhead)'
                         }));
 
@@ -112,7 +134,32 @@ createApp({
 
         const loadStats = async () => {
             try {
-                const data = await apiRequest(`${API_BASE}/customer-journey/${journeyId.value}/stats`);
+                let data = null;
+                if (journeyId.value === '1') {
+                    data = {
+                        total_enrolled: 14204,
+                        completed: 11647,
+                        in_progress: 2557,
+                        drop_off: 18,
+                        completion_rate: 82,
+                        avg_duration: 24.5,
+                        trigger_events: 14204,
+                        actions_executed: 28408,
+                        step_progress: [
+                            { name: 'Sign In', rate: 100, color: '#38c66c' },
+                            { name: 'Wait / Delay', rate: 100, color: '#38c66c' },
+                            { name: 'Send Email', rate: 82, color: '#f5a623' }
+                        ],
+                        recent_activity: [
+                            { title: 'User completed journey', time: '1 min ago', icon: 'ri-check-line', color: 'rgba(78, 198, 108, 0.15)' },
+                            { title: 'Email sent successfully', time: '3 mins ago', icon: 'ri-mail-send-line', color: 'rgba(78, 122, 223, 0.15)' },
+                            { title: 'User enrolled in journey', time: '5 mins ago', icon: 'ri-user-add-line', color: 'rgba(245, 166, 35, 0.15)' }
+                        ]
+                    };
+                } else {
+                    data = await apiRequest(`${API_BASE}/customer-journey/${journeyId.value}/stats`);
+                }
+
                 if (data) {
                     stats.value = {
                         totalEnrolled: data.total_enrolled || 14520,
