@@ -6,10 +6,21 @@
 
     <style>
         /* Authentication Guard Styles */
-        body { display: none !important; }
-        .is-authenticated body { display: block !important; }
-        .cursor-pointer { cursor: pointer; }
-        .cursor-pointer:hover { background-color: rgba(0,0,0,0.05); }
+        body {
+            display: none !important;
+        }
+
+        .is-authenticated body {
+            display: block !important;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .cursor-pointer:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
     </style>
     <script>
         if (!sessionStorage.getItem('isLoggedIn')) { window.location.href = 'auth-login.html'; }
@@ -29,141 +40,146 @@
         <div class="page-content">
             <div id="segmentViewApp" class="container-fluid">
                 <div v-if="segmentData">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <div>
-                    <h4 class="mb-2">{{ segmentData.name || 'Unnamed Segment' }}</h4>
-                    <p class="text-muted mb-0">
-                        <i class="mdi mdi-account-group me-1"></i>
-                        <strong>{{ filteredPlayers.length }}</strong> Players in this segment
-                    </p>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <button type="button" class="btn btn-outline-primary" @click="downloadCSV">
-                        <i class="mdi mdi-download me-1"></i>Download CSV
-                    </button>
-                    <a :href="'pages-segment-details.html?id=' + (segmentData.id || '')" class="btn btn-outline-secondary">
-                        <i class="mdi mdi-arrow-left me-1"></i>Back
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Players Table Card -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <!-- Header -->
-                <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Segment Players</h5>
-                    <div class="d-flex gap-2">
-                        <input 
-                            type="text" 
-                            v-model="search" 
-                            class="form-control form-control-sm border-dashed" 
-                            placeholder="Search by name or email..." 
-                            style="width: 250px;">
-                        <select 
-                            v-model="statusFilter" 
-                            class="form-select form-select-sm border-dashed" 
-                            style="width: 150px;">
-                            <option value="all">All Status</option>
-                            <option value="active">Active</option>
-                            <option value="dormant">Dormant</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Table -->
-                <div class="card-body p-0">
-                    <div v-if="filteredPlayers.length > 0" class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="min-width: 200px;" @click="handleSort('name')" class="cursor-pointer">
-                                        Player <i class="mdi mdi-sort ms-1 small"></i>
-                                    </th>
-                                    <th style="min-width: 200px;">Email</th>
-                                    <th style="min-width: 120px;">Country</th>
-                                    <th style="min-width: 100px;">Status</th>
-                                    <th style="min-width: 150px;" @click="handleSort('lifetime_deposits')" class="cursor-pointer">
-                                        Deposits <i class="mdi mdi-sort ms-1 small"></i>
-                                    </th>
-                                    <th style="min-width: 150px;" @click="handleSort('lifetime_bets')" class="cursor-pointer">
-                                        Bets <i class="mdi mdi-sort ms-1 small"></i>
-                                    </th>
-                                    <th style="min-width: 120px;">Registered</th>
-                                    <th style="min-width: 130px;">Last Active</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="player in filteredPlayers" :key="player.id" class="align-middle">
-                                    <td class="fw-medium">{{ player.name }}</td>
-                                    <td class="text-muted small">{{ player.email }}</td>
-                                    <td>{{ player.country }}</td>
-                                    <td>
-                                        <span class="badge" :class="player.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                                            {{ player.status.toUpperCase() }}
-                                        </span>
-                                    </td>
-                                    <td class="text-nowrap">KES {{ (player.lifetime_deposits || 0).toLocaleString() }}</td>
-                                    <td class="text-nowrap">KES {{ (player.lifetime_bets || 0).toLocaleString() }}</td>
-                                    <td class="small">{{ player.registered_at }}</td>
-                                    <td class="small">{{ player.last_active }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Empty State -->
-                    <div v-else class="text-center py-5">
-                        <i class="mdi mdi-account-search-outline" style="font-size: 48px; color: #ccc;"></i>
-                        <h5 class="text-muted mt-3">No players found</h5>
-                        <p class="text-muted">Try adjusting your search or filter criteria</p>
-                    </div>
-                </div>
-
-                <!-- Footer with Summary -->
-                <div class="card-footer bg-light border-top">
-                    <div class="row text-center">
-                        <div class="col-md-3" v-if="filteredPlayers.length">
-                            <small class="text-muted d-block">Total Players</small>
-                            <strong>{{ filteredPlayers.length }}</strong>
-                        </div>
-                        <div class="col-md-3" v-if="totalDeposits">
-                            <small class="text-muted d-block">Total Deposits</small>
-                            <strong>KES {{ formatNumber(totalDeposits) }}</strong>
-                        </div>
-                        <div class="col-md-3" v-if="totalBets">
-                            <small class="text-muted d-block">Total Bets</small>
-                            <strong>KES {{ formatNumber(totalBets) }}</strong>
-                        </div>
-                        <div class="col-md-3" v-if="activePlayers">
-                            <small class="text-muted d-block">Active Players</small>
-                            <strong>{{ activePlayers }}</strong>
+                    <!-- Header Section -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <div>
+                                    <h4 class="mb-2">{{ segmentData.name || 'Unnamed Segment' }}</h4>
+                                    <p class="text-muted mb-0">
+                                        <i class="mdi mdi-account-group me-1"></i>
+                                        <strong>{{ filteredPlayers.length }}</strong> Players in this segment
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-outline-primary" @click="downloadCSV">
+                                        <i class="mdi mdi-download me-1"></i>Download CSV
+                                    </button>
+                                    <a :href="'pages-segment-details.html?id=' + (segmentData.id || '')"
+                                        class="btn btn-outline-secondary">
+                                        <i class="mdi mdi-arrow-left me-1"></i>Back
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+                    <!-- Players Table Card -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm">
+                                <!-- Header -->
+                                <div
+                                    class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">Segment Players</h5>
+                                    <div class="d-flex gap-2">
+                                        <input type="text" v-model="search"
+                                            class="form-control form-control-sm border-dashed"
+                                            placeholder="Search by name or email..." style="width: 250px;">
+                                        <select v-model="statusFilter" class="form-select form-select-sm border-dashed"
+                                            style="width: 150px;">
+                                            <option value="all">All Status</option>
+                                            <option value="active">Active</option>
+                                            <option value="dormant">Dormant</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Table -->
+                                <div class="card-body p-0">
+                                    <div v-if="filteredPlayers.length > 0" class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="min-width: 200px;" @click="handleSort('name')"
+                                                        class="cursor-pointer">
+                                                        Player <i class="mdi mdi-sort ms-1 small"></i>
+                                                    </th>
+                                                    <th style="min-width: 200px;">Email</th>
+                                                    <th style="min-width: 120px;">Country</th>
+                                                    <th style="min-width: 100px;">Status</th>
+                                                    <th style="min-width: 150px;"
+                                                        @click="handleSort('lifetime_deposits')" class="cursor-pointer">
+                                                        Deposits <i class="mdi mdi-sort ms-1 small"></i>
+                                                    </th>
+                                                    <th style="min-width: 150px;" @click="handleSort('lifetime_bets')"
+                                                        class="cursor-pointer">
+                                                        Bets <i class="mdi mdi-sort ms-1 small"></i>
+                                                    </th>
+                                                    <th style="min-width: 120px;">Registered</th>
+                                                    <th style="min-width: 130px;">Last Active</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="player in filteredPlayers" :key="player.id"
+                                                    class="align-middle">
+                                                    <td class="fw-medium">{{ player.name }}</td>
+                                                    <td class="text-muted small">{{ player.email }}</td>
+                                                    <td>{{ player.country }}</td>
+                                                    <td>
+                                                        <span class="badge"
+                                                            :class="player.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                                                            {{ player.status.toUpperCase() }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-nowrap">KES {{ (player.lifetime_deposits ||
+                                                        0).toLocaleString() }}</td>
+                                                    <td class="text-nowrap">KES {{ (player.lifetime_bets ||
+                                                        0).toLocaleString() }}</td>
+                                                    <td class="small">{{ player.registered_at }}</td>
+                                                    <td class="small">{{ player.last_active }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Empty State -->
+                                    <div v-else class="text-center py-5">
+                                        <i class="mdi mdi-account-search-outline"
+                                            style="font-size: 48px; color: #ccc;"></i>
+                                        <h5 class="text-muted mt-3">No players found</h5>
+                                        <p class="text-muted">Try adjusting your search or filter criteria</p>
+                                    </div>
+                                </div>
+
+                                <!-- Footer with Summary -->
+                                <div class="card-footer bg-light border-top">
+                                    <div class="row text-center">
+                                        <div class="col-md-3" v-if="filteredPlayers.length">
+                                            <small class="text-muted d-block">Total Players</small>
+                                            <strong>{{ filteredPlayers.length }}</strong>
+                                        </div>
+                                        <div class="col-md-3" v-if="totalDeposits">
+                                            <small class="text-muted d-block">Total Deposits</small>
+                                            <strong>KES {{ formatNumber(totalDeposits) }}</strong>
+                                        </div>
+                                        <div class="col-md-3" v-if="totalBets">
+                                            <small class="text-muted d-block">Total Bets</small>
+                                            <strong>KES {{ formatNumber(totalBets) }}</strong>
+                                        </div>
+                                        <div class="col-md-3" v-if="activePlayers">
+                                            <small class="text-muted d-block">Active Players</small>
+                                            <strong>{{ activePlayers }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Loading/Error State -->
                 <div v-else>
-    <div class="text-center py-5">
-        <div v-if="isLoading" class="spinner-border text-primary" role="status"></div>
-        <div v-else>
-            <i class="mdi mdi-alert-circle-outline font-size-48 text-danger mb-3 d-block"></i>
-            <h5>Segment Not Found</h5>
-            <p>The requested segment could not be loaded.</p>
-            <a href="pages-saved-segments.html" class="btn btn-primary mt-2">Back to Segments</a>
-        </div>
-    </div>
-</div>
+                    <div class="text-center py-5">
+                        <div v-if="isLoading" class="spinner-border text-primary" role="status"></div>
+                        <div v-else>
+                            <i class="mdi mdi-alert-circle-outline font-size-48 text-danger mb-3 d-block"></i>
+                            <h5>Segment Not Found</h5>
+                            <p>The requested segment could not be loaded.</p>
+                            <a href="pages-saved-segments.html" class="btn btn-primary mt-2">Back to Segments</a>
+                        </div>
+                    </div>
+                </div>
             </div> <!-- container-fluid -->
         </div> <!-- End Page-content -->
 
@@ -171,6 +187,6 @@
     </div> <!-- end main content-->
 </div> <!-- End layout-wrapper -->
 
-    @@include("partials/vendor-scripts.html")
-    <script src="assets/js/pages/segment-view.js"></script>
+@@include("partials/vendor-scripts.html")
+<script src="assets/js/pages/segment-view.js"></script>
 </body>
