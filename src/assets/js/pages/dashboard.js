@@ -174,7 +174,9 @@ const commonOptions = {
 
 function renderCharts(data) {
     // Top Row
-    charts.liquidity = new ApexCharts(document.querySelector("#liquidity_trend_chart"), {
+    const liqEl = document.querySelector("#liquidity_trend_chart");
+    if (liqEl) {
+        charts.liquidity = new ApexCharts(liqEl, {
         ...commonOptions,
         series: [{ name: 'Stakes', data: data.liquidity.stakes }, { name: 'Payouts', data: data.liquidity.payouts }],
         chart: { ...commonOptions.chart, type: 'area', height: 280 },
@@ -183,8 +185,11 @@ function renderCharts(data) {
         xaxis: { ...commonOptions.xaxis, categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
     });
     charts.liquidity.render();
+    }
 
-    charts.cashflow = new ApexCharts(document.querySelector("#cashflow_trend_chart"), {
+    const cashEl = document.querySelector("#cashflow_trend_chart");
+    if (cashEl) {
+        charts.cashflow = new ApexCharts(cashEl, {
         ...commonOptions,
         series: [{ name: 'Deposits', data: data.cashflow.deposits }, { name: 'Withdrawals', data: data.cashflow.withdrawals }],
         chart: { ...commonOptions.chart, type: 'line', height: 280 },
@@ -193,8 +198,11 @@ function renderCharts(data) {
         xaxis: { ...commonOptions.xaxis, categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
     });
     charts.cashflow.render();
+    }
 
-    charts.activity = new ApexCharts(document.querySelector("#player_activity_chart"), {
+    const actEl = document.querySelector("#player_activity_chart");
+    if (actEl) {
+        charts.activity = new ApexCharts(actEl, {
         ...commonOptions,
         series: [{ name: 'Active', data: data.activity.active }, { name: 'Dormant', data: data.activity.dormant }],
         chart: { ...commonOptions.chart, type: 'bar', height: 280 },
@@ -203,9 +211,12 @@ function renderCharts(data) {
         xaxis: { ...commonOptions.xaxis, categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
     });
     charts.activity.render();
+    }
 
     // Row 2 & 3
-    charts.product = new ApexCharts(document.querySelector("#product_split_chart"), {
+    const prodEl = document.querySelector("#product_split_chart");
+    if (prodEl) {
+        charts.product = new ApexCharts(prodEl, {
         series: data.product,
         chart: { type: 'donut', height: 320 },
         labels: ['Casino', 'Sportsbook', 'Virtuals'],
@@ -214,8 +225,11 @@ function renderCharts(data) {
         legend: { position: 'top', horizontalAlign: 'right' }
     });
     charts.product.render();
+    }
 
-    charts.failed = new ApexCharts(document.querySelector("#failed_tx_chart"), {
+    const failEl = document.querySelector("#failed_tx_chart");
+    if (failEl) {
+        charts.failed = new ApexCharts(failEl, {
         ...commonOptions,
         series: [{ name: 'Failed Deposits', data: data.failed.deposits }, { name: 'Failed Withdrawals', data: data.failed.withdrawals }],
         chart: { ...commonOptions.chart, type: 'bar', height: 280, stacked: true },
@@ -223,8 +237,11 @@ function renderCharts(data) {
         xaxis: { ...commonOptions.xaxis, categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
     });
     charts.failed.render();
+    }
 
-    charts.wagering = new ApexCharts(document.querySelector("#wagering_mix_chart"), {
+    const wagEl = document.querySelector("#wagering_mix_chart");
+    if (wagEl) {
+        charts.wagering = new ApexCharts(wagEl, {
         series: data.wagering_mix,
         chart: { type: 'donut', height: 320 },
         labels: ['Cash', 'Bonus', 'Jackpot', 'CS'],
@@ -233,8 +250,11 @@ function renderCharts(data) {
         legend: { position: 'top', horizontalAlign: 'right' }
     });
     charts.wagering.render();
+    }
 
-    charts.product_volume = new ApexCharts(document.querySelector("#product_volume_chart"), {
+    const volEl = document.querySelector("#product_volume_chart");
+    if (volEl) {
+        charts.product_volume = new ApexCharts(volEl, {
         series: data.product_volume,
         chart: { type: 'pie', height: 320 },
         labels: ['Sportsbook Vol', 'Casino Vol'],
@@ -242,6 +262,7 @@ function renderCharts(data) {
         legend: { position: 'top', horizontalAlign: 'right' }
     });
     charts.product_volume.render();
+    }
 }
 
 function updateCharts(data) {

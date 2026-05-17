@@ -3,7 +3,7 @@
 
     const initSegmentBuilder = () => {
         const el = document.getElementById('segmentBuilderApp');
-        if (!el) return;
+        if (!el || el.__vue_app__) return; // Stop double-mounting crash
 
         createApp({
             setup() {
@@ -26,51 +26,38 @@
                 const addGroup = (list) => list.push(makeGroup());
                 const removeItem = (list, i) => { if (list.length > 1) list.splice(i, 1); };
 
-                const fieldCategories = window.QBFieldCategories || [
-                    {
-                        label: 'Player', fields: [
-                            { field: 'country', label: 'Country', type: 'string', values: ['Kenya', 'Uganda', 'Tanzania', 'Nigeria'] },
-                            { field: 'status', label: 'Status', type: 'string', values: ['active', 'dormant', 'suspended', 'blocked'] },
-                            { field: 'registered_at', label: 'Registration Date', type: 'date' },
-                            { field: 'last_active', label: 'Last Active Date', type: 'date' }
-                        ]
-                    },
-                    {
-                        label: 'Financial', fields: [
-                            { field: 'lifetime_deposits', label: 'Total Deposits (KES)', type: 'number' },
-                            { field: 'lifetime_withdrawals', label: 'Total Withdrawals (KES)', type: 'number' },
-                            { field: 'deposit_count', label: 'Number of Deposits', type: 'number' },
-                            { field: 'avg_deposit', label: 'Avg Deposit Size', type: 'number' },
-                            { field: 'withdrawal_ratio', label: 'Withdrawal/Deposit Ratio %', type: 'number' }
-                        ]
-                    }
-                ];
+                // Force use of global categories from segdummy.js
+                const fieldCategories = computed(() => window.QBFieldCategories || []);
 
                 const fieldMap = computed(() => {
                     const m = {};
-                    fieldCategories.forEach(cat => cat.fields.forEach(f => { m[f.field] = f; }));
+                    if (Array.isArray(fieldCategories.value)) {
+                        fieldCategories.value.forEach(cat => {
+                            if (cat.fields && Array.isArray(cat.fields)) {
+                                cat.fields.forEach(f => { m[f.field] = f; });
+                            }
+                        });
+                    }
                     return m;
                 });
 
-                const getFieldConfig = (field) => fieldMap.value[field];
                 const getOperators = (field) => {
-                    const cfg = getFieldConfig(field);
-                    if (!cfg) return [];
-                    if (cfg.type === 'string' || cfg.values) {
-                        return [{ value: 'eq', label: 'equals' }, { value: 'ne', label: 'not equals' }];
+                    // Handle both field key strings and field objects
+                    const key = field && typeof field === 'object' ? field.field : field;
+                    if (!key) return [];
+                    if (typeof window.getOperatorsForField === 'function') {
+                        return window.getOperatorsForField(key);
                     }
-                    return [
-                        { value: 'eq', label: 'equals' },
-                        { value: 'ne', label: 'not equals' },
-                        { value: 'gt', label: 'greater than' },
-                        { value: 'gte', label: 'greater or equal' },
-                        { value: 'lt', label: 'less than' },
-                        { value: 'lte', label: 'less or equal' },
-                    ];
+                    return [];
                 };
 
                 const runPreview = async () => {
                     if (!window.filterPlayersByCriteria) return;
+                    // Only run preview if there's at least one complete rule
+                    if (!criteria.rules.some(r => r.field && r.operator)) {
+                        matchCount.value = '—';
+                        return;
+                    }
                     try {
                         const cleanCriteria = JSON.parse(JSON.stringify(criteria));
                         const res = await window.filterPlayersByCriteria(cleanCriteria);
@@ -92,19 +79,31 @@
                             name: segmentName.value,
                             description: segmentDescription.value,
                             refresh_type: refreshType.value,
+                            criteria: JSON.parse(JSON.stringify(criteria)), // Keep tree for dummy logic
                             rules,
                             groups
                         };
 
                         let res;
-                        if (isEditMode.value) {
+                        try {
+                            if (isEditMode.value) {
+                                const id = new URLSearchParams(window.location.search).get('edit');
+                                res = await (window.updateSegment ? window.updateSegment(id, payload) : window.updateSegmentDummy(id, payload));
+                            } else {
+                                res = await (window.publishRule ? window.publishRule(payload) : window.createSegmentDummy(payload));
+                            }
+                        } catch (apiErr) {
+                            console.warn("[SegmentBuilder] API failed, falling back to dummy storage:", apiErr);
                             const id = new URLSearchParams(window.location.search).get('edit');
-                            res = await window.updateSegment(id, payload);
-                        } else {
-                            res = await window.publishRule(payload);
+                            res = await (isEditMode.value ? window.updateSegmentDummy(id, payload) : window.createSegmentDummy(payload));
                         }
 
-                        if (window.showToast) window.showToast('Success', 'Segment saved!', 'success');
+                        if (!res || (res.status === 0 && !res.data)) {
+                             throw new Error(res?.error || "Unknown save error");
+                        }
+
+                        console.log("[SegmentBuilder] Save successful:", res);
+                        if (window.showToast) window.showToast('Success', 'Segment saved locally!', 'success');
                         window.location.href = 'pages-saved-segments.html';
                     } catch (e) {
                         console.error("[SegmentBuilder] Save error:", e);
@@ -120,7 +119,12 @@
                     if (editId) {
                         isEditMode.value = true;
                         try {
-                            const res = await window.fetchSegmentById(editId);
+                            let res;
+                            try {
+                                res = await (window.fetchSegmentById ? window.fetchSegmentById(editId) : window.fetchSegmentDetailsDummy(editId));
+                            } catch (e) {
+                                res = await window.fetchSegmentDetailsDummy(editId);
+                            }
                             const data = res.data || res;
                             segmentName.value = data.name || '';
                             segmentDescription.value = data.description || '';
@@ -134,7 +138,8 @@
                 return {
                     segmentName, segmentDescription, refreshType, criteria, isEditMode, isLoading, matchCount,
                     fieldCategories, addRule, addGroup, removeItem, getOperators, saveSegment,
-                    setOperator: (val) => { criteria.operator = val; }
+                    setOperator: (val) => { criteria.operator = val; },
+                    getFieldConfig: (field) => window.getFieldConfig ? window.getFieldConfig(field) : null
                 };
             }
         }).mount('#segmentBuilderApp');

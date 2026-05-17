@@ -116,12 +116,12 @@
             total_players: 5, total_deposits: 1108000, total_bets: 1653000,
             criteria: { operator: "AND", rules: [{ field: "lifetime_deposits", operator: "gt", value: "80000" }] },
             monthly_trend: [
-                { month: "Aug 25", players: 4, deposits: 72000, total_ggr: 10460, sb_stake: 58000, casino_stake: 50000 },
-                { month: "Sep 25", players: 4, deposits: 88000, total_ggr: 12840, sb_stake: 72000, casino_stake: 60000 },
-                { month: "Oct 25", players: 4, deposits: 95000, total_ggr: 14250, sb_stake: 82000, casino_stake: 63000 },
-                { month: "Nov 25", players: 5, deposits: 110000, total_ggr: 16660, sb_stake: 98000, casino_stake: 70000 },
-                { month: "Dec 25", players: 5, deposits: 134000, total_ggr: 20600, sb_stake: 125000, casino_stake: 80000 },
-                { month: "Jan 26", players: 5, deposits: 148000, total_ggr: 22750, sb_stake: 140000, casino_stake: 85000 }
+                { month: "Aug 25", active_players: 4, total_deposits: 72000, total_ggr: 10460, total_stake: 108000 },
+                { month: "Sep 25", active_players: 4, total_deposits: 88000, total_ggr: 12840, total_stake: 132000 },
+                { month: "Oct 25", active_players: 4, total_deposits: 95000, total_ggr: 14250, total_stake: 145000 },
+                { month: "Nov 25", active_players: 5, total_deposits: 110000, total_ggr: 16660, total_stake: 168000 },
+                { month: "Dec 25", active_players: 5, total_deposits: 134000, total_ggr: 20600, total_stake: 205000 },
+                { month: "Jan 26", active_players: 5, total_deposits: 148000, total_ggr: 22750, total_stake: 225000 }
             ],
             casino_stats: [
                 { game: "Lightning Roulette", bets: 520000 },
@@ -137,12 +137,12 @@
             total_players: 7, total_deposits: 142300, total_bets: 195500,
             criteria: { operator: "AND", rules: [{ field: "lifetime_deposits", operator: "between", value: "5000,80000" }] },
             monthly_trend: [
-                { month: "Aug 25", players: 5, deposits: 15000, total_ggr: 2070, sb_stake: 12000, casino_stake: 9000 },
-                { month: "Sep 25", players: 6, deposits: 18500, total_ggr: 2545, sb_stake: 14500, casino_stake: 11500 },
-                { month: "Oct 25", players: 6, deposits: 21000, total_ggr: 2950, sb_stake: 17000, casino_stake: 13000 },
-                { month: "Nov 25", players: 7, deposits: 25000, total_ggr: 3485, sb_stake: 20000, casino_stake: 15500 },
-                { month: "Dec 25", players: 7, deposits: 28000, total_ggr: 3950, sb_stake: 23000, casino_stake: 17000 },
-                { month: "Jan 26", players: 7, deposits: 32000, total_ggr: 4485, sb_stake: 26000, casino_stake: 19500 }
+                { month: "Aug 25", active_players: 5, total_deposits: 15000, total_ggr: 2070, total_stake: 21000 },
+                { month: "Sep 25", active_players: 6, total_deposits: 18500, total_ggr: 2545, total_stake: 26000 },
+                { month: "Oct 25", active_players: 6, total_deposits: 21000, total_ggr: 2950, total_stake: 30000 },
+                { month: "Nov 25", active_players: 7, total_deposits: 25000, total_ggr: 3485, total_stake: 35500 },
+                { month: "Dec 25", active_players: 7, total_deposits: 28000, total_ggr: 3950, total_stake: 40000 },
+                { month: "Jan 26", active_players: 7, total_deposits: 32000, total_ggr: 4485, total_stake: 45500 }
             ]
         }
     ];
@@ -342,19 +342,36 @@
         return { status: 1 };
     };
 
-    window.createSegmentDummy = async (name, description, refreshType, criteria) => {
+    window.createSegmentDummy = async (payload) => {
+        // Accept single object payload to match segment-builder.js call
         const segments = getLocalSegments();
         const newSegment = {
             id: 'seg_' + Date.now(),
-            name, description,
-            refresh_type: refreshType,
-            criteria,
+            name: payload.name,
+            description: payload.description,
+            refresh_type: payload.refresh_type,
+            criteria: payload.criteria || { operator: payload.groups?.[0] || 'AND', rules: payload.rules },
             created_at: new Date().toISOString(),
             is_favorite: false,
         };
         segments.push(newSegment);
         saveLocalSegments(segments);
         return { status: 1, data: newSegment };
+    };
+
+    window.updateSegmentDummy = async (id, payload) => {
+        const segments = getLocalSegments();
+        const idx = segments.findIndex(s => String(s.id) === String(id));
+        if (idx > -1) {
+            segments[idx] = { 
+                ...segments[idx], 
+                ...payload,
+                updated_at: new Date().toISOString()
+            };
+            saveLocalSegments(segments);
+            return { status: 1, data: segments[idx] };
+        }
+        return { status: 0, error: 'Segment not found in local storage' };
     };
 
     window.filterPlayersByCriteria = async (criteria) => {
